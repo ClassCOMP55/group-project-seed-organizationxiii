@@ -1,5 +1,5 @@
 package characters;
 
-public abstract class player {
+public abstract class player extends character {
 
 }

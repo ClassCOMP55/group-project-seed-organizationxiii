@@ -1,5 +1,5 @@
 package characters;
 
-public abstract class boss {
+public abstract class boss extends character{
 
 }
