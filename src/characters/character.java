@@ -15,7 +15,11 @@ public abstract class character {
 	 protected float dmgMult = 1.0f;
 	 protected float healMult = 1.0f;
 	 
-	 protected HashMap<String, GImage> sprites; //new change
+	 protected HashMap<String, String> sprites; //new change
+	 
+	 public GImage getSprite(String key) {
+	        return new GImage(sprites.get(key));
+	    }
 
 	 public character(int hp, int atk, int spd, String nm) {
 	 maxHP = hp;
@@ -23,6 +27,8 @@ public abstract class character {
 	 attack = atk;
 	 speed = spd;
 	 name = nm;
+	 
+	 sprites = new HashMap<>();
 	 }
 
 	 public void takeDamage(int dmg) {
