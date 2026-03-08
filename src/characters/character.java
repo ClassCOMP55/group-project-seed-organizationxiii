@@ -1,5 +1,9 @@
 package characters;
 
+import java.util.HashMap;
+
+import acm.graphics.GImage;
+
 public abstract class character {
 
 	 protected int maxHP;
@@ -10,6 +14,8 @@ public abstract class character {
 
 	 protected float dmgMult = 1.0f;
 	 protected float healMult = 1.0f;
+	 
+	 protected HashMap<String, GImage> sprites; //new change
 
 	 public character(int hp, int atk, int spd, String nm) {
 	 maxHP = hp;
