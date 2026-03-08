@@ -1,20 +1,23 @@
 import acm.graphics.GObject;
 import acm.program.*;
 
-
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 
 public class MainApplication extends GraphicsProgram{
+
 	//Settings
 	public static final int WINDOW_WIDTH = 800;
 	public static final int WINDOW_HEIGHT = 600;
 	
 	//List of all the full screen panes
-	private WelcomePane welcomePane;
-	private DescriptionPane descriptionPane;
+	private TitlePane titlePane;
+	private CutscenePane cutscenePane;
+	private LevelSelectPane levelSelectPane;
+	private BattlePane battlePane;
+	private VictoryPane victoryPane;
+	
 	private GraphicsPane currentScreen;
-
 
 	public MainApplication() {
 		super();
@@ -35,26 +38,43 @@ public class MainApplication extends GraphicsProgram{
 		setupInteractions();
 		
 		//Initialize all Panes
-		welcomePane = new WelcomePane(this);
-		descriptionPane = new DescriptionPane(this);
+		titlePane = new TitlePane(this);
+		cutscenePane = new CutscenePane(this);
+		levelSelectPane = new LevelSelectPane(this);
+		battlePane = new BattlePane(this);
+		victoryPane = new VictoryPane(this);
 
-		//TheDefaultPane
-		switchToScreen(welcomePane);
+		//The Default Screen
+		switchToScreen(titlePane);
 	}
 	
 	public static void main(String[] args) {
 		new MainApplication().start();
-
 	}
 	
-	public void switchToDescriptionScreen() {
-		switchToScreen(descriptionPane);
+	//Screen switching functions
+	
+	public void switchToTitleScreen() {
+		switchToScreen(titlePane);
 	}
 	
-	public void switchToWelcomeScreen() {
-		switchToScreen(welcomePane);
+	public void switchToCutsceneScreen() {
+		switchToScreen(cutscenePane);
 	}
 	
+	public void switchToLevelSelectScreen() {
+		switchToScreen(levelSelectPane);
+	}
+	
+	public void switchToBattleScreen() {
+		switchToScreen(battlePane);
+	}
+	
+	public void switchToVictoryScreen() {
+		switchToScreen(victoryPane);
+	}
+	
+	//Core screen switching logic
 	
 	protected void switchToScreen(GraphicsPane newScreen) {
 		if(currentScreen != null) {
@@ -64,9 +84,13 @@ public class MainApplication extends GraphicsProgram{
 		currentScreen = newScreen;
 	}
 	
+	//Utility function for clicking objects
+	
 	public GObject getElementAtLocation(double x, double y) {
 		return getElementAt(x, y);
 	}
+	
+	//Input routing (DO NOT MODIFY)
 	
 	@Override
 	public void mousePressed(MouseEvent e) {
@@ -123,5 +147,4 @@ public class MainApplication extends GraphicsProgram{
 			currentScreen.keyTyped(e);
 		}
 	}
-
 }
