@@ -4,8 +4,11 @@ import java.awt.event.MouseEvent;
 import acm.graphics.GImage;
 import acm.graphics.GLabel;
 import acm.graphics.GObject;
+import java.awt.Color;
 
 public class TitlePane extends GraphicsPane{
+	private GLabel startLabel;
+	
 	public TitlePane(MainApplication mainScreen) {
 		this.mainScreen = mainScreen;
 	}
@@ -34,8 +37,9 @@ public class TitlePane extends GraphicsPane{
 	}
 	
 	private void addDescriptionButton() {
-		GLabel startLabel = new GLabel("START");
+		startLabel = new GLabel("START");
 		startLabel.setFont("Arial-Bold-36");
+		startLabel.setColor(Color.BLACK);
 		
 		double x = (mainScreen.getWidth() - startLabel.getWidth()) / 2;
 		double y = 490;
@@ -44,6 +48,17 @@ public class TitlePane extends GraphicsPane{
 		contents.add(startLabel);
 		mainScreen.add(startLabel);
 
+	}
+	
+	@Override
+	public void mouseMoved(MouseEvent e) {
+		GObject obj = mainScreen.getElementAtLocation(e.getX(), e.getY());
+		
+		if (obj == startLabel) {
+			startLabel.setColor(Color.MAGENTA);
+		} else {
+			startLabel.setColor(Color.BLACK);
+		}
 	}
 	
 	@Override

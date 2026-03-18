@@ -27,6 +27,7 @@ public class MainApplication extends GraphicsProgram{
 		requestFocus();
 		addKeyListeners();
 		addMouseListeners();
+		addMouseListeners();
 	}
 	
 	public void init() {
