@@ -2,6 +2,7 @@
 import java.awt.event.MouseEvent;
 
 import acm.graphics.GImage;
+import acm.graphics.GLabel;
 import acm.graphics.GObject;
 
 public class TitlePane extends GraphicsPane{
@@ -33,12 +34,15 @@ public class TitlePane extends GraphicsPane{
 	}
 	
 	private void addDescriptionButton() {
-		GImage moreButton = new GImage("more.jpeg", 200, 400);
-		moreButton.scale(0.3, 0.3);
-		moreButton.setLocation((mainScreen.getWidth() - moreButton.getWidth())/ 2, 400);
+		GLabel startLabel = new GLabel("START");
+		startLabel.setFont("Arial-Bold-36");
 		
-		contents.add(moreButton);
-		mainScreen.add(moreButton);
+		double x = (mainScreen.getWidth() - startLabel.getWidth()) / 2;
+		double y = 490;
+		startLabel.setLocation(x, y);
+		
+		contents.add(startLabel);
+		mainScreen.add(startLabel);
 
 	}
 	
