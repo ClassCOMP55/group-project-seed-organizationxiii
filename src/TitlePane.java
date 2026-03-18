@@ -24,7 +24,7 @@ public class TitlePane extends GraphicsPane{
 	}
 	
 	private void addPicture(){
-		GImage startImage = new GImage("start.png", 200, 100);
+		GImage startImage = new GImage("combined_blended.png", 400, 200);
 		startImage.scale(0.5, 0.5);
 		startImage.setLocation((mainScreen.getWidth() - startImage.getWidth())/ 2, 70);
 		
