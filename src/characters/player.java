@@ -12,6 +12,6 @@ public abstract class player extends character {
         // player-specific resets later
     }
 
-    public abstract boolean useAbility(int abilityID, Character target);
+    public abstract boolean useAbility(int abilityID, character target);
 
 }
