@@ -16,6 +16,7 @@ public class MainApplication extends GraphicsProgram{
 	private LevelSelectPane levelSelectPane;
 	private BattlePane battlePane;
 	private VictoryPane victoryPane;
+	private ColorSelectionPane colorSelectionPane;
 	
 	private GraphicsPane currentScreen;
 
@@ -44,6 +45,7 @@ public class MainApplication extends GraphicsProgram{
 		levelSelectPane = new LevelSelectPane(this);
 		battlePane = new BattlePane(this);
 		victoryPane = new VictoryPane(this);
+		colorSelectionPane = new ColorSelectionPane(this);
 
 		//The Default Screen
 		switchToScreen(titlePane);
@@ -73,6 +75,10 @@ public class MainApplication extends GraphicsProgram{
 	
 	public void switchToVictoryScreen() {
 		switchToScreen(victoryPane);
+	}
+	
+	public void switchToColorSelectionScreen() {
+	    switchToScreen(colorSelectionPane);
 	}
 	
 	//Core screen switching logic
