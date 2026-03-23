@@ -8,6 +8,7 @@ import java.awt.Color;
 
 public class TitlePane extends GraphicsPane{
 	private GLabel startLabel;
+	private GLabel titleLabel;
 	
 	public TitlePane(MainApplication mainScreen) {
 		this.mainScreen = mainScreen;
@@ -15,6 +16,7 @@ public class TitlePane extends GraphicsPane{
 	
 	@Override
 	public void showContent() {
+		addTitle();
 		addPicture();
 		addDescriptionButton();
 	}
@@ -30,7 +32,7 @@ public class TitlePane extends GraphicsPane{
 	private void addPicture(){
 		GImage startImage = new GImage("combined_blended.png", 400, 200);
 		startImage.scale(0.5, 0.5);
-		startImage.setLocation((mainScreen.getWidth() - startImage.getWidth())/ 2, 70);
+		startImage.setLocation((mainScreen.getWidth() - startImage.getWidth())/ 2, 110);
 		
 		contents.add(startImage);
 		mainScreen.add(startImage);
@@ -38,16 +40,30 @@ public class TitlePane extends GraphicsPane{
 	
 	private void addDescriptionButton() {
 		startLabel = new GLabel("START");
-		startLabel.setFont("Arial-Bold-36");
+		startLabel.setFont("Times New Roman-Bold-36");
 		startLabel.setColor(Color.BLACK);
 		
 		double x = (mainScreen.getWidth() - startLabel.getWidth()) / 2;
-		double y = 490;
+		double y = 520;
 		startLabel.setLocation(x, y);
 		
 		contents.add(startLabel);
 		mainScreen.add(startLabel);
 
+	}
+	
+	private void addTitle() {
+	    titleLabel = new GLabel("Every Last Hue");
+	    titleLabel.setFont("Times New Roman-Bold-48");
+	    titleLabel.setColor(Color.BLACK);
+	    
+	    double x = (mainScreen.getWidth() - titleLabel.getWidth()) / 2;
+	    double y = 100;
+	    
+	    titleLabel.setLocation(x, y);
+	    
+	    contents.add(titleLabel);
+	    mainScreen.add(titleLabel);
 	}
 	
 	@Override
@@ -67,5 +83,4 @@ public class TitlePane extends GraphicsPane{
 			mainScreen.switchToCutsceneScreen();
 		}
 	}
-
 }
