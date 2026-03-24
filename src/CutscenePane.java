@@ -6,8 +6,10 @@ public class CutscenePane extends GraphicsPane {
 	}
 
 	public void showContent() {
+		
 	}
 
 	public void hideContent() {
+		
 	}
 }

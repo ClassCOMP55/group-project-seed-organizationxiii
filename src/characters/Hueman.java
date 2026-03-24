@@ -1,14 +1,46 @@
 package characters;
 
+import acm.graphics.GImage;
+
 public class Hueman extends player {
+	
+	private ColorType color;
 
     private final int maxSuperPowerMeter = 500;
     private int currentSuperPowerMeter = 0;
 
-    public Hueman(int hp, int atk, int spd, String nm) {
-        super(hp, atk, spd, nm);
+    public Hueman(int hp, int atk, int spd, String nm, ColorType color) {
+    	super(hp, atk, spd, nm);
+    	
+    	this.color = color;
+
+        loadSprites(); // important
+        
     }
 
+    private void loadSprites() {
+        switch(color) {
+            case RED:
+                sprites.put("back", "redback.png");
+                sprites.put("overworld", "redow.png");
+                break;
+
+            case BLUE:
+            	sprites.put("back", "blueback.png");
+                sprites.put("overworld", "blueow.png");
+                break;
+
+            case GREEN:
+            	sprites.put("back", "greenback.png");
+                sprites.put("overworld", "greenow.png");
+                break;
+        }
+    }
+    
+    public GImage getSprite(String key) {
+        return new GImage(sprites.get(key));
+    }
+    
     @Override
     public void takeDamage(int dmg) {
         currentSuperPowerMeter += dmg;
