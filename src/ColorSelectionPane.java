@@ -1,8 +1,6 @@
 import acm.graphics.GImage;
 import acm.graphics.GLabel;
 import acm.graphics.GObject;
-import acm.graphics.GOval;
-import acm.graphics.GLine;
 
 import java.awt.Color;
 import java.awt.event.MouseEvent;
@@ -20,21 +18,12 @@ public class ColorSelectionPane extends GraphicsPane {
     private GImage hoveredImage = null;
     private final double HOVER_SCALE = 1.12;
 
-    // Clouds
-    private GOval cloud1, cloud2;
-
-    // Lightning
-    private GLine bolt1, bolt2, bolt3;
-
     public ColorSelectionPane(MainApplication mainScreen) {
         this.mainScreen = mainScreen;
     }
 
     public void showContent() {
-        addClouds();
-        animateClouds();
-        lightningFlash();
-
+    	mainScreen.getGCanvas().setBackground(Color.LIGHT_GRAY);
         addTitle();
         addColorOptions();
     }
@@ -47,7 +36,6 @@ public class ColorSelectionPane extends GraphicsPane {
         hoveredImage = null;
     }
 
-    // ---------------- TITLE ----------------
     private void addTitle() {
         titleLabel = new GLabel("Choose your color");
         titleLabel.setFont("Times New Roman-Bold-40");
@@ -62,7 +50,6 @@ public class ColorSelectionPane extends GraphicsPane {
         mainScreen.add(titleLabel);
     }
 
-    // ---------------- COLORS ----------------
     private void addColorOptions() {
         blue = new GImage("blueow.png");
         red = new GImage("redow.png");
@@ -91,10 +78,10 @@ public class ColorSelectionPane extends GraphicsPane {
     private void selectColor(ColorType color) {
         Hueman player = new Hueman(100, 20, 10, "Hueman", color);
         mainScreen.setPlayer(player);
+        System.out.println("Selected color");
         mainScreen.switchToCutsceneScreen();
     }
 
-    // ---------------- HOVER ----------------
     private void scaleFromCenter(GImage image, double factor) {
         double oldWidth = image.getWidth();
         double oldHeight = image.getHeight();
@@ -113,7 +100,9 @@ public class ColorSelectionPane extends GraphicsPane {
     }
 
     private void setHoveredImage(GImage newImage) {
-        if (hoveredImage == newImage) return;
+        if (hoveredImage == newImage) {
+            return;
+        }
 
         if (hoveredImage != null) {
             scaleFromCenter(hoveredImage, 1.0 / HOVER_SCALE);
@@ -153,94 +142,7 @@ public class ColorSelectionPane extends GraphicsPane {
             selectColor(ColorType.GREEN);
         }
     }
-
-    // ---------------- CLOUDS ----------------
-    private void addClouds() {
-        cloud1 = new GOval(0, 80, 250, 100);
-        cloud1.setFilled(true);
-        cloud1.setColor(new Color(200, 200, 200));
-
-        cloud2 = new GOval(300, 140, 300, 120);
-        cloud2.setFilled(true);
-        cloud2.setColor(new Color(180, 180, 180));
-
-        mainScreen.add(cloud1);
-        mainScreen.add(cloud2);
-
-        cloud1.sendToBack();
-        cloud2.sendToBack();
-    }
-
-    private void animateClouds() {
-        new Thread(() -> {
-            try {
-                while (true) {
-                    cloud1.move(0.3, 0);
-                    cloud2.move(0.2, 0);
-
-                    if (cloud1.getX() > MainApplication.WINDOW_WIDTH) {
-                        cloud1.setLocation(-250, cloud1.getY());
-                    }
-
-                    if (cloud2.getX() > MainApplication.WINDOW_WIDTH) {
-                        cloud2.setLocation(-300, cloud2.getY());
-                    }
-
-                    Thread.sleep(20);
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }).start();
-    }
-
-    // ---------------- LIGHTNING ----------------
-    private void showLightningBolt() {
-        bolt1 = new GLine(950, 80, 900, 170);
-        bolt2 = new GLine(900, 170, 940, 170);
-        bolt3 = new GLine(940, 170, 880, 280);
-
-        bolt1.setColor(Color.YELLOW);
-        bolt2.setColor(Color.YELLOW);
-        bolt3.setColor(Color.YELLOW);
-
-        mainScreen.add(bolt1);
-        mainScreen.add(bolt2);
-        mainScreen.add(bolt3);
-    }
-
-    private void hideLightningBolt() {
-        if (bolt1 != null) mainScreen.remove(bolt1);
-        if (bolt2 != null) mainScreen.remove(bolt2);
-        if (bolt3 != null) mainScreen.remove(bolt3);
-    }
-
-    private void lightningFlash() {
-        new Thread(() -> {
-            try {
-                while (true) {
-                    Thread.sleep(3000 + (int)(Math.random() * 3000));
-
-                    // First flash
-                    mainScreen.getGCanvas().setBackground(Color.WHITE);
-                    showLightningBolt();
-                    Thread.sleep(300);
-
-                    hideLightningBolt();
-                    mainScreen.getGCanvas().setBackground(new Color(220, 220, 220));
-                    Thread.sleep(150);
-
-                    // Second flash (realistic)
-                    mainScreen.getGCanvas().setBackground(Color.WHITE);
-                    showLightningBolt();
-                    Thread.sleep(350);
-
-                    hideLightningBolt();
-                    mainScreen.getGCanvas().setBackground(new Color(220, 220, 220));
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }).start();
-    }
 }
+    
+//hello
+    
