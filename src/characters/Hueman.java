@@ -15,7 +15,7 @@ public class Hueman extends player {
     	this.color = color;
 
         loadSprites(); // important
-        
+        //test
     }
 
     private void loadSprites() {
