@@ -142,6 +142,4 @@ public class ColorSelectionPane extends GraphicsPane {
         }
     }
     
-//hello
-//hello, again
 }
