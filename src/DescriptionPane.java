@@ -22,7 +22,7 @@ public class DescriptionPane extends GraphicsPane{
 		contents.clear();
 	}
 	
-	private void addText() {
+	private void addText() { 
 		GLabel text = new GLabel("This is an example of a new screen with some description!", 100, 70);
 		text.setColor(Color.BLUE);
 		text.setFont("DialogInput-PLAIN-24");

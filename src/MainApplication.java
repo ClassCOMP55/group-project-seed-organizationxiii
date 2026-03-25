@@ -1,5 +1,6 @@
 import acm.graphics.GObject;
 import acm.program.*;
+import characters.Hueman;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
@@ -17,8 +18,9 @@ public class MainApplication extends GraphicsProgram{
 	private BattlePane battlePane;
 	private VictoryPane victoryPane;
 	private ColorSelectionPane colorSelectionPane;
-	
 	private GraphicsPane currentScreen;
+	
+	private Hueman player;
 
 	public MainApplication() {
 		super();
@@ -33,6 +35,14 @@ public class MainApplication extends GraphicsProgram{
 	
 	public void init() {
 		setSize(WINDOW_WIDTH, WINDOW_HEIGHT);
+	}
+	
+	public void setPlayer(Hueman p) {
+	    player = p;
+	}
+
+	public Hueman getPlayer() {
+	    return player;
 	}
 	
 	public void run() {
