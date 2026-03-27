@@ -27,6 +27,10 @@ public class CutscenePane extends GraphicsPane {
 	private GLabel dialogueText;
 	private GRect backButton;
 	private GLabel backLabel;
+	private GRect continueButton;
+	private GLabel continueLabel;
+	private boolean backHovered = false;
+	private boolean continueHovered = false;
 
 	public CutscenePane(MainApplication mainScreen) {
 		this.mainScreen = mainScreen;
@@ -111,7 +115,39 @@ public class CutscenePane extends GraphicsPane {
 
 	    mainScreen.add(backLabel);
 	    contents.add(backLabel);
+	    
+	    
+	 // continue button
+		continueButton = new GRect(
+		    dialogueBox.getX() + dialogueBox.getWidth() - 180,
+		    dialogueBox.getY() + dialogueBox.getHeight() - 35,
+		    160,
+		    25
+		);
+
+		continueButton.setFilled(true);
+		continueButton.setFillColor(Color.LIGHT_GRAY);
+		continueButton.setColor(Color.BLACK);
+
+		mainScreen.add(continueButton);
+		contents.add(continueButton);
+
+		continueLabel = new GLabel("Click to continue");
+		continueLabel.setFont("Times New Roman-Bold-16");
+		continueLabel.setColor(Color.BLACK);
+
+		continueLabel.setLocation(
+		    continueButton.getX() + 15,
+		    continueButton.getY() + 18
+		);
+
+		mainScreen.add(continueLabel);
+		contents.add(continueLabel);
+		
+	
 	}
+	
+
 	
 	private void advanceDialogue() {
 	    dialogueIndex++;
@@ -121,6 +157,17 @@ public class CutscenePane extends GraphicsPane {
 	    } else {
 	        mainScreen.switchToBattleScreen();
 	    }
+	}
+	
+	private void scaleButton(GRect button, double scale) {
+	    double centerX = button.getX() + button.getWidth() / 2;
+	    double centerY = button.getY() + button.getHeight() / 2;
+
+	    double newWidth = button.getWidth() * scale;
+	    double newHeight = button.getHeight() * scale;
+
+	    button.setSize(newWidth, newHeight);
+	    button.setLocation(centerX - newWidth / 2, centerY - newHeight / 2);
 	}
 
 	@Override
@@ -140,11 +187,19 @@ public class CutscenePane extends GraphicsPane {
 	    double x = e.getX();
 	    double y = e.getY();
 
+	    // ✅ Continue button → go to next page
+	    if (continueButton.contains(x, y) || continueLabel.contains(x, y)) {
+	        mainScreen.switchToBattleScreen();
+	        return;
+	    }
+
+	    // ✅ Back button → go to color selection
 	    if (backButton.contains(x, y) || backLabel.contains(x, y)) {
 	        mainScreen.switchToColorSelectionScreen();
 	        return;
 	    }
 
+	    // otherwise → advance dialogue
 	    advanceDialogue();
 	}
 
@@ -152,6 +207,42 @@ public class CutscenePane extends GraphicsPane {
 	public void mouseReleased(MouseEvent e) {
 	    pressed = false;
 	}
+	
+
+
+@Override
+public void mouseMoved(MouseEvent e) {
+    double x = e.getX();
+    double y = e.getY();
+
+    // ===== BACK BUTTON =====
+    boolean nowBackHovered = backButton.contains(x, y) || backLabel.contains(x, y);
+
+    if (nowBackHovered && !backHovered) {
+        backHovered = true;
+        scaleButton(backButton, 1.1);
+        backButton.setColor(Color.YELLOW); // gold-ish
+    } 
+    else if (!nowBackHovered && backHovered) {
+        backHovered = false;
+        scaleButton(backButton, 1.0 / 1.1); // reset size
+        backButton.setColor(Color.BLACK);
+    }
+
+    // ===== CONTINUE BUTTON =====
+    boolean nowContinueHovered = continueButton.contains(x, y) || continueLabel.contains(x, y);
+
+    if (nowContinueHovered && !continueHovered) {
+        continueHovered = true;
+        scaleButton(continueButton, 1.1);
+        continueButton.setColor(Color.YELLOW);
+    } 
+    else if (!nowContinueHovered && continueHovered) {
+        continueHovered = false;
+        scaleButton(continueButton, 1.0 / 1.1);
+        continueButton.setColor(Color.BLACK);
+    }
+}
 }
 
 
