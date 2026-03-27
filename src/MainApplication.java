@@ -19,6 +19,7 @@ public class MainApplication extends GraphicsProgram{
 	private VictoryPane victoryPane;
 	private ColorSelectionPane colorSelectionPane;
 	private GraphicsPane currentScreen;
+	private vs_First vsFirstPane;
 	
 	private Hueman player;
 
@@ -56,6 +57,7 @@ public class MainApplication extends GraphicsProgram{
 		battlePane = new BattlePane(this);
 		victoryPane = new VictoryPane(this);
 		colorSelectionPane = new ColorSelectionPane(this);
+		vsFirstPane = new vs_First(this);
 
 		//The Default Screen
 		switchToScreen(titlePane);
@@ -89,6 +91,10 @@ public class MainApplication extends GraphicsProgram{
 	
 	public void switchToColorSelectionScreen() {
 	    switchToScreen(colorSelectionPane);
+	}
+	
+	public void switchToVsFirstScreen() {
+	    switchToScreen(vsFirstPane);
 	}
 	
 	//Core screen switching logic
@@ -164,4 +170,7 @@ public class MainApplication extends GraphicsProgram{
 			currentScreen.keyTyped(e);
 		}
 	}
+	
+	
+	
 }
