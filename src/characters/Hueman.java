@@ -8,6 +8,18 @@ public class Hueman extends player {
 
     private final int maxSuperPowerMeter = 500;
     private int currentSuperPowerMeter = 0;
+    
+    public int getSuperMeter() {
+        return currentSuperPowerMeter;
+    }
+
+    public int getMaxSuperMeter() {
+        return maxSuperPowerMeter;
+    }
+
+    public ColorType getColor() {
+        return color;
+    }
 
     public Hueman(int hp, int atk, int spd, String nm, ColorType color) {
     	super(hp, atk, spd, nm);
@@ -65,8 +77,29 @@ public class Hueman extends player {
 
         return false;
     }
-}
+    
+    public void printSummary() {
+        System.out.println("=== Hueman Summary ===");
+        System.out.println("Name: " + getName());
+        System.out.println("Color: " + color);
 
+        System.out.println("\n--- Stats ---");
+        System.out.println("HP: " + getHP());
+        System.out.println("ATK: " + getBaseAttack());
+        System.out.println("SPD: " + calculateSpeed());
+
+        System.out.println("\n--- Super Power ---");
+        System.out.println("Meter: " + currentSuperPowerMeter + " / " + maxSuperPowerMeter);
+
+        System.out.println("\n--- Ability ---");
+        System.out.println("Ability 1: Super Power");
+        System.out.println("Deals damage equal to stored Super Power Meter");
+        System.out.println("Resets meter to 0 after use.");
+
+        System.out.println("======================\n");
+    }
+    
+}
 
 //When Hueman gets hit:
 //currentSuperPowerMeter increases by the damage taken

@@ -20,6 +20,7 @@ public class MainApplication extends GraphicsProgram{
 	private ColorSelectionPane colorSelectionPane;
 	private GraphicsPane currentScreen;
 	private vs_First vsFirstPane;
+	private HuemanStatsScreen huemanStatsScreen;
 	
 	private Hueman player;
 
@@ -31,7 +32,6 @@ public class MainApplication extends GraphicsProgram{
 		requestFocus();
 		addKeyListeners();
 		addMouseListeners();
-		addMouseListeners();
 	}
 	
 	public void init() {
@@ -40,6 +40,7 @@ public class MainApplication extends GraphicsProgram{
 	
 	public void setPlayer(Hueman p) {
 	    player = p;
+	    huemanStatsScreen = new HuemanStatsScreen(player, this);
 	}
 
 	public Hueman getPlayer() {
@@ -97,6 +98,13 @@ public class MainApplication extends GraphicsProgram{
 	    switchToScreen(vsFirstPane);
 	}
 	
+	public void switchToStatsScreen() {
+		if(huemanStatsScreen != null) {
+			switchToScreen(huemanStatsScreen);
+		} else {
+			System.out.println("No player assigned yet!");
+		}
+	}
 	//Core screen switching logic
 	
 	protected void switchToScreen(GraphicsPane newScreen) {
@@ -170,7 +178,5 @@ public class MainApplication extends GraphicsProgram{
 			currentScreen.keyTyped(e);
 		}
 	}
-	
-	
 	
 }
