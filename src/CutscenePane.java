@@ -189,7 +189,7 @@ public class CutscenePane extends GraphicsPane {
 
 	    // ✅ Continue button → go to next page
 	    if (continueButton.contains(x, y) || continueLabel.contains(x, y)) {
-	        mainScreen.switchToBattleScreen();
+	        mainScreen.switchToVsFirstScreen();
 	        return;
 	    }
 
