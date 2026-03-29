@@ -152,7 +152,7 @@ public class vs_First extends GraphicsPane {
         double y = e.getY();
 
         if (continueButton.contains(x, y) || continueLabel.contains(x, y)) {
-            mainScreen.switchToBattleScreen();
+            mainScreen.switchToFirstBattleScreen();
             return;
         }
 

@@ -155,7 +155,7 @@ public class CutscenePane extends GraphicsPane {
 	    if (dialogueIndex < dialogue.length) {
 	        dialogueText.setLabel(dialogue[dialogueIndex]);
 	    } else {
-	        mainScreen.switchToBattleScreen();
+	        mainScreen.switchToVsFirstScreen();
 	    }
 	}
 	

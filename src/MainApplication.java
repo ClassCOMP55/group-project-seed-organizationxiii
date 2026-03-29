@@ -15,7 +15,6 @@ public class MainApplication extends GraphicsProgram{
 	private TitlePane titlePane;
 	private CutscenePane cutscenePane;
 	private LevelSelectPane levelSelectPane;
-	private BattlePane battlePane;
 	private VictoryPane victoryPane;
 	private ColorSelectionPane colorSelectionPane;
 	private GraphicsPane currentScreen;
@@ -56,7 +55,6 @@ public class MainApplication extends GraphicsProgram{
 		titlePane = new TitlePane(this);
 		cutscenePane = new CutscenePane(this);
 		levelSelectPane = new LevelSelectPane(this);
-		battlePane = new BattlePane(this);
 		victoryPane = new VictoryPane(this);
 		colorSelectionPane = new ColorSelectionPane(this);
 		vsFirstPane = new vs_First(this);
@@ -84,9 +82,6 @@ public class MainApplication extends GraphicsProgram{
 		switchToScreen(levelSelectPane);
 	}
 	
-	public void switchToBattleScreen() {
-		switchToScreen(battlePane);
-	}
 	
 	public void switchToVictoryScreen() {
 		switchToScreen(victoryPane);
