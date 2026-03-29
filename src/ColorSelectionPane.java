@@ -78,7 +78,16 @@ public class ColorSelectionPane extends GraphicsPane {
     private void selectColor(ColorType color) {
         Hueman player = new Hueman(100, 20, 10, "Hueman", color);
         mainScreen.setPlayer(player);
-        System.out.println("Selected color");
+
+        if (color == ColorType.RED) {
+            mainScreen.setSelectedColor("red");
+        } else if (color == ColorType.BLUE) {
+            mainScreen.setSelectedColor("blue");
+        } else if (color == ColorType.GREEN) {
+            mainScreen.setSelectedColor("green");
+        }
+
+        System.out.println("Selected color: " + color);
         mainScreen.switchToCutsceneScreen();
     }
 

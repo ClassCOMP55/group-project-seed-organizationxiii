@@ -22,8 +22,20 @@ public class MainApplication extends GraphicsProgram{
 	private HuemanStatsScreen huemanStatsScreen;
 	private FirstBattlePane firstBattlePane;
 	
+	
+	private String selectedColor;
 	private Hueman player;
+	
+	
+	
+	public void setSelectedColor(String color) {
+	    selectedColor = color;
+	}
 
+	public String getSelectedColor() {
+	    return selectedColor;
+	}
+	
 	public MainApplication() {
 		super();
 	}
@@ -98,6 +110,7 @@ public class MainApplication extends GraphicsProgram{
 	public void switchToFirstBattleScreen() {
 	    switchToScreen(firstBattlePane);
 	}
+	
 	
 	public void switchToStatsScreen() {
 		if(huemanStatsScreen != null) {
