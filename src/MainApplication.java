@@ -1,9 +1,11 @@
 import acm.graphics.GObject;
+import acm.graphics.GRect;
 import acm.program.*;
 import characters.Hueman;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
+import java.awt.Color;
 
 public class MainApplication extends GraphicsProgram{
 
@@ -21,10 +23,10 @@ public class MainApplication extends GraphicsProgram{
 	private vs_First vsFirstPane;
 	private HuemanStatsScreen huemanStatsScreen;
 	private FirstBattlePane firstBattlePane;
-	
-	
 	private String selectedColor;
 	private Hueman player;
+	private boolean isTransitioning = false;
+
 	
 	
 	
@@ -121,14 +123,50 @@ public class MainApplication extends GraphicsProgram{
 	}
 	//Core screen switching logic
 	
+
+
 	protected void switchToScreen(GraphicsPane newScreen) {
-		if(currentScreen != null) {
-			currentScreen.hideContent();
-		}
-		newScreen.showContent();
-		currentScreen = newScreen;
+	    if (isTransitioning) return;
+
+	    isTransitioning = true;
+
+	    new Thread(() -> {
+	        GRect fadeRect = new GRect(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
+	        fadeRect.setFilled(true);
+	        fadeRect.setColor(Color.BLACK);
+	        fadeRect.setFillColor(new Color(40, 40, 40, 0));
+
+	        add(fadeRect);
+	        fadeRect.sendToFront();
+
+	        // Fade to dark grey
+	        for (int alpha = 0; alpha <= 255; alpha += 10) {
+	            fadeRect.setFillColor(new Color(40, 40, 40, alpha));
+	            fadeRect.sendToFront();
+	            pause(20);
+	        }
+
+	        // Switch screen
+	        if (currentScreen != null) {
+	            currentScreen.hideContent();
+	        }
+
+	        newScreen.showContent();
+	        currentScreen = newScreen;
+
+	        fadeRect.sendToFront();
+
+	        // Fade back in
+	        for (int alpha = 255; alpha >= 0; alpha -= 10) {
+	            fadeRect.setFillColor(new Color(40, 40, 40, alpha));
+	            fadeRect.sendToFront();
+	            pause(20);
+	        }
+
+	        remove(fadeRect);
+	        isTransitioning = false;
+	    }).start();
 	}
-	
 	//Utility function for clicking objects
 	
 	public GObject getElementAtLocation(double x, double y) {

@@ -1,5 +1,6 @@
 import acm.graphics.GImage;
 import acm.graphics.GObject;
+import java.awt.event.KeyEvent;
 
 public class FirstBattlePane extends GraphicsPane {
 
@@ -17,7 +18,7 @@ public class FirstBattlePane extends GraphicsPane {
         huemanImage = new GImage(huemanFile);
         decimaImage = new GImage("Decima.png");
 
-        huemanImage.scale(0.5);
+        huemanImage.scale(0.8);
         decimaImage.scale(0.5);
 
         huemanImage.setLocation(120, 220);
@@ -28,8 +29,29 @@ public class FirstBattlePane extends GraphicsPane {
 
         contents.add(huemanImage);
         contents.add(decimaImage);
+        
+        mainScreen.requestFocus();
     }
 
+    
+    @Override
+    public void keyPressed(KeyEvent e) {
+        if (huemanImage == null) return;
+
+        int key = e.getKeyCode();
+
+        if (key == KeyEvent.VK_LEFT) {
+            huemanImage.move(-10, 0);
+        } else if (key == KeyEvent.VK_RIGHT) {
+            huemanImage.move(10, 0);
+        } else if (key == KeyEvent.VK_UP) {
+            huemanImage.move(0, -10);
+        } else if (key == KeyEvent.VK_DOWN) {
+            huemanImage.move(0, 10);
+        }
+    }
+    
+    
     private String getHuemanImage() {
         String selectedColor = mainScreen.getSelectedColor();
 
