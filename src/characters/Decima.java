@@ -47,7 +47,7 @@ public class Decima extends boss {
 
 		 System.out.println(name + " took " + dmg + " damage!\n");
 		
-	}
+	} //test?
 
 	@Override
 	public int calculateDamage() {
