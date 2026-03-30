@@ -4,10 +4,19 @@ import java.awt.event.MouseEvent;
 import acm.graphics.GImage;
 import acm.graphics.GLabel;
 import acm.graphics.GRect;
+import characters.Decima;
+import characters.Hueman;
 import acm.graphics.GObject;
+
+
 
 public class vs_First extends GraphicsPane {
     
+	
+	
+	private Decima d1;
+	private Hueman player;
+	
     private String[] dialogue = {
         "So, you finally made it.",
         "I am Decima.",
