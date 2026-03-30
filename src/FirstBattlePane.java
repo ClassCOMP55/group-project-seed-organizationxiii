@@ -66,8 +66,8 @@ public class FirstBattlePane extends GraphicsPane {
         contents.add(huemanHealthBar);
 
         // Decima health bar
-        double dxBar = dxBar = 30;
-        double dyBar = dyBar = 30;
+        double dxBar = 30;
+        double dyBar = 30;
 
         decimaHealthBack = new GRect(dxBar, dyBar, barWidth, barHeight);
         decimaHealthBack.setFilled(true);
