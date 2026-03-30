@@ -13,24 +13,27 @@ public class FirstBattlePane extends GraphicsPane {
 
     @Override
     public void showContent() {
-        String huemanFile = getHuemanImage();
+    	huemanImage = new GImage(getHuemanImage());
+    	decimaImage = new GImage("Decima.png");
 
-        huemanImage = new GImage(huemanFile);
-        decimaImage = new GImage("Decima.png");
+    	huemanImage.scale(0.5);
+    	decimaImage.scale(1.0);
 
-        huemanImage.scale(0.8);
-        decimaImage.scale(0.5);
+    	// ✅ Position Hueman (LEFT SIDE)
+    	double hx = MainApplication.WINDOW_WIDTH * 0.25 - huemanImage.getWidth() / 2 + 20;
+    	double hy = 150 + 50;
+    	huemanImage.setLocation(hx, hy);
 
-        huemanImage.setLocation(120, 220);
-        decimaImage.setLocation(500, 180);
+    	// ✅ Position Decima (RIGHT SIDE)
+    	double dx = MainApplication.WINDOW_WIDTH * 0.75 - decimaImage.getWidth() / 2;
+    	double dy = 150 - 60;
+    	decimaImage.setLocation(dx, dy);
 
-        mainScreen.add(huemanImage);
-        mainScreen.add(decimaImage);
+    	mainScreen.add(huemanImage);
+    	mainScreen.add(decimaImage);
 
-        contents.add(huemanImage);
-        contents.add(decimaImage);
-        
-        mainScreen.requestFocus();
+    	contents.add(huemanImage);
+    	contents.add(decimaImage);
     }
 
     
@@ -55,15 +58,16 @@ public class FirstBattlePane extends GraphicsPane {
     private String getHuemanImage() {
         String selectedColor = mainScreen.getSelectedColor();
 
-        if (selectedColor.equals("red")) {
-            return "redow.png";
+        if (selectedColor == null) {
+            return "redback.png"; 
+        } else if (selectedColor.equals("red")) {
+            return "redback.png";
         } else if (selectedColor.equals("green")) {
-            return "greenow.png";
+            return "greenback.png";
         } else {
-            return "blueow.png";
+            return "blueback.png";
         }
     }
-
     @Override
     public void hideContent() {
         for (GObject obj : contents) {

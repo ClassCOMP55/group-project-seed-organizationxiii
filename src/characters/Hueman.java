@@ -78,6 +78,24 @@ public class Hueman extends player {
         return false;
     }
     
+    public int getStatScore() {
+    	return getHP() + getBaseAttack() + calculateSpeed() + getSuperMeter();
+    }
+    
+    public String getStatLabel() {
+    	int score = getStatScore();
+    	
+    	if (score < 150) {
+    		return "Starter";
+    	} else if (score < 250) {
+    		return "Advamced";
+    	} else if (score < 400) {
+    		return "Elite";
+    	} else {
+    		return "Mythic";
+    	}
+    }
+    
     public void printSummary() {
         System.out.println("=== Hueman Summary ===");
         System.out.println("Name: " + getName());
@@ -87,6 +105,8 @@ public class Hueman extends player {
         System.out.println("HP: " + getHP());
         System.out.println("ATK: " + getBaseAttack());
         System.out.println("SPD: " + calculateSpeed());
+        System.out.println("Stat Score: " + getStatScore());
+        System.out.println("Label: " + getStatLabel());
 
         System.out.println("\n--- Super Power ---");
         System.out.println("Meter: " + currentSuperPowerMeter + " / " + maxSuperPowerMeter);
