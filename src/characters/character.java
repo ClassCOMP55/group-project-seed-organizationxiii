@@ -42,7 +42,7 @@ public abstract class character {
 	 }
 
 	 public int calculateDamage() {
-	 return attack;
+		 return attack;
 	 }
 
 	 public void revive() {

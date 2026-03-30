@@ -17,9 +17,10 @@ public abstract class boss extends character {
 	 // boss-specific resets later
 	 }
 
-	 public abstract void takeTurn(Character player); // AI behavior
+	 public abstract void takeTurn(character player); // AI behavior
 
 	 public void startTurn() {
 	 // optional reset mechanic
 	 }
+
 }
