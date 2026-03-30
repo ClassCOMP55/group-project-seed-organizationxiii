@@ -4,8 +4,6 @@ import java.awt.event.MouseEvent;
 import acm.graphics.GImage;
 import acm.graphics.GLabel;
 import acm.graphics.GRect;
-import characters.Decima;
-import characters.Hueman;
 import acm.graphics.GObject;
 
 
@@ -13,15 +11,13 @@ import acm.graphics.GObject;
 public class vs_First extends GraphicsPane {
     
 	
-	
-	private Decima d1;
-	private Hueman player;
-	
     private String[] dialogue = {
-        "So, you finally made it.",
-        "I am Decima.",
-        "If you want to move forward,",
-        "you will have to defeat me first."
+        "Down with the Color Guardians!!",
+        "Not every color is necessary for our world. We don't",
+        "need to protect every single last one of them.",
+        "Indeed, you'll have to go through me if you want to",
+        "preserve what is ripe for destruction.",
+        "I assure you, this fight won't be fair, but will be quick.",
     };
 
     private int dialogueIndex = 0;
