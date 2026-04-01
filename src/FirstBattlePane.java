@@ -81,8 +81,8 @@ public class FirstBattlePane extends GraphicsPane {
         double barHeight = 12;
 
         // Hueman bar (bottom right)
-        double hxBar = MainApplication.WINDOW_WIDTH - barWidth - 30;
-        double hyBar = MainApplication.WINDOW_HEIGHT - barHeight - 30;
+        double hxBar = MainApplication.WINDOW_WIDTH / 2.2 - barWidth / 2;
+        double hyBar = MainApplication.WINDOW_HEIGHT - barHeight - 150;
 
         huemanHealthBack = new GRect(hxBar, hyBar, barWidth, barHeight);
         huemanHealthBack.setFilled(true);
@@ -108,7 +108,7 @@ public class FirstBattlePane extends GraphicsPane {
 
         decimaHealthBar = new GRect(dxBar, dyBar, barWidth, barHeight);
         decimaHealthBar.setFilled(true);
-        decimaHealthBar.setFillColor(Color.RED);
+        decimaHealthBar.setFillColor(Color.RED);	
 
         mainScreen.add(decimaHealthBack);
         mainScreen.add(decimaHealthBar);
@@ -145,7 +145,7 @@ public class FirstBattlePane extends GraphicsPane {
         double boxWidth = 300;
         double boxHeight = 120;
 
-        double boxX = 50;
+        double boxX = 240;
         double boxY = MainApplication.WINDOW_HEIGHT - boxHeight - 30;
 
         actionBox = new GRect(boxX, boxY, boxWidth, boxHeight);
