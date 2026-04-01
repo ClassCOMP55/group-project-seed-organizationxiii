@@ -15,6 +15,8 @@ public class Decima extends boss {
     public Decima(int hp, int atk, int spd, String nm, Phase ph) {
         super(hp, atk, spd, nm);
         phase = ph;
+        
+        loadSprites();
     }
 	
 	public void thunderSlam(character other) {
@@ -69,6 +71,19 @@ public class Decima extends boss {
 		
 	}
 	
+	private void loadSprites() {
+	    switch (phase) {
+	        case FIRST:
+	            sprites.put("idle", "decima_first.png");
+	            sprites.put("attack", "decima_first_attack.png");
+	            break;
+
+	       //case FINAL:
+	            //sprites.put("idle", "decima_final.png");
+	            //sprites.put("attack", "decima_final_attack.png");
+	            //break;
+	    }
+	}
 	
 	@Override
 	public void takeTurn(character other) {
