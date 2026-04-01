@@ -1,5 +1,7 @@
 package characters;
 
+import acm.graphics.GImage;
+
 public class Decima extends boss {
 
 	public enum Phase {
@@ -71,11 +73,15 @@ public class Decima extends boss {
 		
 	}
 	
+	public GImage getSprite(String key) {
+        return new GImage(sprites.get(key));
+    }
+	
+	
 	private void loadSprites() {
 	    switch (phase) {
 	        case FIRST:
-	            sprites.put("idle", "decima_first.png");
-	            sprites.put("attack", "decima_first_attack.png");
+	            sprites.put("main", "Decima.png");
 	            break;
 
 	       //case FINAL:
