@@ -34,6 +34,9 @@ public class FirstBattlePane extends GraphicsPane {
 
     private GLabel huemanName;
     private GLabel decimaName;
+    
+    private GRect continueButton;
+    private GLabel continueLabel;
 
     public FirstBattlePane(MainApplication mainScreen) {
         this.mainScreen = mainScreen;
@@ -80,7 +83,7 @@ public class FirstBattlePane extends GraphicsPane {
         double barWidth = 200;
         double barHeight = 12;
 
-        // Hueman bar (bottom right)
+        // Hueman bar
         double hxBar = MainApplication.WINDOW_WIDTH / 2.2 - barWidth / 2;
         double hyBar = MainApplication.WINDOW_HEIGHT - barHeight - 150;
 
@@ -98,7 +101,7 @@ public class FirstBattlePane extends GraphicsPane {
         contents.add(huemanHealthBack);
         contents.add(huemanHealthBar);
 
-        // Decima bar (top left)
+        // Decima bar
         double dxBar = 30;
         double dyBar = 30;
 
@@ -108,7 +111,7 @@ public class FirstBattlePane extends GraphicsPane {
 
         decimaHealthBar = new GRect(dxBar, dyBar, barWidth, barHeight);
         decimaHealthBar.setFilled(true);
-        decimaHealthBar.setFillColor(Color.RED);	
+        decimaHealthBar.setFillColor(Color.RED);
 
         mainScreen.add(decimaHealthBack);
         mainScreen.add(decimaHealthBar);
@@ -117,20 +120,20 @@ public class FirstBattlePane extends GraphicsPane {
         contents.add(decimaHealthBar);
 
         // =========================
-        // 4. Create names (AFTER bars exist)
+        // 4. Create names
         // =========================
         huemanName = new GLabel(h1.getName());
         huemanName.setFont("Arial-Bold-14");
         huemanName.setLocation(
-                huemanHealthBack.getX(),
-                huemanHealthBack.getY() - 5
+            huemanHealthBack.getX(),
+            huemanHealthBack.getY() - 5
         );
 
         decimaName = new GLabel(d1.getName());
         decimaName.setFont("Arial-Bold-14");
         decimaName.setLocation(
-                decimaHealthBack.getX(),
-                decimaHealthBack.getY() - 5
+            decimaHealthBack.getX(),
+            decimaHealthBack.getY() - 5
         );
 
         mainScreen.add(huemanName);
@@ -148,13 +151,28 @@ public class FirstBattlePane extends GraphicsPane {
         double boxX = 240;
         double boxY = MainApplication.WINDOW_HEIGHT - boxHeight - 30;
 
+        // Shadow behind box
+        GRect actionBoxShadow = new GRect(boxX + 6, boxY + 6, boxWidth, boxHeight);
+        actionBoxShadow.setFilled(true);
+        actionBoxShadow.setFillColor(new Color(120, 120, 120));
+        actionBoxShadow.setColor(new Color(120, 120, 120));
+        mainScreen.add(actionBoxShadow);
+        contents.add(actionBoxShadow);
+
+        // Main white box
         actionBox = new GRect(boxX, boxY, boxWidth, boxHeight);
         actionBox.setFilled(true);
         actionBox.setFillColor(Color.WHITE);
         actionBox.setColor(Color.BLACK);
-
         mainScreen.add(actionBox);
         contents.add(actionBox);
+
+        // Inner gold frame
+        GRect innerFrame = new GRect(boxX + 6, boxY + 6, boxWidth - 12, boxHeight - 12);
+        innerFrame.setFilled(false);
+        innerFrame.setColor(new Color(212, 175, 55));
+        mainScreen.add(innerFrame);
+        contents.add(innerFrame);
 
         fightOption = new GLabel("FIGHT");
         fightOption.setFont("Arial-Bold-18");
@@ -162,6 +180,34 @@ public class FirstBattlePane extends GraphicsPane {
 
         mainScreen.add(fightOption);
         contents.add(fightOption);
+
+        // =========================
+        // 6. Continue button (TEST)
+        // =========================
+        continueButton = new GRect(
+            MainApplication.WINDOW_WIDTH - 180,
+            MainApplication.WINDOW_HEIGHT - 50,
+            160,
+            25
+        );
+
+        continueButton.setFilled(true);
+        continueButton.setFillColor(Color.LIGHT_GRAY);
+        continueButton.setColor(Color.BLACK);
+
+        mainScreen.add(continueButton);
+        contents.add(continueButton);
+
+        continueLabel = new GLabel("Continue");
+        continueLabel.setFont("Arial-Bold-16");
+
+        continueLabel.setLocation(
+            continueButton.getX() + 35,
+            continueButton.getY() + 18
+        );
+
+        mainScreen.add(continueLabel);
+        contents.add(continueLabel);
     }
 
     // =========================
@@ -170,6 +216,12 @@ public class FirstBattlePane extends GraphicsPane {
     @Override
     public void mouseClicked(MouseEvent e) {
         GObject obj = mainScreen.getElementAtLocation(e.getX(), e.getY());
+
+        // ✅ TEST BUTTON → go to CutScene2Pane
+        if (obj == continueButton || obj == continueLabel) {
+            mainScreen.switchToCutScene2Screen();
+            return;
+        }
 
         if (!showingFightMenu) {
             if (obj == fightOption) {
@@ -180,7 +232,6 @@ public class FirstBattlePane extends GraphicsPane {
                 h1.attackOpponent(d1);
                 updateHealthBars();
             } else if (obj == abilityOption) {
-                // ability logic here
                 updateHealthBars();
             }
         }
