@@ -16,7 +16,7 @@ public class CutscenePane extends GraphicsPane {
 		    "Loathe, a fallen color seeks to rid the world",
 		    "of color completely. Only you, as a foundational color,",
 		    "can restore order by reclaiming the colors he corrupted",
-		    "and put an  end to Loathe's madness.",
+		    "and put an end to Loathe's madness.",
 		    "But before that, you must defeat one of our own Color",
 		    "Guardians. Loathe convinced him to join his color terrorism.",
 		    "He's nearby and will attack at any moment",

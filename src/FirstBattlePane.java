@@ -37,6 +37,15 @@ public class FirstBattlePane extends GraphicsPane {
     
     private GRect continueButton;
     private GLabel continueLabel;
+    
+    private boolean playerTurn = true;
+    private boolean battleOver = false;
+    
+    private GRect superMeterBar;
+    private GRect superMeterBack;
+    private GLabel superLabel;
+    
+    
 
     public FirstBattlePane(MainApplication mainScreen) {
         this.mainScreen = mainScreen;
@@ -100,6 +109,34 @@ public class FirstBattlePane extends GraphicsPane {
 
         contents.add(huemanHealthBack);
         contents.add(huemanHealthBar);
+        
+     // ===== SUPER METER =====
+        double meterWidth = 120;
+        double meterHeight = 12;
+        double spacing = 15;
+
+        double mx = huemanHealthBack.getX() + huemanHealthBack.getWidth() + spacing;
+        double my = huemanHealthBack.getY();
+
+        superMeterBack = new GRect(mx, my, meterWidth, meterHeight);
+        superMeterBack.setFilled(true);
+        superMeterBack.setFillColor(Color.DARK_GRAY);
+
+        superMeterBar = new GRect(mx, my, 0, meterHeight);
+        superMeterBar.setFilled(true);
+        superMeterBar.setFillColor(Color.ORANGE);
+
+        superLabel = new GLabel("SP");
+        superLabel.setFont("Arial-Bold-10");
+        superLabel.setLocation(mx, my - 2);
+
+        mainScreen.add(superMeterBack);
+        mainScreen.add(superMeterBar);
+        mainScreen.add(superLabel);
+
+        contents.add(superMeterBack);
+        contents.add(superMeterBar);
+        contents.add(superLabel);
 
         // Decima bar
         double dxBar = 30;
@@ -215,6 +252,8 @@ public class FirstBattlePane extends GraphicsPane {
     // =========================
     @Override
     public void mouseClicked(MouseEvent e) {
+    	
+    	if (battleOver) return;
         GObject obj = mainScreen.getElementAtLocation(e.getX(), e.getY());
 
         // ✅ TEST BUTTON → go to CutScene2Pane
@@ -227,12 +266,24 @@ public class FirstBattlePane extends GraphicsPane {
             if (obj == fightOption) {
                 openFightMenu();
             }
-        } else {
-            if (obj == fightOption) {
-                h1.attackOpponent(d1);
-                updateHealthBars();
-            } else if (obj == abilityOption) {
-                updateHealthBars();
+        } 
+        else {
+            if (obj == fightOption && playerTurn) {
+
+                performPlayerAttack();   // ✅ player attacks
+                checkBattleEnd();
+
+                if (!battleOver) {
+                    performEnemyTurn(); // ✅ enemy responds
+                    checkBattleEnd();
+                }
+
+            } 
+            else if (obj == abilityOption) {
+                if (h1.getSuperMeter() > 0) {
+                    h1.useAbility(1, d1);
+                    updateHealthBars();
+                }
             }
         }
     }
@@ -255,6 +306,49 @@ public class FirstBattlePane extends GraphicsPane {
         contents.add(fightOption);
         contents.add(abilityOption);
     }
+    
+    private void updateSuperMeter() {
+        double ratio = (double) h1.getSuperMeter() / 500.0;
+        superMeterBar.setSize(200 * ratio, 8);
+    }
+    
+    private void performPlayerAttack() {
+        if (!playerTurn || battleOver) return;
+
+        h1.attackOpponent(d1);
+        updateHealthBars();
+
+        playerTurn = false;
+    }
+    
+    
+    private void performEnemyTurn() {
+        if (battleOver) return;
+
+        if (d1.isAlive()) {
+            d1.takeTurn(h1);
+            updateHealthBars();
+        }
+
+        playerTurn = true;
+    }
+    
+    private void checkBattleEnd() {
+        if (!d1.isAlive()) {
+            battleOver = true;
+            System.out.println("YOU WIN");
+            mainScreen.switchToCutScene2Screen();
+            return;
+        }
+
+        if (!h1.isAlive()) {
+            battleOver = true;
+            System.out.println("YOU LOSE");
+            
+        }
+    }
+    
+    
 
     // =========================
     // HEALTH UPDATE
@@ -265,6 +359,9 @@ public class FirstBattlePane extends GraphicsPane {
 
         huemanHealthBar.setSize(200 * huemanRatio, 12);
         decimaHealthBar.setSize(200 * decimaRatio, 12);
+        
+        updateSuperMeter();
+        
     }
 
     // =========================

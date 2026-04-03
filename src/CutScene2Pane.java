@@ -12,7 +12,7 @@ public class CutScene2Pane extends GraphicsPane {
 	    "You defeated Decima...",
 	    "Impressive. You are stronger than expected.",
 	    "But Loathe still remains and your journey is far from over.",
-	    "Loathe and accomplices still loom large. Thankfully",
+	    "Loathe and his accomplices still loom large. Thankfully",
 	    "I know where his next disciple is. His name is Slujupiter.",
 	    "Find him in the Caustic Mines where everything is",
 	    "turquoise. Good luck."
@@ -59,7 +59,7 @@ public class CutScene2Pane extends GraphicsPane {
 	    mainScreen.add(dialogueBox);
 	    contents.add(dialogueBox);
 	    	
-	    GLabel nameLabel = new GLabel("???");
+	    GLabel nameLabel = new GLabel("Hyperion");
 
 	    nameLabel.setFont("Times New Roman-Bold-25");
 	    nameLabel.setColor(Color.BLACK);
