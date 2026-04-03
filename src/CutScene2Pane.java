@@ -11,9 +11,11 @@ public class CutScene2Pane extends GraphicsPane {
 	private String[] dialogue = {
 	    "You defeated Decima...",
 	    "Impressive. You are stronger than expected.",
-	    "But Loathe still remains...",
-	    "Your journey is far from over.",
-	    "Prepare yourself for what comes next."
+	    "But Loathe still remains and your journey is far from over.",
+	    "Loathe and accomplices still loom large. Thankfully",
+	    "I know where his next disciple is. His name is Slujupiter.",
+	    "Find him in the Caustic Mines where everything is",
+	    "turquoise. Good luck."
 	};
 
 	private int dialogueIndex = 0;
