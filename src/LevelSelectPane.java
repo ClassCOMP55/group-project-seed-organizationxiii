@@ -257,55 +257,125 @@ public class LevelSelectPane extends GraphicsPane {
 
         showLevelScreen = true;
 
-        levelScreenBG = new GRect(0, 0,
-            MainApplication.WINDOW_WIDTH,
-            MainApplication.WINDOW_HEIGHT);
-        levelScreenBG.setFilled(true);
-        levelScreenBG.setFillColor(Color.WHITE);
+        Color bgGray = new Color(225, 225, 225);
+        Color mint = new Color(0, 255, 220);
+        Color darkMint = new Color(0, 200, 170);
 
-        dividerLine = new GLine(
-            MainApplication.WINDOW_WIDTH / 2.0, 40,
-            MainApplication.WINDOW_WIDTH / 2.0, MainApplication.WINDOW_HEIGHT - 40
+        levelScreenBG = new GRect(
+            0,
+            0,
+            MainApplication.WINDOW_WIDTH,
+            MainApplication.WINDOW_HEIGHT
         );
-        dividerLine.setColor(Color.GRAY);
+        levelScreenBG.setFilled(true);
+        levelScreenBG.setFillColor(bgGray);
+        levelScreenBG.setColor(bgGray);
+
+        mainScreen.add(levelScreenBG);
+
+        addBrokenDivider(MainApplication.WINDOW_WIDTH / 2.0);
 
         levelEnemyImage = new GImage("mint.png");
         levelEnemyImage.scale(0.7);
 
-        double imgX = MainApplication.WINDOW_WIDTH * 0.4;
-        double imgY = (MainApplication.WINDOW_HEIGHT - levelEnemyImage.getHeight()) / 2;
+        double imgX = 325;
+        double imgY = (MainApplication.WINDOW_HEIGHT - levelEnemyImage.getHeight()) / 2.0 + 10;
         levelEnemyImage.setLocation(imgX, imgY);
 
         levelTitle = new GLabel("Level 1");
-        levelTitle.setFont("Arial-Bold-36");
-        double titleX = 120;
-        double titleY = 260;
-        levelTitle.setLocation(titleX, titleY);
+        levelTitle.setFont("Arial-Bold-38");
+        levelTitle.setColor(mint);
+        levelTitle.setLocation(120, 255);
 
-        startButton = new GRect(200, 60);
-        startButton.setFilled(true);
-        startButton.setFillColor(Color.LIGHT_GRAY);
-        startButton.setColor(Color.DARK_GRAY);
+        GLabel levelTitleGlow1 = new GLabel("Level 1");
+        levelTitleGlow1.setFont("Arial-Bold-38");
+        levelTitleGlow1.setColor(darkMint);
+        levelTitleGlow1.setLocation(118, 253);
+
+        GLabel levelTitleGlow2 = new GLabel("Level 1");
+        levelTitleGlow2.setFont("Arial-Bold-38");
+        levelTitleGlow2.setColor(darkMint);
+        levelTitleGlow2.setLocation(122, 257);
 
         double btnX = 120;
         double btnY = 320;
-        startButton.setLocation(btnX, btnY);
+        double btnW = 220;
+        double btnH = 70;
+
+        GRect startGlow = new GRect(btnX - 3, btnY - 3, btnW + 6, btnH + 6);
+        startGlow.setFilled(true);
+        startGlow.setFillColor(mint);
+        startGlow.setColor(mint);
+
+        startButton = new GRect(btnX, btnY, btnW, btnH);
+        startButton.setFilled(true);
+        startButton.setFillColor(Color.BLACK);
+        startButton.setColor(mint);
 
         startText = new GLabel("START");
-        startText.setFont("Arial-Bold-20");
-        double textX = btnX + (200 - startText.getWidth()) / 2;
-        double textY = btnY + 38;
+        startText.setFont("Arial-Bold-24");
+
+        GLabel startTextGlow1 = new GLabel("START");
+        startTextGlow1.setFont("Arial-Bold-24");
+        startTextGlow1.setColor(darkMint);
+
+        GLabel startTextGlow2 = new GLabel("START");
+        startTextGlow2.setFont("Arial-Bold-24");
+        startTextGlow2.setColor(darkMint);
+
+        double textX = btnX + (btnW - startText.getWidth()) / 2.0;
+        double textY = btnY + 45;
+
+        startTextGlow1.setLocation(textX - 1, textY - 1);
+        startTextGlow2.setLocation(textX + 1, textY + 1);
+
+        startText.setColor(mint);
         startText.setLocation(textX, textY);
 
-        mainScreen.add(levelScreenBG);
-        mainScreen.add(dividerLine);
-        mainScreen.add(levelEnemyImage);
+        mainScreen.add(levelTitleGlow1);
+        mainScreen.add(levelTitleGlow2);
         mainScreen.add(levelTitle);
-        mainScreen.add(startButton);
-        mainScreen.add(startText);
-    }
-    
 
+        mainScreen.add(startGlow);
+        mainScreen.add(startButton);
+        mainScreen.add(startTextGlow1);
+        mainScreen.add(startTextGlow2);
+        mainScreen.add(startText);
+
+        mainScreen.add(levelEnemyImage);
+    }
+
+    private void addBrokenDivider(double centerX) {
+        Color lineColor = new Color(120, 120, 120);
+
+        double[] yPoints = {0, 60, 120, 180, 240, 300, 360, 420, 480, 540, 600};
+        double[] offsets = {-4, 3, -6, 5, -3, 6, -5, 4, -2, 3, -4};
+
+        for (int i = 0; i < yPoints.length - 1; i++) {
+            GLine piece = new GLine(
+                centerX + offsets[i], yPoints[i],
+                centerX + offsets[i + 1], yPoints[i + 1]
+            );
+            piece.setColor(lineColor);
+            mainScreen.add(piece);
+        }
+
+        for (int i = 0; i < yPoints.length; i++) {
+            GLine ripLeft = new GLine(
+                centerX + offsets[i], yPoints[i],
+                centerX - 8 + offsets[i], yPoints[i] + 8
+            );
+            ripLeft.setColor(lineColor);
+            mainScreen.add(ripLeft);
+
+            GLine ripRight = new GLine(
+                centerX + offsets[i], yPoints[i],
+                centerX + 8 + offsets[i], yPoints[i] - 8
+            );
+            ripRight.setColor(lineColor);
+            mainScreen.add(ripRight);
+        }
+    }
     
     private GPolygon createStar(double centerX, double centerY, double outerR, double innerR) {
         GPolygon star = new GPolygon();
