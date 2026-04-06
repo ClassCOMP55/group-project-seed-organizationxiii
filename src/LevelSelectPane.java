@@ -2,6 +2,7 @@ import acm.graphics.*;
 import java.awt.Color;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
 import characters.Hueman;
 
 public class LevelSelectPane extends GraphicsPane {
@@ -23,16 +24,19 @@ public class LevelSelectPane extends GraphicsPane {
     private double[] pointX;
     private double[] pointY;
     private int currentPoint = 0;
-    
+
     private boolean showLevelScreen = false;
+    private int selectedLevel = 1;
 
     private GRect levelScreenBG;
     private GLabel levelTitle;
     private GRect startButton;
     private GLabel startText;
+    private GRect backButton;
+    private GLabel backText;
     private GImage levelEnemyImage;
-    private GLine dividerLine;
-    
+
+    private ArrayList<GObject> previewObjects = new ArrayList<GObject>();
 
     public LevelSelectPane(MainApplication mainScreen) {
         this.mainScreen = mainScreen;
@@ -40,6 +44,9 @@ public class LevelSelectPane extends GraphicsPane {
 
     @Override
     public void showContent() {
+        showLevelScreen = false;
+        clearPreviewScreen();
+
         Hueman player = mainScreen.getPlayer();
 
         huemanImage = player.getSprite("overworld");
@@ -140,7 +147,6 @@ public class LevelSelectPane extends GraphicsPane {
         };
 
         currentPoint = 0;
-     
     }
 
     @Override
@@ -160,12 +166,14 @@ public class LevelSelectPane extends GraphicsPane {
         removeStar(star3);
         removeStar(star4Glow);
         removeStar(star4);
+
+        clearPreviewScreen();
+        showLevelScreen = false;
     }
 
     @Override
     public void keyPressed(KeyEvent e) {
-    	
-    	if (showLevelScreen) return;
+        if (showLevelScreen) return;
         if (huemanImage == null) return;
 
         if (e.getKeyCode() == KeyEvent.VK_D) {
@@ -179,19 +187,43 @@ public class LevelSelectPane extends GraphicsPane {
 
     @Override
     public void mouseClicked(MouseEvent e) {
+
+        if (showLevelScreen) {
+            if (startButton != null && startButton.contains(e.getX(), e.getY())) {
+                mainScreen.switchToFirstBattleScreen();
+                return;
+            }
+
+            if (backButton != null && backButton.contains(e.getX(), e.getY())) {
+                showLevelScreen = false;
+                mainScreen.switchToLevelSelectScreen();
+                return;
+            }
+        }
+
         if (star1 != null && star1.contains(e.getX(), e.getY())) {
-            mainScreen.switchToFirstBattleScreen();
+            currentPoint = 1;
+            showLevelOneScreen();
+        } else if (star2 != null && star2.contains(e.getX(), e.getY())) {
+            currentPoint = 2;
+            showLevelOneScreen();
+        } else if (star3 != null && star3.contains(e.getX(), e.getY())) {
+            currentPoint = 3;
+            showLevelOneScreen();
+        } else if (star4 != null && star4.contains(e.getX(), e.getY())) {
+            currentPoint = 4;
+            showLevelOneScreen();
         }
     }
 
     private void moveForward() {
         if (currentPoint < pointX.length - 1) {
-        	currentPoint++;
+            currentPoint++;
 
-        	if (currentPoint == 1) {
-        	    showLevelOneScreen();
-        	    return;
-        	}
+            if (currentPoint >= 1) {
+                showLevelOneScreen();
+                return;
+            }
 
             double x = pointX[currentPoint];
             double y = pointY[currentPoint];
@@ -251,11 +283,12 @@ public class LevelSelectPane extends GraphicsPane {
             mainScreen.remove(s);
         }
     }
-    
 
     private void showLevelOneScreen() {
+        clearPreviewScreen();
 
         showLevelScreen = true;
+        selectedLevel = currentPoint;
 
         Color bgGray = new Color(225, 225, 225);
         Color mint = new Color(0, 255, 220);
@@ -270,8 +303,7 @@ public class LevelSelectPane extends GraphicsPane {
         levelScreenBG.setFilled(true);
         levelScreenBG.setFillColor(bgGray);
         levelScreenBG.setColor(bgGray);
-
-        mainScreen.add(levelScreenBG);
+        addPreviewObject(levelScreenBG);
 
         addBrokenDivider(MainApplication.WINDOW_WIDTH / 2.0);
 
@@ -282,17 +314,17 @@ public class LevelSelectPane extends GraphicsPane {
         double imgY = (MainApplication.WINDOW_HEIGHT - levelEnemyImage.getHeight()) / 2.0 + 10;
         levelEnemyImage.setLocation(imgX, imgY);
 
-        levelTitle = new GLabel("Level 1");
+        levelTitle = new GLabel("Level " + selectedLevel);
         levelTitle.setFont("Arial-Bold-38");
         levelTitle.setColor(mint);
         levelTitle.setLocation(120, 255);
 
-        GLabel levelTitleGlow1 = new GLabel("Level 1");
+        GLabel levelTitleGlow1 = new GLabel("Level " + selectedLevel);
         levelTitleGlow1.setFont("Arial-Bold-38");
         levelTitleGlow1.setColor(darkMint);
         levelTitleGlow1.setLocation(118, 253);
 
-        GLabel levelTitleGlow2 = new GLabel("Level 1");
+        GLabel levelTitleGlow2 = new GLabel("Level " + selectedLevel);
         levelTitleGlow2.setFont("Arial-Bold-38");
         levelTitleGlow2.setColor(darkMint);
         levelTitleGlow2.setLocation(122, 257);
@@ -323,26 +355,64 @@ public class LevelSelectPane extends GraphicsPane {
         startTextGlow2.setFont("Arial-Bold-24");
         startTextGlow2.setColor(darkMint);
 
-        double textX = btnX + (btnW - startText.getWidth()) / 2.0;
-        double textY = btnY + 45;
+        double startTextX = btnX + (btnW - startText.getWidth()) / 2.0;
+        double startTextY = btnY + 45;
 
-        startTextGlow1.setLocation(textX - 1, textY - 1);
-        startTextGlow2.setLocation(textX + 1, textY + 1);
+        startTextGlow1.setLocation(startTextX - 1, startTextY - 1);
+        startTextGlow2.setLocation(startTextX + 1, startTextY + 1);
 
         startText.setColor(mint);
-        startText.setLocation(textX, textY);
+        startText.setLocation(startTextX, startTextY);
 
-        mainScreen.add(levelTitleGlow1);
-        mainScreen.add(levelTitleGlow2);
-        mainScreen.add(levelTitle);
+        double backY = 410;
 
-        mainScreen.add(startGlow);
-        mainScreen.add(startButton);
-        mainScreen.add(startTextGlow1);
-        mainScreen.add(startTextGlow2);
-        mainScreen.add(startText);
+        GRect backGlow = new GRect(btnX - 3, backY - 3, btnW + 6, btnH + 6);
+        backGlow.setFilled(true);
+        backGlow.setFillColor(mint);
+        backGlow.setColor(mint);
 
-        mainScreen.add(levelEnemyImage);
+        backButton = new GRect(btnX, backY, btnW, btnH);
+        backButton.setFilled(true);
+        backButton.setFillColor(Color.BLACK);
+        backButton.setColor(mint);
+
+        backText = new GLabel("BACK");
+        backText.setFont("Arial-Bold-24");
+
+        GLabel backTextGlow1 = new GLabel("BACK");
+        backTextGlow1.setFont("Arial-Bold-24");
+        backTextGlow1.setColor(darkMint);
+
+        GLabel backTextGlow2 = new GLabel("BACK");
+        backTextGlow2.setFont("Arial-Bold-24");
+        backTextGlow2.setColor(darkMint);
+
+        double backTextX = btnX + (btnW - backText.getWidth()) / 2.0;
+        double backTextY = backY + 45;
+
+        backTextGlow1.setLocation(backTextX - 1, backTextY - 1);
+        backTextGlow2.setLocation(backTextX + 1, backTextY + 1);
+
+        backText.setColor(mint);
+        backText.setLocation(backTextX, backTextY);
+
+        addPreviewObject(levelTitleGlow1);
+        addPreviewObject(levelTitleGlow2);
+        addPreviewObject(levelTitle);
+
+        addPreviewObject(startGlow);
+        addPreviewObject(startButton);
+        addPreviewObject(startTextGlow1);
+        addPreviewObject(startTextGlow2);
+        addPreviewObject(startText);
+
+        addPreviewObject(backGlow);
+        addPreviewObject(backButton);
+        addPreviewObject(backTextGlow1);
+        addPreviewObject(backTextGlow2);
+        addPreviewObject(backText);
+
+        addPreviewObject(levelEnemyImage);
     }
 
     private void addBrokenDivider(double centerX) {
@@ -357,7 +427,7 @@ public class LevelSelectPane extends GraphicsPane {
                 centerX + offsets[i + 1], yPoints[i + 1]
             );
             piece.setColor(lineColor);
-            mainScreen.add(piece);
+            addPreviewObject(piece);
         }
 
         for (int i = 0; i < yPoints.length; i++) {
@@ -366,17 +436,37 @@ public class LevelSelectPane extends GraphicsPane {
                 centerX - 8 + offsets[i], yPoints[i] + 8
             );
             ripLeft.setColor(lineColor);
-            mainScreen.add(ripLeft);
+            addPreviewObject(ripLeft);
 
             GLine ripRight = new GLine(
                 centerX + offsets[i], yPoints[i],
                 centerX + 8 + offsets[i], yPoints[i] - 8
             );
             ripRight.setColor(lineColor);
-            mainScreen.add(ripRight);
+            addPreviewObject(ripRight);
         }
     }
-    
+
+    private void addPreviewObject(GObject obj) {
+        mainScreen.add(obj);
+        previewObjects.add(obj);
+    }
+
+    private void clearPreviewScreen() {
+        for (GObject obj : previewObjects) {
+            mainScreen.remove(obj);
+        }
+        previewObjects.clear();
+
+        levelScreenBG = null;
+        levelTitle = null;
+        startButton = null;
+        startText = null;
+        backButton = null;
+        backText = null;
+        levelEnemyImage = null;
+    }
+
     private GPolygon createStar(double centerX, double centerY, double outerR, double innerR) {
         GPolygon star = new GPolygon();
 
@@ -397,6 +487,4 @@ public class LevelSelectPane extends GraphicsPane {
 
         return star;
     }
-    
-
 }
