@@ -203,6 +203,7 @@ public class vs_First extends GraphicsPane {
             continueButton.setColor(Color.BLACK);
         }
         //image!
+        //another image!
         //test
     }
 }
