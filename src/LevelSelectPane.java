@@ -23,6 +23,16 @@ public class LevelSelectPane extends GraphicsPane {
     private double[] pointX;
     private double[] pointY;
     private int currentPoint = 0;
+    
+    private boolean showLevelScreen = false;
+
+    private GRect levelScreenBG;
+    private GLabel levelTitle;
+    private GRect startButton;
+    private GLabel startText;
+    private GImage levelEnemyImage;
+    private GLine dividerLine;
+    
 
     public LevelSelectPane(MainApplication mainScreen) {
         this.mainScreen = mainScreen;
@@ -130,6 +140,7 @@ public class LevelSelectPane extends GraphicsPane {
         };
 
         currentPoint = 0;
+     
     }
 
     @Override
@@ -153,6 +164,8 @@ public class LevelSelectPane extends GraphicsPane {
 
     @Override
     public void keyPressed(KeyEvent e) {
+    	
+    	if (showLevelScreen) return;
         if (huemanImage == null) return;
 
         if (e.getKeyCode() == KeyEvent.VK_D) {
@@ -173,7 +186,12 @@ public class LevelSelectPane extends GraphicsPane {
 
     private void moveForward() {
         if (currentPoint < pointX.length - 1) {
-            currentPoint++;
+        	currentPoint++;
+
+        	if (currentPoint == 1) {
+        	    showLevelOneScreen();
+        	    return;
+        	}
 
             double x = pointX[currentPoint];
             double y = pointY[currentPoint];
@@ -233,7 +251,62 @@ public class LevelSelectPane extends GraphicsPane {
             mainScreen.remove(s);
         }
     }
+    
 
+    private void showLevelOneScreen() {
+
+        showLevelScreen = true;
+
+        levelScreenBG = new GRect(0, 0,
+            MainApplication.WINDOW_WIDTH,
+            MainApplication.WINDOW_HEIGHT);
+        levelScreenBG.setFilled(true);
+        levelScreenBG.setFillColor(Color.WHITE);
+
+        dividerLine = new GLine(
+            MainApplication.WINDOW_WIDTH / 2.0, 40,
+            MainApplication.WINDOW_WIDTH / 2.0, MainApplication.WINDOW_HEIGHT - 40
+        );
+        dividerLine.setColor(Color.GRAY);
+
+        levelEnemyImage = new GImage("mint.png");
+        levelEnemyImage.scale(0.7);
+
+        double imgX = MainApplication.WINDOW_WIDTH * 0.4;
+        double imgY = (MainApplication.WINDOW_HEIGHT - levelEnemyImage.getHeight()) / 2;
+        levelEnemyImage.setLocation(imgX, imgY);
+
+        levelTitle = new GLabel("Level 1");
+        levelTitle.setFont("Arial-Bold-36");
+        double titleX = 120;
+        double titleY = 260;
+        levelTitle.setLocation(titleX, titleY);
+
+        startButton = new GRect(200, 60);
+        startButton.setFilled(true);
+        startButton.setFillColor(Color.LIGHT_GRAY);
+        startButton.setColor(Color.DARK_GRAY);
+
+        double btnX = 120;
+        double btnY = 320;
+        startButton.setLocation(btnX, btnY);
+
+        startText = new GLabel("START");
+        startText.setFont("Arial-Bold-20");
+        double textX = btnX + (200 - startText.getWidth()) / 2;
+        double textY = btnY + 38;
+        startText.setLocation(textX, textY);
+
+        mainScreen.add(levelScreenBG);
+        mainScreen.add(dividerLine);
+        mainScreen.add(levelEnemyImage);
+        mainScreen.add(levelTitle);
+        mainScreen.add(startButton);
+        mainScreen.add(startText);
+    }
+    
+
+    
     private GPolygon createStar(double centerX, double centerY, double outerR, double innerR) {
         GPolygon star = new GPolygon();
 
@@ -254,4 +327,6 @@ public class LevelSelectPane extends GraphicsPane {
 
         return star;
     }
+    
+
 }
