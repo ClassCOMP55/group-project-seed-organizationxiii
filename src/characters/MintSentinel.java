@@ -28,6 +28,27 @@ public class MintSentinel extends boss {
 		
 		
 	}
+	
+	@Override
+	public void takeDamage(int dmg) {
+		switch(defenseStacks) {
+		
+		case 0:
+			currentHP -= dmg;
+			break;
+		case 1:
+			currentHP -= (dmg * 0.9);
+			break;
+		case 2:
+			currentHP -= (dmg * 0.8);
+			break;
+		case 3:
+			currentHP -= (dmg * 0.7);
+			break;
+		
+		
+		}
+	}
 
 	@Override
 	public void takeTurn(character player) {
