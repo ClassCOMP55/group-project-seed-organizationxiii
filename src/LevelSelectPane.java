@@ -190,7 +190,11 @@ public class LevelSelectPane extends GraphicsPane {
 
         if (showLevelScreen) {
             if (startButton != null && startButton.contains(e.getX(), e.getY())) {
-                mainScreen.switchToFirstBattleScreen();
+            	if (selectedLevel == 1) {
+            		mainScreen.switchToSecondBattleScreen();
+            	} else if (selectedLevel == 2) {
+            		mainScreen.switchToCutScene3Screen();
+            	}
                 return;
             }
 
@@ -203,15 +207,19 @@ public class LevelSelectPane extends GraphicsPane {
 
         if (star1 != null && star1.contains(e.getX(), e.getY())) {
             currentPoint = 1;
+            selectedLevel = 1;
             showLevelOneScreen();
         } else if (star2 != null && star2.contains(e.getX(), e.getY())) {
             currentPoint = 2;
+            selectedLevel = 2;
             showLevelOneScreen();
         } else if (star3 != null && star3.contains(e.getX(), e.getY())) {
             currentPoint = 3;
+            selectedLevel = 3;
             showLevelOneScreen();
         } else if (star4 != null && star4.contains(e.getX(), e.getY())) {
             currentPoint = 4;
+            selectedLevel = 4;
             showLevelOneScreen();
         }
     }
@@ -288,7 +296,6 @@ public class LevelSelectPane extends GraphicsPane {
         clearPreviewScreen();
 
         showLevelScreen = true;
-        selectedLevel = currentPoint;
 
         Color bgGray = new Color(225, 225, 225);
         Color mint = new Color(0, 255, 220);

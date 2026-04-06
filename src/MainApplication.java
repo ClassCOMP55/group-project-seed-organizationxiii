@@ -26,6 +26,9 @@ public class MainApplication extends GraphicsProgram{
 	private String selectedColor;
 	private Hueman player;
 	private CutScene2Pane cutScene2Pane;
+	private CutScene3Pane cutScene3Pane;
+	private SecondBattlePane secondBattlePane;
+	private vs_Second vsSecondPane;
 	private boolean isTransitioning = false;
 
 	
@@ -75,6 +78,9 @@ public class MainApplication extends GraphicsProgram{
 		vsFirstPane = new vs_First(this);
 		firstBattlePane = new FirstBattlePane(this);
 		cutScene2Pane = new CutScene2Pane(this);
+		cutScene3Pane = new CutScene3Pane(this);
+		vsSecondPane = new vs_Second(this);
+		secondBattlePane = new SecondBattlePane(this);
 
 		//The Default Screen
 		switchToScreen(titlePane);
@@ -117,6 +123,18 @@ public class MainApplication extends GraphicsProgram{
 	
 	public void switchToCutScene2Screen() {
 	    switchToScreen(cutScene2Pane);
+	}
+	
+	public void switchToCutScene3Screen() {
+		switchToScreen(cutScene3Pane);
+	}
+	
+	public void switchToSecondBattleScreen() {
+		switchToScreen(secondBattlePane);
+	}
+	
+	public void switchToVsSecondScreen() {
+		switchToScreen(vsSecondPane);
 	}
 	
 	
@@ -236,5 +254,4 @@ public class MainApplication extends GraphicsProgram{
 			currentScreen.keyTyped(e);
 		}
 	}
-	
 }
