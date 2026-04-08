@@ -14,12 +14,12 @@ public class LevelSelectPane extends GraphicsPane {
     private GPolygon star3, star3Glow;
     private GPolygon star4, star4Glow;
 
-    private GOval[] seg1Dots;
-    private GOval[] seg2Dots;
-    private GOval[] seg3Dots;
-    private GOval[] seg4Dots;
+    private GRect[] seg1Dots;
+    private GRect[] seg2Dots;
+    private GRect[] seg3Dots;
+    private GRect[] seg4Dots;
 
-    private GOval[] stopDots;
+    private GRect[] stopDots;
 
     private double[] pointX;
     private double[] pointY;
@@ -52,20 +52,20 @@ public class LevelSelectPane extends GraphicsPane {
 
         huemanImage = player.getSprite("overworld");
         huemanImage.scale(0.6);
+
         if (levelProgress == 1) {
-            huemanImage.setLocation(60, 420);
-        } 
-        
-        else if (levelProgress >= 2) {
+            huemanImage.setLocation(95, 420);
+        } else if (levelProgress >= 2) {
             huemanImage.setLocation(550, 260);
         }
-        
+
         mainScreen.add(huemanImage);
+        huemanImage.sendToFront();
 
-        double startX = 95;
-        double startY = 450;
+        double startX = 120;
+        double startY = 530;
 
-        double star1X = 670;
+        double star1X = 640;
         double star1Y = 360;
 
         double star2X = 260;
@@ -77,10 +77,22 @@ public class LevelSelectPane extends GraphicsPane {
         double star4X = 260;
         double star4Y = 80;
 
-        seg1Dots = addPathSegment(startX, startY, star1X, star1Y, 5);
-        seg2Dots = addPathSegment(star1X, star1Y, star2X, star2Y, 5);
-        seg3Dots = addPathSegment(star2X, star2Y, star3X, star3Y, 5);
-        seg4Dots = addPathSegment(star3X, star3Y, star4X, star4Y, 5);
+        double path1X = 610;
+        double path1Y = 415;
+
+        double path2X = 290;
+        double path2Y = 305;
+
+        double path3X = 640;
+        double path3Y = 195;
+
+        double path4X = 290;
+        double path4Y = 135;
+
+        seg1Dots = addPathSegment(startX, startY, path1X, path1Y, 12);
+        seg2Dots = null;
+        seg3Dots = null;
+        seg4Dots = null;
 
         star1Glow = createStar(star1X, star1Y, 55, 28);
         star1Glow.setFilled(true);
@@ -92,10 +104,11 @@ public class LevelSelectPane extends GraphicsPane {
         star1.setFilled(true);
         star1.setFillColor(Color.BLACK);
         star1.setColor(Color.DARK_GRAY);
-       
+
         if (levelProgress >= 2) {
             star1.setFillColor(getPlayerColor());
         }
+
         mainScreen.add(star1);
 
         star2Glow = createStar(star2X, star2Y, 55, 28);
@@ -134,34 +147,34 @@ public class LevelSelectPane extends GraphicsPane {
         star4.setColor(Color.DARK_GRAY);
         mainScreen.add(star4);
 
-        stopDots = new GOval[] {
-            null,
-            seg1Dots[4],
-            seg2Dots[4],
-            seg3Dots[4],
-            seg4Dots[4]
-            		};
-        
+        stopDots = new GRect[] {
+        	    null,
+        	    seg1Dots[11],
+        	    null,
+        	    null,
+        	    null
+        	};
+
         if (levelProgress >= 2 && seg2Dots[0] != null) {
             mainScreen.remove(seg2Dots[0]);
             seg2Dots[0] = null;
         }
 
         pointX = new double[] {
-            60,
-            seg1Dots[4].getX(),
-            seg2Dots[4].getX(),
-            seg3Dots[4].getX(),
-            seg4Dots[4].getX()
-        };
+        	    60,
+        	    seg1Dots[11].getX(),
+        	    0,
+        	    0,
+        	    0
+        	};
 
         pointY = new double[] {
-            420,
-            seg1Dots[4].getY(),
-            seg2Dots[4].getY(),
-            seg3Dots[4].getY(),
-            seg4Dots[4].getY()
-        };
+        	    420,
+        	    seg1Dots[11].getY(),
+        	    0,
+        	    0,
+        	    0
+        	};
 
         if (levelProgress >= 2) {
             currentPoint = 1;
@@ -277,30 +290,35 @@ public class LevelSelectPane extends GraphicsPane {
         }
     }
 
-    private GOval[] addPathSegment(double x1, double y1, double x2, double y2, int dots) {
-        GOval[] segment = new GOval[dots];
+    private GRect[] addPathSegment(double x1, double y1, double x2, double y2, int steps) {
+        GRect[] segment = new GRect[steps];
 
-        for (int i = 1; i <= dots; i++) {
-            double t = (double) i / (dots + 1);
+        for (int i = 1; i <= steps; i++) {
+            double t = (double) (i - 1) / (steps - 1);
             double x = x1 + (x2 - x1) * t;
             double y = y1 + (y2 - y1) * t;
 
-            GOval dot = new GOval(x, y, 18, 18);
-            dot.setFilled(true);
-            dot.setFillColor(new Color(140, 140, 140));
-            dot.setColor(Color.DARK_GRAY);
+            GRect step = new GRect(x, y, 32, 12);
+            step.setFilled(true);
+            step.setFillColor(new Color(140, 140, 140));
+            step.setColor(Color.DARK_GRAY);
 
-            mainScreen.add(dot);
-            segment[i - 1] = dot;
+            if (i == steps) {
+                step.setSize(70, 16);
+                step.setLocation(x - 5, y);
+            }
+
+            mainScreen.add(step);
+            segment[i - 1] = step;
         }
 
         return segment;
     }
 
-    private void removeDots(GOval[] dots) {
+    private void removeDots(GRect[] dots) {
         if (dots == null) return;
 
-        for (GOval dot : dots) {
+        for (GRect dot : dots) {
             if (dot != null) {
                 mainScreen.remove(dot);
             }
