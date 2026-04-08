@@ -255,7 +255,8 @@ public class SecondBattlePane extends GraphicsPane {
         GObject obj = mainScreen.getElementAtLocation(e.getX(), e.getY());
 
         if (obj == continueButton || obj == continueLabel) {
-            mainScreen.switchToVictoryScreen();
+        	mainScreen.setCurrentLevel(2); // you completed level 1
+        	mainScreen.switchToLevelSelectScreen();
             return;
         }
 
@@ -336,12 +337,15 @@ public class SecondBattlePane extends GraphicsPane {
     }
 
     private void checkBattleEnd() {
-        if (!m1.isAlive()) {
-            battleOver = true;
-            System.out.println("YOU WIN");
-            mainScreen.switchToVictoryScreen();
-            return;
-        }
+    	if (!m1.isAlive()) {
+    	    battleOver = true;
+    	    System.out.println("YOU WIN");
+
+    	    mainScreen.setCurrentLevel(2);   // ⭐ THIS is the important line
+    	    mainScreen.switchToLevelSelectScreen();
+
+    	    return;
+    	}
 
         if (!h1.isAlive()) {
             battleOver = true;

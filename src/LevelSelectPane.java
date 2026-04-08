@@ -48,10 +48,16 @@ public class LevelSelectPane extends GraphicsPane {
         clearPreviewScreen();
 
         Hueman player = mainScreen.getPlayer();
+        int levelProgress = mainScreen.getCurrentLevel();
 
         huemanImage = player.getSprite("overworld");
         huemanImage.scale(0.6);
-        huemanImage.setLocation(60, 420);
+        if (levelProgress == 1) {
+            huemanImage.setLocation(60, 420);
+        } else if (levelProgress >= 2) {
+            huemanImage.setLocation(625, 390);
+        }
+        
         mainScreen.add(huemanImage);
 
         double startX = 95;
@@ -84,6 +90,9 @@ public class LevelSelectPane extends GraphicsPane {
         star1.setFilled(true);
         star1.setFillColor(Color.BLACK);
         star1.setColor(Color.DARK_GRAY);
+        if (levelProgress >= 2) {
+            star1.setFillColor(getPlayerColor());
+        }
         mainScreen.add(star1);
 
         star2Glow = createStar(star2X, star2Y, 55, 28);
@@ -128,7 +137,12 @@ public class LevelSelectPane extends GraphicsPane {
             seg2Dots[4],
             seg3Dots[4],
             seg4Dots[4]
-        };
+            		};
+        
+        if (levelProgress >= 2 && stopDots[1] != null) {
+            mainScreen.remove(stopDots[1]);
+            stopDots[1] = null;
+        }
 
         pointX = new double[] {
             60,
@@ -146,7 +160,11 @@ public class LevelSelectPane extends GraphicsPane {
             seg4Dots[4].getY()
         };
 
-        currentPoint = 0;
+        if (levelProgress >= 2) {
+            currentPoint = 1;
+        } else {
+            currentPoint = 0;
+        }
     }
 
     @Override
@@ -494,4 +512,15 @@ public class LevelSelectPane extends GraphicsPane {
 
         return star;
     }
+    
+    private Color getPlayerColor() {
+        String selectedColor = mainScreen.getSelectedColor();
+
+        if (selectedColor == null) return Color.BLACK;
+        if (selectedColor.equals("red")) return Color.RED;
+        if (selectedColor.equals("green")) return Color.GREEN;
+        return Color.BLUE;
+    }
+    
+    
 }

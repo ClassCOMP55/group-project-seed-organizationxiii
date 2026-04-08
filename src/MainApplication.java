@@ -29,6 +29,7 @@ public class MainApplication extends GraphicsProgram{
 	private CutScene3Pane cutScene3Pane;
 	private SecondBattlePane secondBattlePane;
 	private vs_Second vsSecondPane;
+	private int currentLevel = 1; // start at level 1
 	private boolean isTransitioning = false;
 
 	
@@ -253,5 +254,13 @@ public class MainApplication extends GraphicsProgram{
 		if(currentScreen != null) {
 			currentScreen.keyTyped(e);
 		}
+	}
+	
+	public int getCurrentLevel() {
+	    return currentLevel;
+	}
+
+	public void setCurrentLevel(int level) {
+	    currentLevel = level;
 	}
 }
