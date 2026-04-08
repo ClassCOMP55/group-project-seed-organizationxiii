@@ -54,8 +54,10 @@ public class LevelSelectPane extends GraphicsPane {
         huemanImage.scale(0.6);
         if (levelProgress == 1) {
             huemanImage.setLocation(60, 420);
-        } else if (levelProgress >= 2) {
-            huemanImage.setLocation(625, 390);
+        } 
+        
+        else if (levelProgress >= 2) {
+            huemanImage.setLocation(550, 260);
         }
         
         mainScreen.add(huemanImage);
@@ -90,6 +92,7 @@ public class LevelSelectPane extends GraphicsPane {
         star1.setFilled(true);
         star1.setFillColor(Color.BLACK);
         star1.setColor(Color.DARK_GRAY);
+       
         if (levelProgress >= 2) {
             star1.setFillColor(getPlayerColor());
         }
@@ -139,9 +142,9 @@ public class LevelSelectPane extends GraphicsPane {
             seg4Dots[4]
             		};
         
-        if (levelProgress >= 2 && stopDots[1] != null) {
-            mainScreen.remove(stopDots[1]);
-            stopDots[1] = null;
+        if (levelProgress >= 2 && seg2Dots[0] != null) {
+            mainScreen.remove(seg2Dots[0]);
+            seg2Dots[0] = null;
         }
 
         pointX = new double[] {
