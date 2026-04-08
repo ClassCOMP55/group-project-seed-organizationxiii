@@ -163,11 +163,12 @@ public class SecondBattlePane extends GraphicsPane {
 
         mintHealthBack = new GRect(mxBar, myBar, barWidth, barHeight);
         mintHealthBack.setFilled(true);
-        mintHealthBack.setFillColor(Color.DARK_GRAY);
+        mintHealthBack.setFillColor(new Color(40, 70, 70));
 
         mintHealthBar = new GRect(mxBar, myBar, barWidth, barHeight);
         mintHealthBar.setFilled(true);
-        mintHealthBar.setFillColor(Color.RED);
+        mintHealthBar.setFillColor(new Color(60, 230, 230));
+        mintHealthBar.setColor(new Color(0, 160, 160));
 
         mainScreen.add(mintHealthBack);
         mainScreen.add(mintHealthBar);
