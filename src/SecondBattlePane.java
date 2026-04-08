@@ -104,8 +104,25 @@ public class SecondBattlePane extends GraphicsPane {
 
         huemanHealthBar = new GRect(hxBar, hyBar, barWidth, barHeight);
         huemanHealthBar.setFilled(true);
-        huemanHealthBar.setFillColor(Color.GREEN);
-
+        
+        String color = mainScreen.getSelectedColor();
+        
+        if (color != null) {
+        	if (color.equals("red")) {
+        		huemanHealthBar.setFillColor(new Color(220, 60, 60));
+        	} else if (color.equals("green")) {
+        		huemanHealthBar.setFillColor(new Color(60, 220, 100));
+        	} else if (color.equals("blue")) {
+        		huemanHealthBar.setFillColor(new Color(60, 140, 255));
+        	} else {
+        		huemanHealthBar.setFillColor(new Color(60, 220, 100));
+        	}
+        } else {
+        	huemanHealthBar.setFillColor(new Color(60, 220, 100));
+        }
+        
+        huemanHealthBar.setColor(huemanHealthBar.getFillColor().darker());
+        
         mainScreen.add(huemanHealthBack);
         mainScreen.add(huemanHealthBar);
 
