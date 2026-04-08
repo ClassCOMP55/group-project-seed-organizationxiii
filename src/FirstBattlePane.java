@@ -165,7 +165,8 @@ public class FirstBattlePane extends GraphicsPane {
 
         decimaHealthBar = new GRect(dxBar, dyBar, barWidth, barHeight);
         decimaHealthBar.setFilled(true);
-        decimaHealthBar.setFillColor(Color.RED);
+        decimaHealthBar.setFillColor(new Color(212, 175, 55));
+        decimaHealthBar.setColor(new Color(150, 120, 30));
 
         mainScreen.add(decimaHealthBack);
         mainScreen.add(decimaHealthBar);
