@@ -29,6 +29,7 @@ public class MainApplication extends GraphicsProgram{
 	private CutScene3Pane cutScene3Pane;
 	private SecondBattlePane secondBattlePane;
 	private ThirdBattlePane thirdBattlePane;
+	private FourthBattlePane fourthBattlePane;
 	private vs_Second vsSecondPane;
 	private int currentLevel = 1; // start at level 1
 	private boolean isTransitioning = false;
@@ -84,6 +85,7 @@ public class MainApplication extends GraphicsProgram{
 		vsSecondPane = new vs_Second(this);
 		secondBattlePane = new SecondBattlePane(this);
 		thirdBattlePane = new ThirdBattlePane(this);
+		fourthBattlePane = new FourthBattlePane(this);
 
 		//The Default Screen
 		switchToScreen(titlePane);
@@ -264,6 +266,14 @@ public class MainApplication extends GraphicsProgram{
 	        currentScreen.hideContent();
 	    }
 	    currentScreen = thirdBattlePane;
+	    currentScreen.showContent();
+	}
+	
+	public void switchToFourthBattleScreen() {
+	    if (currentScreen != null) {
+	        currentScreen.hideContent();
+	    }
+	    currentScreen = fourthBattlePane;
 	    currentScreen.showContent();
 	}
 	
