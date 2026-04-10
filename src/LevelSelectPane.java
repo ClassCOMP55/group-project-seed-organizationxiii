@@ -50,18 +50,6 @@ public class LevelSelectPane extends GraphicsPane {
         Hueman player = mainScreen.getPlayer();
         int levelProgress = mainScreen.getCurrentLevel();
 
-        huemanImage = player.getSprite("overworld");
-        huemanImage.scale(0.6);
-
-        if (levelProgress == 1) {
-            huemanImage.setLocation(95, 420);
-        } else if (levelProgress >= 2) {
-            huemanImage.setLocation(550, 260);
-        }
-
-        mainScreen.add(huemanImage);
-        huemanImage.sendToFront();
-
         double startX = 120;
         double startY = 530;
 
@@ -90,9 +78,24 @@ public class LevelSelectPane extends GraphicsPane {
         double path4Y = 135;
 
         seg1Dots = addPathSegment(startX, startY, path1X, path1Y, 12);
-        seg2Dots = null;
-        seg3Dots = null;
-        seg4Dots = null;
+
+        if (levelProgress >= 2) {
+            seg2Dots = addPathSegment(path1X, path1Y, path2X, path2Y, 10);
+        } else {
+            seg2Dots = null;
+        }
+
+        if (levelProgress >= 3) {
+            seg3Dots = addPathSegment(path2X, path2Y, path3X, path3Y, 10);
+        } else {
+            seg3Dots = null;
+        }
+
+        if (levelProgress >= 4) {
+            seg4Dots = addPathSegment(path3X, path3Y, path4X, path4Y, 10);
+        } else {
+            seg4Dots = null;
+        }
 
         star1Glow = createStar(star1X, star1Y, 55, 28);
         star1Glow.setFilled(true);
@@ -102,13 +105,8 @@ public class LevelSelectPane extends GraphicsPane {
 
         star1 = createStar(star1X, star1Y, 48, 24);
         star1.setFilled(true);
-        star1.setFillColor(Color.BLACK);
+        star1.setFillColor(levelProgress >= 2 ? getPlayerColor() : Color.BLACK);
         star1.setColor(Color.DARK_GRAY);
-
-        if (levelProgress >= 2) {
-            star1.setFillColor(getPlayerColor());
-        }
-
         mainScreen.add(star1);
 
         star2Glow = createStar(star2X, star2Y, 55, 28);
@@ -119,7 +117,7 @@ public class LevelSelectPane extends GraphicsPane {
 
         star2 = createStar(star2X, star2Y, 48, 24);
         star2.setFilled(true);
-        star2.setFillColor(Color.BLACK);
+        star2.setFillColor(levelProgress >= 3 ? getPlayerColor() : Color.BLACK);
         star2.setColor(Color.DARK_GRAY);
         mainScreen.add(star2);
 
@@ -131,7 +129,7 @@ public class LevelSelectPane extends GraphicsPane {
 
         star3 = createStar(star3X, star3Y, 48, 24);
         star3.setFilled(true);
-        star3.setFillColor(Color.BLACK);
+        star3.setFillColor(levelProgress >= 4 ? getPlayerColor() : Color.BLACK);
         star3.setColor(Color.DARK_GRAY);
         mainScreen.add(star3);
 
@@ -147,39 +145,55 @@ public class LevelSelectPane extends GraphicsPane {
         star4.setColor(Color.DARK_GRAY);
         mainScreen.add(star4);
 
-        stopDots = new GRect[] {
-        	    null,
-        	    seg1Dots[11],
-        	    null,
-        	    null,
-        	    null
-        	};
-
-        if (levelProgress >= 2 && seg2Dots[0] != null) {
-            mainScreen.remove(seg2Dots[0]);
-            seg2Dots[0] = null;
-        }
-
         pointX = new double[] {
-        	    60,
-        	    seg1Dots[11].getX(),
-        	    0,
-        	    0,
-        	    0
-        	};
+            startX,
+            path1X,
+            path2X,
+            path3X,
+            path4X
+        };
 
         pointY = new double[] {
-        	    420,
-        	    seg1Dots[11].getY(),
-        	    0,
-        	    0,
-        	    0
-        	};
+            startY,
+            path1Y,
+            path2Y,
+            path3Y,
+            path4Y
+        };
 
-        if (levelProgress >= 2) {
-            currentPoint = 1;
-        } else {
-            currentPoint = 0;
+        stopDots = new GRect[] {
+            null,
+            seg1Dots[seg1Dots.length - 1],
+            seg2Dots != null ? seg2Dots[seg2Dots.length - 1] : null,
+            seg3Dots != null ? seg3Dots[seg3Dots.length - 1] : null,
+            seg4Dots != null ? seg4Dots[seg4Dots.length - 1] : null
+        };
+
+        currentPoint = levelProgress - 1;
+        if (currentPoint < 0) currentPoint = 0;
+        if (currentPoint > 4) currentPoint = 4;
+
+        huemanImage = player.getSprite("overworld");
+        huemanImage.scale(0.6);
+        huemanImage.setLocation(pointX[currentPoint] - 40, pointY[currentPoint] + 30);
+        mainScreen.add(huemanImage);
+        huemanImage.sendToFront();
+
+        if (currentPoint >= 1 && stopDots[1] != null) {
+            mainScreen.remove(stopDots[1]);
+            stopDots[1] = null;
+        }
+        if (currentPoint >= 2 && stopDots[2] != null) {
+            mainScreen.remove(stopDots[2]);
+            stopDots[2] = null;
+        }
+        if (currentPoint >= 3 && stopDots[3] != null) {
+            mainScreen.remove(stopDots[3]);
+            stopDots[3] = null;
+        }
+        if (currentPoint >= 4 && stopDots[4] != null) {
+            mainScreen.remove(stopDots[4]);
+            stopDots[4] = null;
         }
     }
 
@@ -224,11 +238,11 @@ public class LevelSelectPane extends GraphicsPane {
 
         if (showLevelScreen) {
             if (startButton != null && startButton.contains(e.getX(), e.getY())) {
-            	if (selectedLevel == 1) {
-            		mainScreen.switchToSecondBattleScreen();
-            	} else if (selectedLevel == 2) {
-            		mainScreen.switchToCutScene3Screen();
-            	}
+                if (selectedLevel == 1) {
+                    mainScreen.switchToSecondBattleScreen();
+                } else if (selectedLevel == 2) {
+                    mainScreen.switchToCutScene3Screen();
+                }
                 return;
             }
 
@@ -239,19 +253,21 @@ public class LevelSelectPane extends GraphicsPane {
             }
         }
 
-        if (star1 != null && star1.contains(e.getX(), e.getY())) {
+        int levelProgress = mainScreen.getCurrentLevel();
+
+        if (star1 != null && star1.contains(e.getX(), e.getY()) && levelProgress >= 1) {
             currentPoint = 1;
             selectedLevel = 1;
             showLevelOneScreen();
-        } else if (star2 != null && star2.contains(e.getX(), e.getY())) {
+        } else if (star2 != null && star2.contains(e.getX(), e.getY()) && levelProgress >= 2) {
             currentPoint = 2;
             selectedLevel = 2;
             showLevelOneScreen();
-        } else if (star3 != null && star3.contains(e.getX(), e.getY())) {
+        } else if (star3 != null && star3.contains(e.getX(), e.getY()) && levelProgress >= 3) {
             currentPoint = 3;
             selectedLevel = 3;
             showLevelOneScreen();
-        } else if (star4 != null && star4.contains(e.getX(), e.getY())) {
+        } else if (star4 != null && star4.contains(e.getX(), e.getY()) && levelProgress >= 4) {
             currentPoint = 4;
             selectedLevel = 4;
             showLevelOneScreen();
@@ -259,23 +275,23 @@ public class LevelSelectPane extends GraphicsPane {
     }
 
     private void moveForward() {
-        if (currentPoint < pointX.length - 1) {
-            currentPoint++;
+        int maxReachablePoint = mainScreen.getCurrentLevel();
 
-            if (currentPoint >= 1) {
-                showLevelOneScreen();
-                return;
-            }
+        if (currentPoint < maxReachablePoint && currentPoint < pointX.length - 1) {
+            currentPoint++;
 
             double x = pointX[currentPoint];
             double y = pointY[currentPoint];
 
             huemanImage.setLocation(x - 40, y + 30);
 
-            if (stopDots[currentPoint] != null) {
+            if (stopDots != null && stopDots[currentPoint] != null) {
                 mainScreen.remove(stopDots[currentPoint]);
                 stopDots[currentPoint] = null;
             }
+
+            selectedLevel = currentPoint;
+            showLevelOneScreen();
         }
     }
 
@@ -353,7 +369,16 @@ public class LevelSelectPane extends GraphicsPane {
 
         addBrokenDivider(MainApplication.WINDOW_WIDTH / 2.0);
 
-        levelEnemyImage = new GImage("mint.png");
+        if (selectedLevel == 1) {
+            levelEnemyImage = new GImage("mint.png");
+        } else if (selectedLevel == 2) {
+            levelEnemyImage = new GImage("slujupiter.png");
+        } else if (selectedLevel == 3) {
+            levelEnemyImage = new GImage("mint.png");
+        } else if (selectedLevel == 4) {
+            levelEnemyImage = new GImage("mint.png");
+        } 
+        
         levelEnemyImage.scale(0.7);
 
         double imgX = 325;
@@ -533,7 +558,7 @@ public class LevelSelectPane extends GraphicsPane {
 
         return star;
     }
-    
+
     private Color getPlayerColor() {
         String selectedColor = mainScreen.getSelectedColor();
 
@@ -542,6 +567,4 @@ public class LevelSelectPane extends GraphicsPane {
         if (selectedColor.equals("green")) return Color.GREEN;
         return Color.BLUE;
     }
-    
-    
 }

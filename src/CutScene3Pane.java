@@ -97,15 +97,15 @@ public class CutScene3Pane extends GraphicsPane {
         contents.add(continueLabel);
     }
 
-    private void advanceDialogue() {
-        dialogueIndex++;
+	private void advanceDialogue() {
+	    dialogueIndex++;
 
-        if (dialogueIndex < dialogue.length) {
-            dialogueText.setLabel(dialogue[dialogueIndex]);
-        } else {
-            mainScreen.switchToSecondBattleScreen();
-        }
-    }
+	    if (dialogueIndex < dialogue.length) {
+	        dialogueText.setLabel(dialogue[dialogueIndex]);
+	    } else {
+	        mainScreen.switchToThirdBattlePane();
+	    }
+	}
 
     private void scaleButton(GRect button, double scale) {
         double centerX = button.getX() + button.getWidth() / 2;
