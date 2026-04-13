@@ -31,6 +31,7 @@ public class MainApplication extends GraphicsProgram{
 	private ThirdBattlePane thirdBattlePane;
 	private FourthBattlePane fourthBattlePane;
 	private vs_Second vsSecondPane;
+	private vs_Third vsThirdPane;
 	private int currentLevel = 1; // start at level 1
 	private boolean isTransitioning = false;
 
@@ -86,6 +87,7 @@ public class MainApplication extends GraphicsProgram{
 		secondBattlePane = new SecondBattlePane(this);
 		thirdBattlePane = new ThirdBattlePane(this);
 		fourthBattlePane = new FourthBattlePane(this);
+		vsThirdPane = new vs_Third(this);
 
 		//The Default Screen
 		switchToScreen(titlePane);
@@ -141,6 +143,11 @@ public class MainApplication extends GraphicsProgram{
 	public void switchToVsSecondScreen() {
 		switchToScreen(vsSecondPane);
 	}
+	
+	public void switchToVsThirdScreen() {
+		switchToScreen(vsSecondPane);
+	}
+	
 	
 	
 	public void switchToStatsScreen() {
