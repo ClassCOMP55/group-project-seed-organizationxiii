@@ -92,7 +92,7 @@ public class Decima extends boss {
 	}
 	
 	@Override
-	public void takeTurn(character other) {
+	public void takeTurn(Hueman other) {
 		
 		switch(phase) {
 		

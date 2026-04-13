@@ -51,7 +51,7 @@ public class MintSentinel extends boss {
 	}
 
 	@Override
-	public void takeTurn(character player) {
+	public void takeTurn(Hueman player) {
 		if (Math.random() < 0.33) {
 			raiseDefense();
 		}

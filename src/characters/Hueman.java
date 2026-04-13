@@ -9,6 +9,22 @@ public class Hueman extends player {
     private final int maxSuperPowerMeter = 500;
     private int currentSuperPowerMeter = 0;
     
+    private float speedMult = 1.0f;
+    
+    
+    @Override
+    public int calculateSpeed() {
+    	return (int) (speed * speedMult);
+    }
+    
+    public void applySpeedModifier(float mult) {
+    	speedMult = mult;
+    }
+    
+    public void clearSpeedModifier() {
+    	speedMult = 1.0f;
+    }
+    
     public int getSuperMeter() {
         return currentSuperPowerMeter;
     }
@@ -88,7 +104,7 @@ public class Hueman extends player {
     	if (score < 150) {
     		return "Starter";
     	} else if (score < 250) {
-    		return "Advamced";
+    		return "Advanced";
     	} else if (score < 400) {
     		return "Elite";
     	} else {

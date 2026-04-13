@@ -17,7 +17,7 @@ public abstract class boss extends character {
 	 // boss-specific resets later
 	 }
 
-	 public abstract void takeTurn(character player); // AI behavior
+	 public abstract void takeTurn(Hueman player); // AI behavior
 
 	 public void startTurn() {
 	 // optional reset mechanic
