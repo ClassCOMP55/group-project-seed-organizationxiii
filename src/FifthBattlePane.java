@@ -374,5 +374,5 @@ public class FifthBattlePane extends GraphicsPane {
         contents.clear();
     }
     
-    //test
+    //test2
 }

@@ -32,6 +32,7 @@ public class MainApplication extends GraphicsProgram{
 	private FourthBattlePane fourthBattlePane;
 	private FifthBattlePane fifthBattlePane;
 	private vs_Second vsSecondPane;
+	private vs_Third vsThirdPane;
 	private int currentLevel = 1; // start at level 1
 	private boolean isTransitioning = false;
 
@@ -88,6 +89,8 @@ public class MainApplication extends GraphicsProgram{
 		thirdBattlePane = new ThirdBattlePane(this);
 		fourthBattlePane = new FourthBattlePane(this);
 		fifthBattlePane = new FifthBattlePane(this);
+		vsThirdPane = new vs_Third(this);
+
 
 		//The Default Screen
 		switchToScreen(titlePane);
@@ -144,6 +147,10 @@ public class MainApplication extends GraphicsProgram{
 		switchToScreen(vsSecondPane);
 	}
 	
+	public void switchToVsThirdScreen() {
+	    switchToScreen(vsThirdPane);
+	}
+	    
 	
 	public void switchToStatsScreen() {
 		if(huemanStatsScreen != null) {
@@ -296,4 +303,4 @@ public class MainApplication extends GraphicsProgram{
 	}
 }
 
-//test
+//test2
