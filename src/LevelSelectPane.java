@@ -244,14 +244,11 @@ public class LevelSelectPane extends GraphicsPane {
         	        mainScreen.switchToCutScene3Screen();
         	    } else if (selectedLevel == 3) {
         	        mainScreen.switchToFourthBattleScreen();
+        	    } else if (selectedLevel == 4) {
+        	        mainScreen.switchToFifthBattleScreen(); // ✅ ADD THIS LINE
         	    }
         	    return;
         	}
-            if (backButton != null && backButton.contains(e.getX(), e.getY())) {
-                showLevelScreen = false;
-                mainScreen.switchToLevelSelectScreen();
-                return;
-            }
         }
 
         int levelProgress = mainScreen.getCurrentLevel();
@@ -572,6 +569,7 @@ public class LevelSelectPane extends GraphicsPane {
 
             star.addVertex(x - centerX, y - centerY);
         }
+        
 
         star.setFilled(true);
         star.setFillColor(Color.BLACK);
@@ -590,3 +588,4 @@ public class LevelSelectPane extends GraphicsPane {
         return Color.BLUE;
     }
 }
+//test2

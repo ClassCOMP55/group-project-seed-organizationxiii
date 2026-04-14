@@ -30,7 +30,9 @@ public class MainApplication extends GraphicsProgram{
 	private SecondBattlePane secondBattlePane;
 	private ThirdBattlePane thirdBattlePane;
 	private FourthBattlePane fourthBattlePane;
+	private FifthBattlePane fifthBattlePane;
 	private vs_Second vsSecondPane;
+	private vs_Third vsThirdPane;
 	private int currentLevel = 1; // start at level 1
 	private boolean isTransitioning = false;
 
@@ -86,6 +88,9 @@ public class MainApplication extends GraphicsProgram{
 		secondBattlePane = new SecondBattlePane(this);
 		thirdBattlePane = new ThirdBattlePane(this);
 		fourthBattlePane = new FourthBattlePane(this);
+		fifthBattlePane = new FifthBattlePane(this);
+		vsThirdPane = new vs_Third(this);
+
 
 		//The Default Screen
 		switchToScreen(titlePane);
@@ -142,6 +147,10 @@ public class MainApplication extends GraphicsProgram{
 		switchToScreen(vsSecondPane);
 	}
 	
+	public void switchToVsThirdScreen() {
+	    switchToScreen(vsThirdPane);
+	}
+	    
 	
 	public void switchToStatsScreen() {
 		if(huemanStatsScreen != null) {
@@ -277,6 +286,13 @@ public class MainApplication extends GraphicsProgram{
 	    currentScreen.showContent();
 	}
 	
+	public void switchToFifthBattleScreen() {
+	    if (currentScreen != null) {
+	        currentScreen.hideContent();
+	    }
+	    currentScreen = fifthBattlePane;
+	    currentScreen.showContent();
+	}
 	
 	public int getCurrentLevel() {
 	    return currentLevel;
@@ -286,3 +302,5 @@ public class MainApplication extends GraphicsProgram{
 	    currentLevel = level;
 	}
 }
+
+//test2

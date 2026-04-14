@@ -2,26 +2,26 @@ import acm.graphics.GImage;
 import acm.graphics.GLabel;
 import acm.graphics.GObject;
 import acm.graphics.GRect;
-import characters.Decima;
 import characters.Hueman;
+import characters.MintSentinel;
 
 import java.awt.Color;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 
-public class FourthBattlePane extends GraphicsPane {
+public class FifthBattlePane extends GraphicsPane {
 
     private GImage huemanImage;
-    private GImage decimaImage;
+    private GImage mintImage;
 
     private GRect huemanHealthBar;
     private GRect huemanHealthBack;
 
-    private GRect decimaHealthBar;
-    private GRect decimaHealthBack;
+    private GRect mintHealthBar;
+    private GRect mintHealthBack;
 
     private double huemanMaxHP;
-    private double decimaMaxHP;
+    private double mintMaxHP;
 
     private GRect actionBox;
     private GLabel fightOption;
@@ -30,10 +30,10 @@ public class FourthBattlePane extends GraphicsPane {
     private boolean showingFightMenu = false;
 
     private Hueman h1;
-    private Decima d1;
+    private MintSentinel m1;
 
     private GLabel huemanName;
-    private GLabel decimaName;
+    private GLabel mintName;
 
     private GRect continueButton;
     private GLabel continueLabel;
@@ -45,37 +45,37 @@ public class FourthBattlePane extends GraphicsPane {
     private GRect superMeterBack;
     private GLabel superLabel;
 
-    public FourthBattlePane(MainApplication mainScreen) {
+    public FifthBattlePane(MainApplication mainScreen) {
         this.mainScreen = mainScreen;
     }
 
     @Override
     public void showContent() {
         h1 = mainScreen.getPlayer();
-        d1 = new Decima(600, 20, 10, "Decima", Decima.Phase.FIRST);
+        m1 = new MintSentinel(600, 20, 10, "Mint");
 
         huemanMaxHP = h1.getHP();
-        decimaMaxHP = d1.getHP();
+        mintMaxHP = m1.getHP();
 
         huemanImage = new GImage(getHuemanImage());
-        decimaImage = new GImage("Decima.png");
+        mintImage = new GImage("Mint.png");
 
         huemanImage.scale(0.6);
-        decimaImage.scale(0.9);
+        mintImage.scale(0.9);
 
         double hx = MainApplication.WINDOW_WIDTH * 0.25 - huemanImage.getWidth() / 2 + 30;
         double hy = 200;
         huemanImage.setLocation(hx, hy);
 
-        double dx = MainApplication.WINDOW_WIDTH * 0.75 - decimaImage.getWidth() / 2;
-        double dy = 10;
-        decimaImage.setLocation(dx, dy);
+        double mx = MainApplication.WINDOW_WIDTH * 0.75 - mintImage.getWidth() / 2;
+        double my = 10;
+        mintImage.setLocation(mx, my);
 
         mainScreen.add(huemanImage);
-        mainScreen.add(decimaImage);
+        mainScreen.add(mintImage);
 
         contents.add(huemanImage);
-        contents.add(decimaImage);
+        contents.add(mintImage);
 
         double barWidth = 200;
         double barHeight = 12;
@@ -118,20 +118,20 @@ public class FourthBattlePane extends GraphicsPane {
         double meterHeight = 12;
         double spacing = 15;
 
-        double mx = huemanHealthBack.getX() + huemanHealthBack.getWidth() + spacing;
-        double my = huemanHealthBack.getY();
+        double meterX = huemanHealthBack.getX() + huemanHealthBack.getWidth() + spacing;
+        double meterY = huemanHealthBack.getY();
 
-        superMeterBack = new GRect(mx, my, meterWidth, meterHeight);
+        superMeterBack = new GRect(meterX, meterY, meterWidth, meterHeight);
         superMeterBack.setFilled(true);
         superMeterBack.setFillColor(Color.DARK_GRAY);
 
-        superMeterBar = new GRect(mx, my, 0, meterHeight);
+        superMeterBar = new GRect(meterX, meterY, 0, meterHeight);
         superMeterBar.setFilled(true);
         superMeterBar.setFillColor(Color.ORANGE);
 
         superLabel = new GLabel("SP");
         superLabel.setFont("Arial-Bold-10");
-        superLabel.setLocation(mx, my - 2);
+        superLabel.setLocation(meterX, meterY - 2);
 
         mainScreen.add(superMeterBack);
         mainScreen.add(superMeterBar);
@@ -141,23 +141,23 @@ public class FourthBattlePane extends GraphicsPane {
         contents.add(superMeterBar);
         contents.add(superLabel);
 
-        double dxBar = 30;
-        double dyBar = 30;
+        double mxBar = 30;
+        double myBar = 30;
 
-        decimaHealthBack = new GRect(dxBar, dyBar, barWidth, barHeight);
-        decimaHealthBack.setFilled(true);
-        decimaHealthBack.setFillColor(Color.DARK_GRAY);
+        mintHealthBack = new GRect(mxBar, myBar, barWidth, barHeight);
+        mintHealthBack.setFilled(true);
+        mintHealthBack.setFillColor(Color.DARK_GRAY);
 
-        decimaHealthBar = new GRect(dxBar, dyBar, barWidth, barHeight);
-        decimaHealthBar.setFilled(true);
-        decimaHealthBar.setFillColor(new Color(212, 175, 55));
-        decimaHealthBar.setColor(new Color(150, 120, 30));
+        mintHealthBar = new GRect(mxBar, myBar, barWidth, barHeight);
+        mintHealthBar.setFilled(true);
+        mintHealthBar.setFillColor(new Color(102, 255, 204));
+        mintHealthBar.setColor(new Color(0, 153, 102));
 
-        mainScreen.add(decimaHealthBack);
-        mainScreen.add(decimaHealthBar);
+        mainScreen.add(mintHealthBack);
+        mainScreen.add(mintHealthBar);
 
-        contents.add(decimaHealthBack);
-        contents.add(decimaHealthBar);
+        contents.add(mintHealthBack);
+        contents.add(mintHealthBar);
 
         huemanName = new GLabel(h1.getName());
         huemanName.setFont("Arial-Bold-14");
@@ -166,18 +166,18 @@ public class FourthBattlePane extends GraphicsPane {
             huemanHealthBack.getY() - 5
         );
 
-        decimaName = new GLabel(d1.getName());
-        decimaName.setFont("Arial-Bold-14");
-        decimaName.setLocation(
-            decimaHealthBack.getX(),
-            decimaHealthBack.getY() - 5
+        mintName = new GLabel(m1.getName());
+        mintName.setFont("Arial-Bold-14");
+        mintName.setLocation(
+            mintHealthBack.getX(),
+            mintHealthBack.getY() - 5
         );
 
         mainScreen.add(huemanName);
-        mainScreen.add(decimaName);
+        mainScreen.add(mintName);
 
         contents.add(huemanName);
-        contents.add(decimaName);
+        contents.add(mintName);
 
         double boxWidth = 300;
         double boxHeight = 120;
@@ -201,7 +201,7 @@ public class FourthBattlePane extends GraphicsPane {
 
         GRect innerFrame = new GRect(boxX + 6, boxY + 6, boxWidth - 12, boxHeight - 12);
         innerFrame.setFilled(false);
-        innerFrame.setColor(new Color(212, 175, 55));
+        innerFrame.setColor(new Color(102, 255, 204));
         mainScreen.add(innerFrame);
         contents.add(innerFrame);
 
@@ -245,7 +245,6 @@ public class FourthBattlePane extends GraphicsPane {
         GObject obj = mainScreen.getElementAtLocation(e.getX(), e.getY());
 
         if (obj == continueButton || obj == continueLabel) {
-            mainScreen.setCurrentLevel(4);
             mainScreen.switchToLevelSelectScreen();
             return;
         }
@@ -266,7 +265,7 @@ public class FourthBattlePane extends GraphicsPane {
 
             } else if (obj == abilityOption) {
                 if (h1.getSuperMeter() > 0) {
-                    h1.useAbility(1, d1);
+                    h1.useAbility(1, m1);
                     updateHealthBars();
                 }
             }
@@ -300,7 +299,7 @@ public class FourthBattlePane extends GraphicsPane {
     private void performPlayerAttack() {
         if (!playerTurn || battleOver) return;
 
-        h1.attackOpponent(d1);
+        h1.attackOpponent(m1);
         updateHealthBars();
 
         playerTurn = false;
@@ -309,8 +308,8 @@ public class FourthBattlePane extends GraphicsPane {
     private void performEnemyTurn() {
         if (battleOver) return;
 
-        if (d1.isAlive()) {
-            d1.takeTurn(h1);
+        if (m1.isAlive()) {
+            m1.takeTurn(h1);
             updateHealthBars();
         }
 
@@ -318,11 +317,9 @@ public class FourthBattlePane extends GraphicsPane {
     }
 
     private void checkBattleEnd() {
-        if (!d1.isAlive()) {
+        if (!m1.isAlive()) {
             battleOver = true;
             System.out.println("YOU WIN");
-
-            mainScreen.setCurrentLevel(4);
             mainScreen.switchToLevelSelectScreen();
             return;
         }
@@ -335,10 +332,10 @@ public class FourthBattlePane extends GraphicsPane {
 
     private void updateHealthBars() {
         double huemanRatio = (double) h1.getHP() / huemanMaxHP;
-        double decimaRatio = (double) d1.getHP() / decimaMaxHP;
+        double mintRatio = (double) m1.getHP() / mintMaxHP;
 
         huemanHealthBar.setSize(200 * huemanRatio, 12);
-        decimaHealthBar.setSize(200 * decimaRatio, 12);
+        mintHealthBar.setSize(200 * mintRatio, 12);
 
         updateSuperMeter();
     }
