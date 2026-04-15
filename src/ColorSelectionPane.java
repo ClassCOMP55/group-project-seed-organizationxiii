@@ -76,7 +76,7 @@ public class ColorSelectionPane extends GraphicsPane {
     }
 
     private void selectColor(ColorType color) {
-        Hueman player = new Hueman(400, 50, 10, "Hueman", color);
+        Hueman player = new Hueman(500, 50, 11, "Hueman", color);
         mainScreen.setPlayer(player);
 
         if (color == ColorType.RED) {

@@ -56,7 +56,7 @@ public class SecondBattlePane extends GraphicsPane {
         // 1. Create characters
         // =========================
         h1 = mainScreen.getPlayer();
-        m1 = new MintSentinel(700, 24, 12, "Mint");
+        m1 = new MintSentinel(900, 15, 10, "Mint");
 
         huemanMaxHP = h1.getHP();
         mintMaxHP = m1.getHP();
