@@ -6,7 +6,7 @@ public class Hueman extends player {
 	
 	private ColorType color;
 
-    private final int maxSuperPowerMeter = 500;
+    private final int maxSuperPowerMeter = 400;
     private int currentSuperPowerMeter = 0;
     
     private short debilitateStacks = 0;
@@ -43,7 +43,7 @@ public class Hueman extends player {
     	}
     }
     
-    public void debilitate(boss other) {
+    public void debilitate(boss other) { //after slujupiter battle
     	
     	System.out.println("Hueman used debilitate!");
     	
@@ -156,7 +156,7 @@ public class Hueman extends player {
     @Override
     public boolean useAbility(int abilityID, character target) {
         if (abilityID == 1) {
-            int damage = currentSuperPowerMeter;
+            int damage = (int) (currentSuperPowerMeter * 1.5);
 
             target.takeDamage(damage);
             currentSuperPowerMeter = 0;
