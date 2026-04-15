@@ -17,7 +17,9 @@ public class lavender extends boss {
 	}
 	
 	
-	
+	private void loadSprites() {
+		sprites.put("main", "lavender.png");
+	}
 	
 	
 	@Override
