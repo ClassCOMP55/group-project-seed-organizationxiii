@@ -72,7 +72,7 @@ public class SecondBattlePane extends GraphicsPane {
         mintImage = new GImage("mint.png");
 
         huemanImage.scale(0.6);
-        mintImage.scale(0.7);
+        mintImage.scale(0.5);
 
         double hx = MainApplication.WINDOW_WIDTH * 0.25 - huemanImage.getWidth() / 2 + 30;
         double hy = 200;
