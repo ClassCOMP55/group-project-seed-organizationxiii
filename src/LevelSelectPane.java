@@ -9,20 +9,12 @@ public class LevelSelectPane extends GraphicsPane {
 
     private GImage huemanImage;
 
-    private GPolygon star1, star1Glow;
-    private GPolygon star2, star2Glow;
-    private GPolygon star3, star3Glow;
-    private GPolygon star4, star4Glow;
-
-    private GRect[] seg1Dots;
-    private GRect[] seg2Dots;
-    private GRect[] seg3Dots;
-    private GRect[] seg4Dots;
-
-    private GRect[] stopDots;
+    private GPolygon[] stars;
+    private GPolygon[] starGlows;
 
     private double[] pointX;
     private double[] pointY;
+
     private int currentPoint = 0;
 
     private boolean showLevelScreen = false;
@@ -41,6 +33,7 @@ public class LevelSelectPane extends GraphicsPane {
     public LevelSelectPane(MainApplication mainScreen) {
         this.mainScreen = mainScreen;
     }
+    
 
     @Override
     public void showContent() {
@@ -50,171 +43,127 @@ public class LevelSelectPane extends GraphicsPane {
         Hueman player = mainScreen.getPlayer();
         int levelProgress = mainScreen.getCurrentLevel();
 
-        double startX = 120;
-        double startY = 530;
+        removeAllStars();
 
-        double star1X = 640;
-        double star1Y = 360;
-
-        double star2X = 260;
-        double star2Y = 250;
-
-        double star3X = 670;
-        double star3Y = 140;
-
-        double star4X = 260;
-        double star4Y = 80;
-
-        double path1X = 610;
-        double path1Y = 415;
-
-        double path2X = 290;
-        double path2Y = 305;
-
-        double path3X = 640;
-        double path3Y = 195;
-
-        double path4X = 290;
-        double path4Y = 135;
-
-        seg1Dots = addPathSegment(startX, startY, path1X, path1Y, 12);
-
-        if (levelProgress >= 2) {
-            seg2Dots = addPathSegment(path1X, path1Y, path2X, path2Y, 10);
-        } else {
-            seg2Dots = null;
-        }
-
-        if (levelProgress >= 3) {
-            seg3Dots = addPathSegment(path2X, path2Y, path3X, path3Y, 10);
-        } else {
-            seg3Dots = null;
-        }
-
-        if (levelProgress >= 4) {
-            seg4Dots = addPathSegment(path3X, path3Y, path4X, path4Y, 10);
-        } else {
-            seg4Dots = null;
-        }
-
-        star1Glow = createStar(star1X, star1Y, 55, 28);
-        star1Glow.setFilled(true);
-        star1Glow.setFillColor(new Color(255, 230, 120));
-        star1Glow.setColor(new Color(255, 230, 120));
-        mainScreen.add(star1Glow);
-
-        star1 = createStar(star1X, star1Y, 48, 24);
-        star1.setFilled(true);
-        star1.setFillColor(levelProgress >= 2 ? getPlayerColor() : Color.BLACK);
-        star1.setColor(Color.DARK_GRAY);
-        mainScreen.add(star1);
-
-        star2Glow = createStar(star2X, star2Y, 55, 28);
-        star2Glow.setFilled(true);
-        star2Glow.setFillColor(new Color(255, 230, 120));
-        star2Glow.setColor(new Color(255, 230, 120));
-        mainScreen.add(star2Glow);
-
-        star2 = createStar(star2X, star2Y, 48, 24);
-        star2.setFilled(true);
-        star2.setFillColor(levelProgress >= 3 ? getPlayerColor() : Color.BLACK);
-        star2.setColor(Color.DARK_GRAY);
-        mainScreen.add(star2);
-
-        star3Glow = createStar(star3X, star3Y, 55, 28);
-        star3Glow.setFilled(true);
-        star3Glow.setFillColor(new Color(255, 230, 120));
-        star3Glow.setColor(new Color(255, 230, 120));
-        mainScreen.add(star3Glow);
-
-        star3 = createStar(star3X, star3Y, 48, 24);
-        star3.setFilled(true);
-        star3.setFillColor(levelProgress >= 4 ? getPlayerColor() : Color.BLACK);
-        star3.setColor(Color.DARK_GRAY);
-        mainScreen.add(star3);
-
-        star4Glow = createStar(star4X, star4Y, 55, 28);
-        star4Glow.setFilled(true);
-        star4Glow.setFillColor(new Color(255, 230, 120));
-        star4Glow.setColor(new Color(255, 230, 120));
-        mainScreen.add(star4Glow);
-
-        star4 = createStar(star4X, star4Y, 48, 24);
-        star4.setFilled(true);
-        star4.setFillColor(Color.BLACK);
-        star4.setColor(Color.DARK_GRAY);
-        mainScreen.add(star4);
+        stars = new GPolygon[8];
+        starGlows = new GPolygon[8];
 
         pointX = new double[] {
-            startX,
-            path1X,
-            path2X,
-            path3X,
-            path4X
+            400,  // star 1
+            300,  // star 2
+            1500,  // star 3
+            1600,  // star 4
+            400,  // star 5
+            300,  // star 6
+            1500, // star 7
+            1600  // star 8
         };
 
         pointY = new double[] {
-            startY,
-            path1Y,
-            path2Y,
-            path3Y,
-            path4Y
+            900,  // star 1
+            800,  // star 2
+            700,  // star 3
+            600,  // star 4
+            500,  // star 5
+            400,  // star 6
+            300,  // star 7
+            200   // star 8
         };
 
-        stopDots = new GRect[] {
-            null,
-            seg1Dots[seg1Dots.length - 1],
-            seg2Dots != null ? seg2Dots[seg2Dots.length - 1] : null,
-            seg3Dots != null ? seg3Dots[seg3Dots.length - 1] : null,
-            seg4Dots != null ? seg4Dots[seg4Dots.length - 1] : null
-        };
+        drawRopes();
+
+        for (int i = 0; i < 8; i++) {
+            boolean isBoss = ((i + 1) % 2 == 0);
+
+            double outerGlow = isBoss ? 58 : 44;
+            double innerGlow = isBoss ? 28 : 20;
+
+            double outerStar = isBoss ? 50 : 36;
+            double innerStar = isBoss ? 24 : 16;
+
+            starGlows[i] = createStar(pointX[i], pointY[i], outerGlow, innerGlow);
+            starGlows[i].setFilled(true);
+            starGlows[i].setFillColor(new Color(255, 230, 120));
+            starGlows[i].setColor(new Color(255, 230, 120));
+            mainScreen.add(starGlows[i]);
+
+            stars[i] = createStar(pointX[i], pointY[i], outerStar, innerStar);
+            stars[i].setFilled(true);
+
+            if (levelProgress > i + 1) {
+                stars[i].setFillColor(getPlayerColor());
+            } else {
+                stars[i].setFillColor(Color.BLACK);
+            }
+
+            stars[i].setColor(Color.DARK_GRAY);
+            mainScreen.add(stars[i]);
+        }
 
         currentPoint = levelProgress - 1;
         if (currentPoint < 0) currentPoint = 0;
-        if (currentPoint > 4) currentPoint = 4;
+        if (currentPoint > 8) currentPoint = 8;
 
         huemanImage = player.getSprite("overworld");
         huemanImage.scale(0.6);
-        huemanImage.setLocation(pointX[currentPoint] - 40, pointY[currentPoint] + 30);
+
+        double playerStartX = 20;
+        double playerStartY = 900;
+
+        if (currentPoint == 0) {
+            huemanImage.setLocation(playerStartX, playerStartY);
+        } else {
+            huemanImage.setLocation(pointX[currentPoint - 1], pointY[currentPoint - 1]);
+        }
+
         mainScreen.add(huemanImage);
         huemanImage.sendToFront();
+    }
+    
+    
+    private ArrayList<GObject> ropeObjects = new ArrayList<GObject>();
 
-        if (currentPoint >= 1 && stopDots[1] != null) {
-            mainScreen.remove(stopDots[1]);
-            stopDots[1] = null;
-        }
-        if (currentPoint >= 2 && stopDots[2] != null) {
-            mainScreen.remove(stopDots[2]);
-            stopDots[2] = null;
-        }
-        if (currentPoint >= 3 && stopDots[3] != null) {
-            mainScreen.remove(stopDots[3]);
-            stopDots[3] = null;
-        }
-        if (currentPoint >= 4 && stopDots[4] != null) {
-            mainScreen.remove(stopDots[4]);
-            stopDots[4] = null;
+    private void drawRopes() {
+        clearRopes();
+
+        Color ropeMain = new Color(120, 85, 45);
+        Color ropeShadow = new Color(85, 55, 25);
+
+        for (int i = 0; i < pointX.length - 1; i++) {
+            double x1 = pointX[i];
+            double y1 = pointY[i];
+            double x2 = pointX[i + 1];
+            double y2 = pointY[i + 1];
+
+            GLine rope1 = new GLine(x1, y1, x2, y2);
+            rope1.setColor(ropeMain);
+            mainScreen.add(rope1);
+            ropeObjects.add(rope1);
+
+            GLine rope2 = new GLine(x1 + 2, y1 + 2, x2 + 2, y2 + 2);
+            rope2.setColor(ropeShadow);
+            mainScreen.add(rope2);
+            ropeObjects.add(rope2);
+
+            for (int k = 1; k <= 4; k++) {
+                double t = k / 5.0;
+                double mx = x1 + (x2 - x1) * t;
+                double my = y1 + (y2 - y1) * t;
+
+                GLine knot = new GLine(mx - 4, my - 4, mx + 4, my + 4);
+                knot.setColor(ropeShadow);
+                mainScreen.add(knot);
+                ropeObjects.add(knot);
+            }
         }
     }
+    
 
     @Override
     public void hideContent() {
         if (huemanImage != null) mainScreen.remove(huemanImage);
-
-        removeDots(seg1Dots);
-        removeDots(seg2Dots);
-        removeDots(seg3Dots);
-        removeDots(seg4Dots);
-
-        removeStar(star1Glow);
-        removeStar(star1);
-        removeStar(star2Glow);
-        removeStar(star2);
-        removeStar(star3Glow);
-        removeStar(star3);
-        removeStar(star4Glow);
-        removeStar(star4);
-
+        removeAllStars();
+        clearRopes();
         clearPreviewScreen();
         showLevelScreen = false;
     }
@@ -237,56 +186,48 @@ public class LevelSelectPane extends GraphicsPane {
     public void mouseClicked(MouseEvent e) {
 
         if (showLevelScreen) {
-        	if (startButton != null && startButton.contains(e.getX(), e.getY())) {
-        	    if (selectedLevel == 1) {
-        	        mainScreen.switchToSecondBattleScreen();
-        	    } else if (selectedLevel == 2) {
-        	        mainScreen.switchToCutScene3Screen();
-        	    } else if (selectedLevel == 3) {
-        	        mainScreen.switchToFourthBattleScreen();
-        	    } else if (selectedLevel == 4) {
-        	        mainScreen.switchToFifthBattleScreen(); // ✅ ADD THIS LINE
-        	    }
-        	    return;
-        	}
+            if (startButton != null && startButton.contains(e.getX(), e.getY())) {
+                if (selectedLevel == 1) {
+                    mainScreen.switchToSecondBattleScreen();
+                } else if (selectedLevel == 2) {
+                    mainScreen.switchToCutScene3Screen();
+                } else if (selectedLevel == 3) {
+                    mainScreen.switchToFourthBattleScreen();
+                } else if (selectedLevel == 4) {
+                    mainScreen.switchToFifthBattleScreen();
+                }
+                return;
+            }
+
+            if (backButton != null && backButton.contains(e.getX(), e.getY())) {
+                clearPreviewScreen();
+                showLevelScreen = false;
+                return;
+            }
         }
 
         int levelProgress = mainScreen.getCurrentLevel();
 
-        if (star1 != null && star1.contains(e.getX(), e.getY()) && levelProgress >= 1) {
-            currentPoint = 1;
-            selectedLevel = 1;
-            showLevelOneScreen();
-        } else if (star2 != null && star2.contains(e.getX(), e.getY()) && levelProgress >= 2) {
-            currentPoint = 2;
-            selectedLevel = 2;
-            showLevelOneScreen();
-        } else if (star3 != null && star3.contains(e.getX(), e.getY()) && levelProgress >= 3) {
-            currentPoint = 3;
-            selectedLevel = 3;
-            showLevelOneScreen();
-        } else if (star4 != null && star4.contains(e.getX(), e.getY()) && levelProgress >= 4) {
-            currentPoint = 4;
-            selectedLevel = 4;
-            showLevelOneScreen();
+        for (int i = 0; i < 8; i++) {
+            if (stars[i] != null && stars[i].contains(e.getX(), e.getY()) && levelProgress >= i + 1) {
+                currentPoint = i + 1;
+                selectedLevel = i + 1;
+                showLevelOneScreen();
+                return;
+            }
         }
     }
 
     private void moveForward() {
         int maxReachablePoint = mainScreen.getCurrentLevel();
 
-        if (currentPoint < maxReachablePoint && currentPoint < pointX.length - 1) {
+        if (currentPoint < maxReachablePoint && currentPoint < pointX.length) {
             currentPoint++;
 
-            double x = pointX[currentPoint];
-            double y = pointY[currentPoint];
+            double x = pointX[currentPoint - 1];
+            double y = pointY[currentPoint - 1];
 
-            huemanImage.setLocation(x - 40, y + 30);
-
-            if (stopDots != null && stopDots[currentPoint] != null) {
-                mainScreen.remove(stopDots[currentPoint]);
-                stopDots[currentPoint] = null;
-            }
+            huemanImage.setLocation(x, y);
 
             selectedLevel = currentPoint;
             showLevelOneScreen();
@@ -297,78 +238,80 @@ public class LevelSelectPane extends GraphicsPane {
         if (currentPoint > 0) {
             currentPoint--;
 
-            double x = pointX[currentPoint];
-            double y = pointY[currentPoint];
-
-            huemanImage.setLocation(x - 40, y + 30);
-        }
-    }
-
-    private GRect[] addPathSegment(double x1, double y1, double x2, double y2, int steps) {
-        GRect[] segment = new GRect[steps];
-
-        for (int i = 1; i <= steps; i++) {
-            double t = (double) (i - 1) / (steps - 1);
-            double x = x1 + (x2 - x1) * t;
-            double y = y1 + (y2 - y1) * t;
-
-            GRect step = new GRect(x, y, 32, 12);
-            step.setFilled(true);
-            step.setFillColor(new Color(140, 140, 140));
-            step.setColor(Color.DARK_GRAY);
-
-            if (i == steps) {
-                step.setSize(70, 16);
-                step.setLocation(x - 5, y);
-            }
-
-            mainScreen.add(step);
-            segment[i - 1] = step;
-        }
-
-        return segment;
-    }
-
-    private void removeDots(GRect[] dots) {
-        if (dots == null) return;
-
-        for (GRect dot : dots) {
-            if (dot != null) {
-                mainScreen.remove(dot);
+            if (currentPoint == 0) {
+                double playerStartX = 20;
+                double playerStartY = 500;
+                huemanImage.setLocation(playerStartX, playerStartY);
+            } else {
+                double x = pointX[currentPoint - 1];
+                double y = pointY[currentPoint - 1];
+                huemanImage.setLocation(x, y);
             }
         }
     }
 
-    private void removeStar(GPolygon s) {
-        if (s != null) {
-            mainScreen.remove(s);
+    private void removeAllStars() {
+        if (stars != null) {
+            for (GPolygon s : stars) {
+                if (s != null) mainScreen.remove(s);
+            }
+        }
+
+        if (starGlows != null) {
+            for (GPolygon s : starGlows) {
+                if (s != null) mainScreen.remove(s);
+            }
         }
     }
 
     private void showLevelOneScreen() {
         clearPreviewScreen();
-
         showLevelScreen = true;
 
         Color bgGray = new Color(225, 225, 225);
         Color mainColor;
         Color glowColor;
+        String enemyName = "";
 
         if (selectedLevel == 1) {
             mainColor = new Color(0, 255, 220);
             glowColor = new Color(0, 200, 170);
+            enemyName = "mint.png";
         } 
         else if (selectedLevel == 2) {
-            mainColor = new Color(11, 95, 90);   // slujupiter color
+            mainColor = new Color(11, 95, 90);
             glowColor = new Color(19, 115, 109);
+            enemyName = "slujupiter.png";
         } 
         else if (selectedLevel == 3) {
-            mainColor = new Color(212, 175, 55);   // decima gold
-            glowColor = new Color(150, 120, 30);
+            mainColor = new Color(170, 100, 255);
+            glowColor = new Color(130, 70, 220);
+            enemyName = "effervena.png";
+        } 
+        else if (selectedLevel == 4) {
+            mainColor = new Color(190, 140, 255);
+            glowColor = new Color(145, 100, 220);
+            enemyName = "lavender.png";
+        } 
+        else if (selectedLevel == 5) {
+            mainColor = new Color(255, 120, 120);
+            glowColor = new Color(210, 90, 90);
+            enemyName = "";
+        } 
+        else if (selectedLevel == 6) {
+            mainColor = new Color(255, 80, 80);
+            glowColor = new Color(200, 50, 50);
+            enemyName = "";
+        } 
+        else if (selectedLevel == 7) {
+            mainColor = new Color(120, 180, 255);
+            glowColor = new Color(80, 140, 220);
+            enemyName = "";
         } 
         else {
-            mainColor = new Color(0, 255, 220);
-            glowColor = new Color(0, 200, 170);
+            mainColor = new Color(80, 120, 255);
+            glowColor = new Color(50, 90, 220);
+            enemyName = "";
         }
 
         levelScreenBG = new GRect(
@@ -384,34 +327,42 @@ public class LevelSelectPane extends GraphicsPane {
 
         addBrokenDivider(MainApplication.WINDOW_WIDTH / 2.0);
 
-        if (selectedLevel == 1) {
-            levelEnemyImage = new GImage("mint.png");
-        } else if (selectedLevel == 2) {
-            levelEnemyImage = new GImage("slujupiter.png");
-        } else if (selectedLevel == 3) {
-            levelEnemyImage = new GImage("Decima.png");
-        } else if (selectedLevel == 4) {
-            levelEnemyImage = new GImage("mint.png");
-        } 
+        if (!enemyName.equals("")) {
+            levelEnemyImage = new GImage(enemyName);
+            levelEnemyImage.scale(0.7);
 
-        levelEnemyImage.scale(0.7);
+            double imgX = 325;
+            double imgY = (MainApplication.WINDOW_HEIGHT - levelEnemyImage.getHeight()) / 2.0 + 10;
+            levelEnemyImage.setLocation(imgX, imgY);
+            addPreviewObject(levelEnemyImage);
+        } else {
+            GRect placeholder = new GRect(430, 180, 220, 220);
+            placeholder.setFilled(true);
+            placeholder.setFillColor(Color.BLACK);
+            placeholder.setColor(mainColor);
 
-        double imgX = 325;
-        double imgY = (MainApplication.WINDOW_HEIGHT - levelEnemyImage.getHeight()) / 2.0 + 10;
-        levelEnemyImage.setLocation(imgX, imgY);
+            GLabel comingSoon = new GLabel("COMING SOON");
+            comingSoon.setFont("Arial-Bold-26");
+            comingSoon.setColor(mainColor);
+            comingSoon.setLocation(455, 300);
 
-        // ===== TITLE =====
-        levelTitle = new GLabel("Level " + selectedLevel);
+            addPreviewObject(placeholder);
+            addPreviewObject(comingSoon);
+        }
+
+        String labelText = ((selectedLevel % 2 == 1) ? "Minion " : "Boss ") + selectedLevel;
+
+        levelTitle = new GLabel(labelText);
         levelTitle.setFont("Arial-Bold-38");
         levelTitle.setColor(mainColor);
         levelTitle.setLocation(120, 255);
 
-        GLabel levelTitleGlow1 = new GLabel("Level " + selectedLevel);
+        GLabel levelTitleGlow1 = new GLabel(labelText);
         levelTitleGlow1.setFont("Arial-Bold-38");
         levelTitleGlow1.setColor(glowColor);
         levelTitleGlow1.setLocation(118, 253);
 
-        GLabel levelTitleGlow2 = new GLabel("Level " + selectedLevel);
+        GLabel levelTitleGlow2 = new GLabel(labelText);
         levelTitleGlow2.setFont("Arial-Bold-38");
         levelTitleGlow2.setColor(glowColor);
         levelTitleGlow2.setLocation(122, 257);
@@ -421,7 +372,6 @@ public class LevelSelectPane extends GraphicsPane {
         double btnW = 220;
         double btnH = 70;
 
-        // ===== START BUTTON =====
         GRect startGlow = new GRect(btnX - 3, btnY - 3, btnW + 6, btnH + 6);
         startGlow.setFilled(true);
         startGlow.setFillColor(mainColor);
@@ -452,7 +402,6 @@ public class LevelSelectPane extends GraphicsPane {
         startText.setColor(mainColor);
         startText.setLocation(startTextX, startTextY);
 
-        // ===== BACK BUTTON =====
         double backY = 410;
 
         GRect backGlow = new GRect(btnX - 3, backY - 3, btnW + 6, btnH + 6);
@@ -500,11 +449,8 @@ public class LevelSelectPane extends GraphicsPane {
         addPreviewObject(backTextGlow1);
         addPreviewObject(backTextGlow2);
         addPreviewObject(backText);
-
-        addPreviewObject(levelEnemyImage);
     }
-    
-    
+
     private void addBrokenDivider(double centerX) {
         Color lineColor = new Color(120, 120, 120);
 
@@ -569,7 +515,6 @@ public class LevelSelectPane extends GraphicsPane {
 
             star.addVertex(x - centerX, y - centerY);
         }
-        
 
         star.setFilled(true);
         star.setFillColor(Color.BLACK);
@@ -587,5 +532,11 @@ public class LevelSelectPane extends GraphicsPane {
         if (selectedColor.equals("green")) return Color.GREEN;
         return Color.BLUE;
     }
-}
-//test2
+    
+    private void clearRopes() {
+        for (GObject obj : ropeObjects) {
+            mainScreen.remove(obj);
+        }
+        ropeObjects.clear();
+    }
+}//test2
