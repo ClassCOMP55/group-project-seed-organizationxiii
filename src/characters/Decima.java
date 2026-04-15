@@ -26,6 +26,12 @@ public class Decima extends boss {
 		other.takeDamage((int) (calculateDamage() * 1.5));
 	}
 	
+	
+	public void heal() {
+		currentHP += (int) (maxHP * 0.25);
+		System.out.println("Decima healed some health!");
+	}
+	
 	@Override
 	public void takeDamage(int dmg) {
 		currentHP -= dmg;
@@ -79,16 +85,7 @@ public class Decima extends boss {
 	
 	
 	private void loadSprites() {
-	    switch (phase) {
-	        case FIRST:
-	            sprites.put("main", "Decima.png");
-	            break;
-
-	       //case FINAL:
-	            //sprites.put("idle", "decima_final.png");
-	            //sprites.put("attack", "decima_final_attack.png");
-	            //break;
-	    }
+	   sprites.put("main", "Decima.png");
 	}
 	
 	@Override
@@ -109,6 +106,15 @@ public class Decima extends boss {
 		
 		
 		case FINAL:
+			if (Math.random() < 0.30) {
+				thunderSlam(other);
+			}
+			
+			if (Math.random() < 0.20) {
+				heal();
+			}
+				
+				attackOpponent(other);
 		break;
 		}
 		
