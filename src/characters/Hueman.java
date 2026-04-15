@@ -28,6 +28,10 @@ public class Hueman extends player {
     public int getSuperMeter() {
         return currentSuperPowerMeter;
     }
+    
+    public void lowerSuperMeter(int n) {
+    	currentSuperPowerMeter -= n;
+    }
 
     public int getMaxSuperMeter() {
         return maxSuperPowerMeter;
