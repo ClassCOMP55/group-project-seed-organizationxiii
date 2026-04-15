@@ -14,6 +14,7 @@ public abstract class character {
 
 	 protected float dmgMult = 1.0f;
 	 protected float healMult = 1.0f;
+	 protected float speedMult = 1.0f;
 	 
 	 protected HashMap<String, String> sprites; //new change
 	 
@@ -64,6 +65,10 @@ public abstract class character {
 	 public void clearHealModifier() {
 	 healMult = 1.0f;
 	 }
+	 
+	 public void applySpeedModifier(float mult) {
+	    	speedMult = mult;
+	    }
 
 	 public void takeFixedDamage(int dmg) {
 	 currentHP -= dmg;

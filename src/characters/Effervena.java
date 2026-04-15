@@ -6,6 +6,10 @@ public class Effervena extends boss {
 		super(hp, atk, spd, nm);
 		// TODO Auto-generated constructor stub
 	}
+	
+	private void loadSprites() {
+		sprites.put("main", "effervena.png");
+	}
 
 	public void fadingTouch(Hueman player) {
 		player.lowerSuperMeter(40);
