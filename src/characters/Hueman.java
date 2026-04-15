@@ -9,6 +9,9 @@ public class Hueman extends player {
     private final int maxSuperPowerMeter = 500;
     private int currentSuperPowerMeter = 0;
     
+    private short debilitateStacks = 0;
+    private short attackStacks = 0;
+    
     private float speedMult = 1.0f;
     
     
@@ -17,9 +20,75 @@ public class Hueman extends player {
     	return (int) (speed * speedMult);
     }
     
-    public void applySpeedModifier(float mult) {
-    	speedMult = mult;
+    @Override
+    public void attackOpponent(character other) {
+    	switch(attackStacks) {
+    	
+    	case 0:
+    		other.takeDamage(attack);
+    		break;
+    	
+    	case 1:
+    		other.takeDamage((int) (attack * 1.5));
+    		break;
+    	
+    	case 2:
+    		other.takeDamage((int) (attack * 1.75));
+    		break;
+    		
+    	case 3:
+    		other.takeDamage(attack * 2);
+    		break;
+    	
+    	}
     }
+    
+    public void debilitate(boss other) {
+    	
+    	System.out.println("Hueman used debilitate!");
+    	
+    	switch(debilitateStacks) {
+    	
+    	case 0:
+    		other.applyDamageModifier(0.8f);
+    		other.applySpeedModifier(0.8f);
+    		attackStacks++;
+    		debilitateStacks++;
+    		System.out.println("The boss is crippled!");
+    		break;
+    	
+    	case 1:
+    		other.applyDamageModifier(0.7f);
+    		other.applySpeedModifier(0.7f);
+    		attackStacks++;
+    		debilitateStacks++;
+    		System.out.println("The boss is crippled further!");
+    		break;
+    		
+    	case 2:
+    		other.applyDamageModifier(0.6f);
+    		other.applySpeedModifier(0.6f);
+    		attackStacks++;
+    		debilitateStacks++;
+    		System.out.println("The boss is crippled further!");
+    		break;
+    		
+    	case 3:
+    		other.applyDamageModifier(0.5f);
+    		other.applySpeedModifier(0.5f);
+    		attackStacks++;
+    		debilitateStacks++;
+    		System.out.println("The boss is crippled!");
+    		break;
+    	
+    	default:
+    		System.out.println("The boss can't be crippled further!");
+    		break;
+    		
+    	}
+    }
+    
+    
     
     public void clearSpeedModifier() {
     	speedMult = 1.0f;
