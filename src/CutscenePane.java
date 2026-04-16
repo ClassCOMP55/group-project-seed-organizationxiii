@@ -1,249 +1,638 @@
 import java.awt.Color;
 import java.awt.event.MouseEvent;
-
-import acm.graphics.GImage;
-import acm.graphics.GLabel;
-import acm.graphics.GRect;
-import acm.graphics.GObject;
+import javax.swing.Timer;
+import acm.graphics.*;
 
 public class CutscenePane extends GraphicsPane {
-	
-	private String[] dialogue = {
-		    "Welcome to our world of Palletia.",
-		    "I am the Elder Color Guardian, Hyperion.",
-		    "I wish our introduction could be warmer...",
-		    "But you are summoned here to save the world from evil.",
-		    "Loathe, a fallen color seeks to rid the world",
-		    "of color completely. Only you, as a foundational color,",
-		    "can restore order by reclaiming the colors he corrupted",
-		    "and put an end to Loathe's madness.",
-		    "But before that, you must defeat one of our own Color",
-		    "Guardians. Loathe convinced him to join his color terrorism.",
-		    "He's nearby and will attack at any moment",
-		    "Brace yourself."
-	};
 
-	private int dialogueIndex = 0;
-	private GLabel dialogueText;
-	private GRect backButton;
-	private GLabel backLabel;
-	private GRect continueButton;
-	private GLabel continueLabel;
-	private boolean backHovered = false;
-	private boolean continueHovered = false;
+    // ── Dialogue ──────────────────────────────────────────────────────────────
+    private final String[] dialogue = {
+        "Welcome to our world of Palletia.",
+        "I am the Elder Color Guardian, Hyperion.",
+        "I wish our introduction could be warmer...",
+        "But you are summoned here to save the world from evil.",
+        "Loathe, a fallen color seeks to rid the world",
+        "of color completely. Only you, as a foundational color,",
+        "can restore order by reclaiming the colors he corrupted",
+        "and put an end to Loathe's madness.",
+        "But before that, you must defeat one of our own Color",
+        "Guardians. Loathe convinced him to join his color terrorism.",
+        "He's nearby and will attack at any moment.",
+        "Brace yourself."
+    };
 
-	public CutscenePane(MainApplication mainScreen) {
-		this.mainScreen = mainScreen;
-	}
+    private int     dialogueIndex = 0;
+    private boolean pressed       = false;
 
-	public void showContent() {
-	    GImage hyperion = new GImage("hyperioncutscene.png");
+    // ── Core UI ───────────────────────────────────────────────────────────────
+    private GLabel  dialogueText;
+    private GRect   continueButton;
+    private GLabel  continueLabel;
+    private GRect   backButton;
+    private GLabel  backLabel;
+    private GRect   dialogueBox;
+    private GRect   dialogueBoxGlow;
+    private GOval[] progressDots;
 
-	    hyperion.scale(0.6, 0.6);
+    // ── Animation ─────────────────────────────────────────────────────────────
+    private Timer  animTimer;
+    private int    tick = 0;
 
-	    double x = (MainApplication.WINDOW_WIDTH - hyperion.getWidth()) / 2;
-	    double y = (MainApplication.WINDOW_HEIGHT * 0.35) - (hyperion.getHeight() / 2);
+    // Twinkling stars
+    private static final int STAR_COUNT = 55;
+    private GOval[]  bgStars      = new GOval[STAR_COUNT];
+    private float[]  starAlpha    = new float[STAR_COUNT];
+    private float[]  starSpeed    = new float[STAR_COUNT];
 
-	    hyperion.setLocation(x, y);
+    // Floating dust motes
+    private static final int DUST_COUNT = 18;
+    private GOval[]  dust         = new GOval[DUST_COUNT];
+    private double[] dustX        = new double[DUST_COUNT];
+    private double[] dustY        = new double[DUST_COUNT];
+    private double[] dustVX       = new double[DUST_COUNT];
+    private double[] dustVY       = new double[DUST_COUNT];
+    private float[]  dustAlpha    = new float[DUST_COUNT];
 
-	    mainScreen.add(hyperion);
-	    contents.add(hyperion);
-	    
-	    GRect dialogueBox = new GRect(
-	    	    50, 
-	    	    MainApplication.WINDOW_HEIGHT - 180, 
-	    	    MainApplication.WINDOW_WIDTH - 100, 
-	    	    130
-	    );
+    // Large planet glow pulse
+    private GOval    planetAtmo;
 
-	    dialogueBox.setFilled(true);
-	    dialogueBox.setFillColor(Color.WHITE);
-	    dialogueBox.setColor(Color.BLACK);
+    // Hover state
+    private boolean backHovered     = false;
+    private boolean continueHovered = false;
 
-	    mainScreen.add(dialogueBox);
-	    contents.add(dialogueBox);
-	    	
-	    GLabel nameLabel = new GLabel("Hyperion");
+    // ── Palette ───────────────────────────────────────────────────────────────
+    private static final Color GOLD         = new Color(220, 175,  60);
+    private static final Color GOLD_DARK    = new Color(140, 105,  25);
+    private static final Color PANEL_FILL   = new Color( 18,   8,  28, 235);
+    private static final Color PANEL_BORDER = new Color(180, 140,  50, 200);
+    private static final Color TEXT_MAIN    = new Color(235, 225, 200);
+    private static final Color TEXT_DIM     = new Color(160, 150, 130);
 
-	    nameLabel.setFont("Times New Roman-Bold-25");
-	    nameLabel.setColor(Color.BLACK);
+    // Sky colours
+    private static final Color SKY_TOP  = new Color( 28,  10,  52);
+    private static final Color SKY_MID  = new Color( 55,  18,  88);
+    private static final Color SKY_HOR  = new Color( 80,  30, 110);
 
-	    nameLabel.setLocation(
-	    	    dialogueBox.getX() + 10,
-	    	    dialogueBox.getY() - 5
-	    );
-
-	    mainScreen.add(nameLabel);
-	    contents.add(nameLabel);
-	    	
-	    dialogueText = new GLabel(dialogue[0]);
-
-	    dialogueText.setFont("Times New Roman-PLAIN-25");
-	    dialogueText.setColor(Color.BLACK);
-
-	    dialogueText.setLocation(
-	    	    dialogueBox.getX() + 10,
-	    	    dialogueBox.getY() + 40
-	    );
-
-	    mainScreen.add(dialogueText);
-	    contents.add(dialogueText);
-
-	    // Back button
-	    backButton = new GRect(
-	    	    dialogueBox.getX() + 10,
-	    	    dialogueBox.getY() + dialogueBox.getHeight() - 35,
-	    	    80,
-	    	    25
-	    );
-
-	    backButton.setFilled(true);
-	    backButton.setFillColor(Color.LIGHT_GRAY);
-	    backButton.setColor(Color.BLACK);
-
-	    mainScreen.add(backButton);
-	    contents.add(backButton);
-
-	    backLabel = new GLabel("Back");
-	    backLabel.setFont("Times New Roman-Bold-16");
-	    backLabel.setColor(Color.BLACK);
-
-	    backLabel.setLocation(
-	    	    backButton.getX() + 22,
-	    	    backButton.getY() + 18
-	    );
-
-	    mainScreen.add(backLabel);
-	    contents.add(backLabel);
-	    
-	    
-	 // continue button
-		continueButton = new GRect(
-		    dialogueBox.getX() + dialogueBox.getWidth() - 180,
-		    dialogueBox.getY() + dialogueBox.getHeight() - 35,
-		    160,
-		    25
-		);
-
-		continueButton.setFilled(true);
-		continueButton.setFillColor(Color.LIGHT_GRAY);
-		continueButton.setColor(Color.BLACK);
-
-		mainScreen.add(continueButton);
-		contents.add(continueButton);
-
-		continueLabel = new GLabel("Click to continue");
-		continueLabel.setFont("Times New Roman-Bold-16");
-		continueLabel.setColor(Color.BLACK);
-
-		continueLabel.setLocation(
-		    continueButton.getX() + 15,
-		    continueButton.getY() + 18
-		);
-
-		mainScreen.add(continueLabel);
-		contents.add(continueLabel);
-		
-	
-	}
-	
-
-	
-	private void advanceDialogue() {
-	    dialogueIndex++;
-	    System.out.println("Index: " + dialogueIndex);
-	    if (dialogueIndex < dialogue.length) {
-	        dialogueText.setLabel(dialogue[dialogueIndex]);
-	    } else {
-	        mainScreen.switchToVsFirstScreen();
-	    }
-	}
-	
-	private void scaleButton(GRect button, double scale) {
-	    double centerX = button.getX() + button.getWidth() / 2;
-	    double centerY = button.getY() + button.getHeight() / 2;
-
-	    double newWidth = button.getWidth() * scale;
-	    double newHeight = button.getHeight() * scale;
-
-	    button.setSize(newWidth, newHeight);
-	    button.setLocation(centerX - newWidth / 2, centerY - newHeight / 2);
-	}
-
-	@Override
-	public void hideContent() {
-	    for (GObject item : contents) {
-	        mainScreen.remove(item);
-	    }
-	    contents.clear();
-	}
-	private boolean pressed = false;
-
-	@Override
-	public void mousePressed(MouseEvent e) {
-	    if (pressed) return;
-	    pressed = true;
-
-	    double x = e.getX();
-	    double y = e.getY();
-
-	    // ✅ Continue button → go to next page
-	    if (continueButton.contains(x, y) || continueLabel.contains(x, y)) {
-	        mainScreen.switchToVsFirstScreen();
-	        return;
-	    }
-
-	    // ✅ Back button → go to color selection
-	    if (backButton.contains(x, y) || backLabel.contains(x, y)) {
-	        mainScreen.switchToColorSelectionScreen();
-	        return;
-	    }
-
-	    // otherwise → advance dialogue
-	    advanceDialogue();
-	}
-
-	@Override
-	public void mouseReleased(MouseEvent e) {
-	    pressed = false;
-	}
-	
-
-
-@Override
-public void mouseMoved(MouseEvent e) {
-    double x = e.getX();
-    double y = e.getY();
-
-    // ===== BACK BUTTON =====
-    boolean nowBackHovered = backButton.contains(x, y) || backLabel.contains(x, y);
-
-    if (nowBackHovered && !backHovered) {
-        backHovered = true;
-        scaleButton(backButton, 1.1);
-        backButton.setColor(Color.YELLOW); // gold-ish
-    } 
-    else if (!nowBackHovered && backHovered) {
-        backHovered = false;
-        scaleButton(backButton, 1.0 / 1.1); // reset size
-        backButton.setColor(Color.BLACK);
+    public CutscenePane(MainApplication mainScreen) {
+        this.mainScreen = mainScreen;
     }
 
-    // ===== CONTINUE BUTTON =====
-    boolean nowContinueHovered = continueButton.contains(x, y) || continueLabel.contains(x, y);
+    // ════════════════════════════════════════════════════════════════════════
+    //  showContent
+    // ════════════════════════════════════════════════════════════════════════
+    @Override
+    public void showContent() {
+        double W = mainScreen.getWidth();
+        double H = mainScreen.getHeight();
 
-    if (nowContinueHovered && !continueHovered) {
-        continueHovered = true;
-        scaleButton(continueButton, 1.1);
-        continueButton.setColor(Color.YELLOW);
-    } 
-    else if (!nowContinueHovered && continueHovered) {
-        continueHovered = false;
-        scaleButton(continueButton, 1.0 / 1.1);
-        continueButton.setColor(Color.BLACK);
+        // ── 1. Sky gradient (layered rects) ───────────────────────────────────
+        GRect skyTop = new GRect(0, 0, W, H * 0.55);
+        skyTop.setFilled(true); skyTop.setFillColor(SKY_TOP); skyTop.setColor(SKY_TOP);
+        add(skyTop);
+
+        GRect skyMid = new GRect(0, H * 0.30, W, H * 0.35);
+        skyMid.setFilled(true); skyMid.setFillColor(SKY_MID); skyMid.setColor(SKY_MID);
+        add(skyMid);
+
+        GRect skyHor = new GRect(0, H * 0.52, W, H * 0.10);
+        skyHor.setFilled(true); skyHor.setFillColor(SKY_HOR); skyHor.setColor(SKY_HOR);
+        add(skyHor);
+
+        // ── 2. Twinkling star-field ───────────────────────────────────────────
+        for (int i = 0; i < STAR_COUNT; i++) {
+            double sx = Math.random() * W;
+            double sy = Math.random() * H * 0.58;
+            double sr = 0.7 + Math.random() * 2.0;
+            starAlpha[i] = (float) Math.random();
+            starSpeed[i] = 0.004f + (float)(Math.random() * 0.012f);
+            bgStars[i] = new GOval(sx - sr, sy - sr, sr * 2, sr * 2);
+            bgStars[i].setFilled(true);
+            Color sc = new Color(230, 210, 255,
+                                 Math.max(0, Math.min(255, (int)(starAlpha[i] * 220))));
+            bgStars[i].setFillColor(sc); bgStars[i].setColor(sc);
+            add(bgStars[i]);
+        }
+
+        // ── 3. Distant small moon (top-left) ──────────────────────────────────
+        double sm_r = H * 0.085;
+        double sm_x = W * 0.12;
+        double sm_y = H * 0.10;
+
+        // Atmosphere halo
+        GOval smAtmo = new GOval(sm_x - sm_r*1.5, sm_y - sm_r*1.5, sm_r*3, sm_r*3);
+        smAtmo.setFilled(true);
+        smAtmo.setFillColor(new Color(140, 60, 180, 30));
+        smAtmo.setColor(new Color(0,0,0,0));
+        add(smAtmo);
+
+        // Moon disc
+        GOval smDisc = new GOval(sm_x - sm_r, sm_y - sm_r, sm_r*2, sm_r*2);
+        smDisc.setFilled(true);
+        smDisc.setFillColor(new Color(185, 140, 210));
+        smDisc.setColor(new Color(160, 110, 190, 180));
+        add(smDisc);
+
+//        // Moon surface bands
+//        GLine smBand1 = new GLine(sm_x - sm_r*0.6, sm_y - sm_r*0.1,
+//                                  sm_x + sm_r*0.6, sm_y + sm_r*0.1);
+//        smBand1.setColor(new Color(155, 100, 175, 100));
+//        add(smBand1);
+//        GLine smBand2 = new GLine(sm_x - sm_r*0.5, sm_y + sm_r*0.3,
+//                                  sm_x + sm_r*0.5, sm_y + sm_r*0.4);
+//        smBand2.setColor(new Color(155, 100, 175, 80));
+//        add(smBand2);
+
+        // ── 4. Large ringed planet (right side) ───────────────────────────────
+        double p_r = H * 0.27;
+        double p_x = W * 0.78;
+        double p_y = H * 0.24;
+
+        // Atmosphere glow (outermost)
+        planetAtmo = new GOval(p_x - p_r*1.35, p_y - p_r*1.35, p_r*2.7, p_r*2.7);
+        planetAtmo.setFilled(true);
+        planetAtmo.setFillColor(new Color(200, 80, 160, 22));
+        planetAtmo.setColor(new Color(0,0,0,0));
+        add(planetAtmo);
+
+        // Soft glow ring
+        GOval pGlow = new GOval(p_x - p_r*1.12, p_y - p_r*1.12, p_r*2.24, p_r*2.24);
+        pGlow.setFilled(true);
+        pGlow.setFillColor(new Color(210, 90, 160, 35));
+        pGlow.setColor(new Color(0,0,0,0));
+        add(pGlow);
+
+        // Planet disc
+        GOval planet = new GOval(p_x - p_r, p_y - p_r, p_r*2, p_r*2);
+        planet.setFilled(true);
+        planet.setFillColor(new Color(210, 100, 160));
+        planet.setColor(new Color(180, 70, 130, 200));
+        add(planet);
+
+        // Surface bands (horizontal stripes inside the disc)
+//        Color[] bandColors = {
+//            new Color(185,  75, 135, 140),
+//            new Color(230, 130, 180, 110),
+//            new Color(175,  65, 125, 130),
+//            new Color(240, 140, 190,  90),
+//            new Color(180,  70, 130, 120),
+//        };
+//        double[] bandOffsets = {-0.35, -0.12, 0.08, 0.28, 0.46};
+//        double[] bandHeights = { 0.18,  0.14, 0.16, 0.12, 0.14};
+//        for (int b = 0; b < bandColors.length; b++) {
+//            double bY  = p_y + bandOffsets[b] * p_r * 2;
+//            double bH2 = bandHeights[b] * p_r * 2;
+//            // Clamp band inside planet disc using a wide rect (ACM clips to canvas only)
+//            GRect band = new GRect(p_x - p_r, bY, p_r*2, bH2);
+//            band.setFilled(true);
+//            band.setFillColor(bandColors[b]);
+//            band.setColor(new Color(0,0,0,0));
+//            add(band);
+//        }
+
+        // Ring system — ellipse approximated with two arcs via GLine segments
+//        drawPlanetRing(p_x, p_y, p_r, W, H);
+
+        // ── 5. Ground / terrain ───────────────────────────────────────────────
+        drawTerrain(W, H);
+
+        // ── 6. Floating dust motes ────────────────────────────────────────────
+        for (int i = 0; i < DUST_COUNT; i++) {
+            dustX[i]    = Math.random() * W;
+            dustY[i]    = H * 0.55 + Math.random() * H * 0.20;
+            dustVX[i]   = (Math.random() - 0.5) * 0.4;
+            dustVY[i]   = -0.1 - Math.random() * 0.25;
+            dustAlpha[i]= (float)(0.1 + Math.random() * 0.4);
+            double dr   = 1.5 + Math.random() * 3;
+            dust[i]     = new GOval(dustX[i]-dr, dustY[i]-dr, dr*2, dr*2);
+            dust[i].setFilled(true);
+            Color dc = new Color(200, 150, 230,
+                                 Math.max(0,Math.min(255,(int)(dustAlpha[i]*200))));
+            dust[i].setFillColor(dc); dust[i].setColor(dc);
+            add(dust[i]);
+        }
+
+        
+
+        // ── 8. Dialogue panel ─────────────────────────────────────────────────
+        double boxH  = 170;
+        double boxY2 = H - boxH - 18;
+        double boxX2 = 38;
+        double boxW2 = W - 76;
+
+        // Layered glow
+        dialogueBoxGlow = new GRect(boxX2-6, boxY2-6, boxW2+12, boxH+12);
+        dialogueBoxGlow.setFilled(true);
+        dialogueBoxGlow.setFillColor(new Color(GOLD.getRed(),GOLD.getGreen(),GOLD.getBlue(),14));
+        dialogueBoxGlow.setColor(new Color(GOLD.getRed(),GOLD.getGreen(),GOLD.getBlue(),45));
+        add(dialogueBoxGlow);
+
+        // Panel body
+        dialogueBox = new GRect(boxX2, boxY2, boxW2, boxH);
+        dialogueBox.setFilled(true);
+        dialogueBox.setFillColor(PANEL_FILL);
+        dialogueBox.setColor(PANEL_BORDER);
+        add(dialogueBox);
+
+        // Inner inset
+        GRect dbInner = new GRect(boxX2+5, boxY2+5, boxW2-10, boxH-10);
+        dbInner.setFilled(false);
+        dbInner.setColor(new Color(GOLD.getRed(),GOLD.getGreen(),GOLD.getBlue(),28));
+        add(dbInner);
+
+        // Top accent bar
+        GRect topBar = new GRect(boxX2, boxY2, boxW2, 4);
+        topBar.setFilled(true); topBar.setFillColor(GOLD); topBar.setColor(GOLD);
+        add(topBar);
+
+        // Corner diamonds on panel
+        double[][] boxCorners = {{boxX2,boxY2},{boxX2+boxW2,boxY2},
+                                 {boxX2,boxY2+boxH},{boxX2+boxW2,boxY2+boxH}};
+        for (double[] c : boxCorners) {
+            GPolygon d = makeDiamond(c[0], c[1], 9);
+            d.setFilled(true);
+            d.setFillColor(new Color(GOLD.getRed(),GOLD.getGreen(),GOLD.getBlue(),180));
+            d.setColor(new Color(GOLD.getRed(),GOLD.getGreen(),GOLD.getBlue(),240));
+            add(d);
+        }
+
+        // ── 9. Name plate ─────────────────────────────────────────────────────
+        double npW = 170, npH = 34;
+        double npX = boxX2 + 20, npY = boxY2 - npH + 2;
+        GRect np = new GRect(npX, npY, npW, npH);
+        np.setFilled(true); np.setFillColor(new Color(30,18,8)); np.setColor(PANEL_BORDER);
+        add(np);
+        GRect npBar = new GRect(npX, npY, 4, npH);
+        npBar.setFilled(true); npBar.setFillColor(GOLD_DARK); npBar.setColor(GOLD_DARK);
+        add(npBar);
+        GLabel nameLabel = new GLabel("Hyperion");
+        nameLabel.setFont("Times New Roman-Bold-20");
+        nameLabel.setColor(GOLD);
+        nameLabel.setLocation(npX+14, npY+23);
+        add(nameLabel);
+
+        // ── 10. Dialogue text ─────────────────────────────────────────────────
+        GLabel quote = new GLabel("\u201C");
+        quote.setFont("Times New Roman-Bold-48");
+        quote.setColor(new Color(GOLD.getRed(),GOLD.getGreen(),GOLD.getBlue(),55));
+        quote.setLocation(boxX2+10, boxY2+68);
+        add(quote);
+
+        dialogueText = new GLabel(dialogue[0]);
+        dialogueText.setFont("Times New Roman-PLAIN-22");
+        dialogueText.setColor(TEXT_MAIN);
+        dialogueText.setLocation(boxX2+24, boxY2+52);
+        add(dialogueText);
+
+        // ── 11. Progress dots ─────────────────────────────────────────────────
+        int total = dialogue.length;
+        double dotSpacing = 14;
+        double dotsStartX = (W - (total-1)*dotSpacing) / 2.0;
+        double dotsY = boxY2 + boxH - 22;
+        progressDots = new GOval[total];
+        for (int i = 0; i < total; i++) {
+            GOval dot = new GOval(dotsStartX+i*dotSpacing-4, dotsY-4, 8, 8);
+            dot.setFilled(true);
+            dot.setFillColor(i==0 ? GOLD : new Color(60,55,40));
+            dot.setColor(i==0 ? GOLD : new Color(90,80,55));
+            add(dot);
+            progressDots[i] = dot;
+        }
+
+        // ── 12. Back button ───────────────────────────────────────────────────
+        double btnH2 = 40, btnW3 = 110;
+        double backX = boxX2 + 16, backY = boxY2 + boxH - btnH2 - 14;
+        backButton = new GRect(backX, backY, btnW3, btnH2);
+        backButton.setFilled(true);
+        backButton.setFillColor(new Color(20,14,8));
+        backButton.setColor(new Color(140,105,35,180));
+        add(backButton);
+        GRect backBar = new GRect(backX, backY, 3, btnH2);
+        backBar.setFilled(true); backBar.setFillColor(GOLD_DARK); backBar.setColor(GOLD_DARK);
+        add(backBar);
+        backLabel = new GLabel("◀  Back");
+        backLabel.setFont("Arial-Bold-15");
+        backLabel.setColor(TEXT_DIM);
+        backLabel.setLocation(backX+(btnW3-backLabel.getWidth())/2.0+2, backY+26);
+        add(backLabel);
+
+        // ── 13. Continue button ───────────────────────────────────────────────
+        double contW = 200;
+        double contX = boxX2 + boxW2 - contW - 16;
+        double contY = backY;
+        GRect contGlow = new GRect(contX-4, contY-4, contW+8, btnH2+8);
+        contGlow.setFilled(true);
+        contGlow.setFillColor(new Color(GOLD.getRed(),GOLD.getGreen(),GOLD.getBlue(),22));
+        contGlow.setColor(new Color(0,0,0,0));
+        add(contGlow);
+        continueButton = new GRect(contX, contY, contW, btnH2);
+        continueButton.setFilled(true);
+        continueButton.setFillColor(new Color(30,20,8));
+        continueButton.setColor(PANEL_BORDER);
+        add(continueButton);
+        continueLabel = new GLabel("Continue  ▶");
+        continueLabel.setFont("Arial-Bold-15");
+        continueLabel.setColor(GOLD);
+        continueLabel.setLocation(contX+(contW-continueLabel.getWidth())/2.0, contY+26);
+        add(continueLabel);
+
+        // Hint
+        GLabel hint = new GLabel("Click anywhere to advance");
+        hint.setFont("Arial-12");
+        hint.setColor(new Color(100,88,65));
+        hint.setLocation((W-hint.getWidth())/2.0, boxY2+boxH-5);
+        add(hint);
+
+        // ── 14. Start animation ───────────────────────────────────────────────
+        tick = 0;
+        animTimer = new Timer(33, e -> animate());
+        animTimer.start();
+    }
+
+    // ════════════════════════════════════════════════════════════════════════
+    //  Terrain  (rocky alien ground)
+    // ════════════════════════════════════════════════════════════════════════
+    private void drawTerrain(double w, double h) {
+        double groundY = h * 0.60;
+
+        // Far ground plane
+        GRect farGround = new GRect(0, groundY, w, h - groundY);
+        farGround.setFilled(true);
+        farGround.setFillColor(new Color(45, 35, 60));
+        farGround.setColor(new Color(45, 35, 60));
+        add(farGround);
+
+        // Mid ground
+        GRect midGround = new GRect(0, groundY + h*0.06, w, h - (groundY + h*0.06));
+        midGround.setFilled(true);
+        midGround.setFillColor(new Color(38, 28, 52));
+        midGround.setColor(new Color(38, 28, 52));
+        add(midGround);
+
+        // Near ground
+        GRect nearGround = new GRect(0, groundY + h*0.14, w, h - (groundY + h*0.14));
+        nearGround.setFilled(true);
+        nearGround.setFillColor(new Color(28, 20, 42));
+        nearGround.setColor(new Color(28, 20, 42));
+        add(nearGround);
+
+        // Horizon glow line
+        GLine horizGlow = new GLine(0, groundY, w, groundY);
+        horizGlow.setColor(new Color(160, 80, 200, 80));
+        add(horizGlow);
+        GLine horizGlow2 = new GLine(0, groundY+1, w, groundY+1);
+        horizGlow2.setColor(new Color(130, 60, 170, 50));
+        add(horizGlow2);
+
+        // ── Rock formations ───────────────────────────────────────────────────
+
+        // Left large rock slab
+        GPolygon rock1 = new GPolygon();
+        rock1.addVertex(0,            groundY + h*0.08);
+        rock1.addVertex(w*0.18,       groundY - h*0.04);
+        rock1.addVertex(w*0.28,       groundY + h*0.02);
+        rock1.addVertex(w*0.35,       groundY + h*0.10);
+        rock1.addVertex(0,            groundY + h*0.18);
+        rock1.setFilled(true);
+        rock1.setFillColor(new Color(52, 42, 65));
+        rock1.setColor(new Color(70, 55, 88, 180));
+        rock1.setLocation(0, 0);
+        add(rock1);
+
+//        // Left inner crack detail
+//        GLine crack1 = new GLine(w*0.06, groundY+h*0.14, w*0.14, groundY+h*0.04);
+//        crack1.setColor(new Color(30, 22, 44, 180));
+//        add(crack1);
+//        GLine crack2 = new GLine(w*0.14, groundY+h*0.04, w*0.10, groundY+h*0.14);
+//        crack2.setColor(new Color(30, 22, 44, 120));
+//        add(crack2);
+
+        // Centre-left jutting spire
+        GPolygon rock2 = new GPolygon();
+        rock2.addVertex(w*0.30, groundY + h*0.18);
+        rock2.addVertex(w*0.36, groundY - h*0.01);
+        rock2.addVertex(w*0.40, groundY + h*0.02);
+        rock2.addVertex(w*0.46, groundY + h*0.18);
+        rock2.setFilled(true);
+        rock2.setFillColor(new Color(44, 34, 58));
+        rock2.setColor(new Color(60, 48, 76, 160));
+        rock2.setLocation(0, 0);
+        add(rock2);
+
+        // Right large rock mass
+        GPolygon rock3 = new GPolygon();
+        rock3.addVertex(w*0.60,  groundY + h*0.18);
+        rock3.addVertex(w*0.68,  groundY + h*0.04);
+        rock3.addVertex(w*0.76,  groundY - h*0.02);
+        rock3.addVertex(w*0.84,  groundY + h*0.00);
+        rock3.addVertex(w*0.90,  groundY + h*0.06);
+        rock3.addVertex(w*1.00,  groundY + h*0.04);
+        rock3.addVertex(w*1.00,  groundY + h*0.18);
+        rock3.setFilled(true);
+        rock3.setFillColor(new Color(48, 38, 62));
+        rock3.setColor(new Color(66, 52, 82, 160));
+        rock3.setLocation(0, 0);
+        add(rock3);
+
+//        // Right crack detail
+//        GLine crack3 = new GLine(w*0.70, groundY+h*0.16, w*0.76, groundY+h*0.03);
+//        crack3.setColor(new Color(28, 20, 40, 160));
+//        add(crack3);
+//        GLine crack4 = new GLine(w*0.76, groundY+h*0.03, w*0.80, groundY+h*0.10);
+//        crack4.setColor(new Color(28, 20, 40, 120));
+//        add(crack4);
+
+        // Very near foreground dark strip with sharp rocky edge
+        GPolygon fore = new GPolygon();
+        fore.addVertex(0,       h);
+        fore.addVertex(0,       groundY + h*0.22);
+        fore.addVertex(w*0.08,  groundY + h*0.18);
+        fore.addVertex(w*0.18,  groundY + h*0.26);
+        fore.addVertex(w*0.30,  groundY + h*0.20);
+        fore.addVertex(w*0.42,  groundY + h*0.28);
+        fore.addVertex(w*0.55,  groundY + h*0.22);
+        fore.addVertex(w*0.65,  groundY + h*0.27);
+        fore.addVertex(w*0.78,  groundY + h*0.21);
+        fore.addVertex(w*0.90,  groundY + h*0.26);
+        fore.addVertex(w*1.00,  groundY + h*0.22);
+        fore.addVertex(w*1.00,  h);
+        fore.setFilled(true);
+        fore.setFillColor(new Color(18, 12, 28));
+        fore.setColor(new Color(30, 20, 45, 160));
+        fore.setLocation(0, 0);
+        add(fore);
+    }
+
+    // ════════════════════════════════════════════════════════════════════════
+    //  Planet ring system
+    // ════════════════════════════════════════════════════════════════════════
+    private void drawPlanetRing(double px, double py, double pr, double w, double h) {
+        // Rings are drawn as a series of thin ellipses (approximated with
+        // horizontal line segments to give an ellipse feel in ACM)
+        double ringRX = pr * 1.7;
+        double ringRY = pr * 0.22;
+
+        int ringSteps = 40;
+        Color[] ringCols = {
+            new Color(200,  80, 145, 140),
+            new Color(220, 100, 160, 110),
+            new Color(190,  70, 135, 130),
+        };
+        double[] ringOffsets = {0, pr * 0.12, -pr * 0.12};
+        double[] ringScales  = {1.0, 0.88, 1.14};
+
+        for (int r = 0; r < ringCols.length; r++) {
+            double rX = ringRX * ringScales[r];
+            double rY = ringRY * ringScales[r];
+            double rOff = ringOffsets[r];
+
+            double prevX = px + rX, prevY = py + rOff;
+            for (int s = 1; s <= ringSteps; s++) {
+                double angle = Math.toRadians((double) s / ringSteps * 360.0);
+                double nx = px + rX * Math.cos(angle);
+                double ny = py + rOff + rY * Math.sin(angle);
+                GLine seg = new GLine(prevX, prevY, nx, ny);
+                seg.setColor(ringCols[r]);
+                add(seg);
+                prevX = nx; prevY = ny;
+            }
+        }
+    }
+
+    // ════════════════════════════════════════════════════════════════════════
+    //  Animation
+    // ════════════════════════════════════════════════════════════════════════
+    private void animate() {
+        tick++;
+        double W = mainScreen.getWidth();
+        double H = mainScreen.getHeight();
+
+        // Twinkling stars
+        for (int i = 0; i < STAR_COUNT; i++) {
+            if (bgStars[i] == null) continue;
+            starAlpha[i] += starSpeed[i] * (i%2==0 ? 1 : -1);
+            if (starAlpha[i] > 1f)  { starAlpha[i]=1f;  starSpeed[i]=-Math.abs(starSpeed[i]); }
+            if (starAlpha[i] < 0f)  { starAlpha[i]=0f;  starSpeed[i]= Math.abs(starSpeed[i]); }
+            int a = Math.max(0,Math.min(255,(int)(starAlpha[i]*220)));
+            Color sc = new Color(230,210,255,a);
+            bgStars[i].setFillColor(sc); bgStars[i].setColor(sc);
+        }
+
+        // Planet atmosphere pulse
+        if (planetAtmo != null) {
+            float p = (float)(0.5 + 0.5*Math.sin(tick*0.025));
+            planetAtmo.setFillColor(new Color(200, 80, 160, (int)(14 + p*22)));
+        }
+
+        // Floating dust
+        for (int i = 0; i < DUST_COUNT; i++) {
+            if (dust[i] == null) continue;
+            dustX[i] += dustVX[i] + Math.sin(tick*0.03 + i)*0.02;
+            dustY[i] += dustVY[i];
+            if (dustY[i] < H*0.40) { dustY[i]=H*0.72; dustX[i]=Math.random()*W; }
+            if (dustX[i]<0) dustX[i]=W; if (dustX[i]>W) dustX[i]=0;
+            Color dc = new Color(200,150,230,Math.max(0,Math.min(255,(int)(dustAlpha[i]*180))));
+            dust[i].setFillColor(dc); dust[i].setColor(dc);
+            dust[i].setLocation(dustX[i], dustY[i]);
+        }
+
+        // Dialogue glow pulse
+        if (dialogueBoxGlow != null) {
+            float p = (float)(0.5 + 0.5*Math.sin(tick*0.04));
+            dialogueBoxGlow.setFillColor(new Color(GOLD.getRed(),GOLD.getGreen(),GOLD.getBlue(),(int)(10+p*18)));
+            dialogueBoxGlow.setColor(new Color(GOLD.getRed(),GOLD.getGreen(),GOLD.getBlue(),(int)(35+p*55)));
+        }
+
+        // Continue button border pulse
+        if (continueButton != null && !continueHovered) {
+            float p = (float)(0.5 + 0.5*Math.sin(tick*0.06));
+            continueButton.setColor(new Color(
+                PANEL_BORDER.getRed(), PANEL_BORDER.getGreen(), PANEL_BORDER.getBlue(),
+                (int)(110 + p*145)));
+        }
+
+        // Active progress dot pulse
+        if (progressDots != null && dialogueIndex < progressDots.length) {
+            float p = (float)(0.5 + 0.5*Math.sin(tick*0.08));
+            progressDots[dialogueIndex].setFillColor(
+                new Color(GOLD.getRed(),GOLD.getGreen(),GOLD.getBlue(),(int)(160+p*95)));
+        }
+    }
+
+    // ════════════════════════════════════════════════════════════════════════
+    //  Dialogue
+    // ════════════════════════════════════════════════════════════════════════
+    private void advanceDialogue() {
+        if (progressDots != null && dialogueIndex < progressDots.length) {
+            progressDots[dialogueIndex].setFillColor(new Color(60,55,40));
+            progressDots[dialogueIndex].setColor(new Color(90,80,55));
+        }
+        dialogueIndex++;
+        if (dialogueIndex < dialogue.length) {
+            dialogueText.setLabel(dialogue[dialogueIndex]);
+            if (progressDots != null && dialogueIndex < progressDots.length) {
+                progressDots[dialogueIndex].setFillColor(GOLD);
+                progressDots[dialogueIndex].setColor(GOLD);
+            }
+        } else {
+            mainScreen.switchToVsFirstScreen();
+        }
+    }
+
+    // ════════════════════════════════════════════════════════════════════════
+    //  hideContent
+    // ════════════════════════════════════════════════════════════════════════
+    @Override
+    public void hideContent() {
+        if (animTimer != null) { animTimer.stop(); animTimer = null; }
+        for (GObject item : contents) mainScreen.remove(item);
+        contents.clear();
+        dialogueText=null; continueButton=null; continueLabel=null;
+        dialogueBox=null; dialogueBoxGlow=null; progressDots=null; planetAtmo=null;
+        for (int i=0; i<STAR_COUNT;  i++) bgStars[i]=null;
+        for (int i=0; i<DUST_COUNT;  i++) dust[i]=null;
+        dialogueIndex=0; pressed=false;
+    }
+
+    // ════════════════════════════════════════════════════════════════════════
+    //  Mouse
+    // ════════════════════════════════════════════════════════════════════════
+    @Override
+    public void mousePressed(MouseEvent e) {
+        if (pressed) return;
+        pressed = true;
+        double x=e.getX(), y=e.getY();
+        if (continueButton!=null && (continueButton.contains(x,y)||continueLabel.contains(x,y))) {
+            mainScreen.switchToVsFirstScreen(); return;
+        }
+        if (backButton!=null && (backButton.contains(x,y)||backLabel.contains(x,y))) {
+            mainScreen.switchToColorSelectionScreen(); return;
+        }
+        advanceDialogue();
+    }
+
+    @Override public void mouseReleased(MouseEvent e) { pressed=false; }
+
+    @Override
+    public void mouseMoved(MouseEvent e) {
+        double x=e.getX(), y=e.getY();
+        boolean nb = backButton!=null&&(backButton.contains(x,y)||backLabel.contains(x,y));
+        if (nb&&!backHovered)    { backHovered=true;  backButton.setColor(GOLD); backLabel.setColor(GOLD); }
+        else if (!nb&&backHovered){ backHovered=false; backButton.setColor(new Color(140,105,35,180)); backLabel.setColor(TEXT_DIM); }
+
+        boolean nc = continueButton!=null&&(continueButton.contains(x,y)||continueLabel.contains(x,y));
+        if (nc&&!continueHovered)    { continueHovered=true;  continueButton.setFillColor(new Color(50,34,10)); continueButton.setColor(GOLD); continueLabel.setColor(new Color(255,240,140)); }
+        else if (!nc&&continueHovered){ continueHovered=false; continueButton.setFillColor(new Color(30,20,8));  continueButton.setColor(PANEL_BORDER); continueLabel.setColor(GOLD); }
+    }
+
+    // ════════════════════════════════════════════════════════════════════════
+    //  Helpers
+    // ════════════════════════════════════════════════════════════════════════
+    private void add(GObject obj) { mainScreen.add(obj); contents.add(obj); }
+
+    private static GPolygon makeDiamond(double cx, double cy, double r) {
+        GPolygon d = new GPolygon();
+        d.addVertex(0,-r); d.addVertex(r,0); d.addVertex(0,r); d.addVertex(-r,0);
+        d.setLocation(cx, cy);
+        return d;
     }
 }
-}
-
-
-//hello
