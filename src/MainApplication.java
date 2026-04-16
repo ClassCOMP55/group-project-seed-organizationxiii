@@ -10,8 +10,8 @@ import java.awt.Color;
 public class MainApplication extends GraphicsProgram{
 
 	//Settings
-	public static final int WINDOW_WIDTH = 800;
-	public static final int WINDOW_HEIGHT = 600;
+	public static final int WINDOW_WIDTH = 1700;
+	public static final int WINDOW_HEIGHT = 1100;
 	
 	//List of all the full screen panes
 	private TitlePane titlePane;

@@ -2,8 +2,8 @@ import acm.graphics.GImage;
 import acm.graphics.GLabel;
 import acm.graphics.GObject;
 import acm.graphics.GRect;
+import characters.Effervena;
 import characters.Hueman;
-import characters.MintSentinel;
 
 import java.awt.Color;
 import java.awt.event.KeyEvent;
@@ -12,16 +12,16 @@ import java.awt.event.MouseEvent;
 public class FifthBattlePane extends GraphicsPane {
 
     private GImage huemanImage;
-    private GImage mintImage;
+    private GImage effervenaImage;
 
     private GRect huemanHealthBar;
     private GRect huemanHealthBack;
 
-    private GRect mintHealthBar;
-    private GRect mintHealthBack;
+    private GRect effervenaHealthBar;
+    private GRect effervenaHealthBack;
 
     private double huemanMaxHP;
-    private double mintMaxHP;
+    private double effervenaMaxHP;
 
     private GRect actionBox;
     private GLabel fightOption;
@@ -30,10 +30,10 @@ public class FifthBattlePane extends GraphicsPane {
     private boolean showingFightMenu = false;
 
     private Hueman h1;
-    private MintSentinel m1;
+    private Effervena e1;
 
     private GLabel huemanName;
-    private GLabel mintName;
+    private GLabel effervenaName;
 
     private GRect continueButton;
     private GLabel continueLabel;
@@ -52,30 +52,30 @@ public class FifthBattlePane extends GraphicsPane {
     @Override
     public void showContent() {
         h1 = mainScreen.getPlayer();
-        m1 = new MintSentinel(600, 20, 10, "Mint");
+        e1 = new Effervena(600, 20, 10, "Effervena");
 
         huemanMaxHP = h1.getHP();
-        mintMaxHP = m1.getHP();
+        effervenaMaxHP = e1.getHP();
 
         huemanImage = new GImage(getHuemanImage());
-        mintImage = new GImage("Mint.png");
+        effervenaImage = new GImage("effervena.png");
 
         huemanImage.scale(0.6);
-        mintImage.scale(0.9);
+        effervenaImage.scale(0.9);
 
         double hx = MainApplication.WINDOW_WIDTH * 0.25 - huemanImage.getWidth() / 2 + 30;
         double hy = 200;
         huemanImage.setLocation(hx, hy);
 
-        double mx = MainApplication.WINDOW_WIDTH * 0.75 - mintImage.getWidth() / 2;
-        double my = 10;
-        mintImage.setLocation(mx, my);
+        double ex = MainApplication.WINDOW_WIDTH * 0.75 - effervenaImage.getWidth() / 2;
+        double ey = 10;
+        effervenaImage.setLocation(ex, ey);
 
         mainScreen.add(huemanImage);
-        mainScreen.add(mintImage);
+        mainScreen.add(effervenaImage);
 
         contents.add(huemanImage);
-        contents.add(mintImage);
+        contents.add(effervenaImage);
 
         double barWidth = 200;
         double barHeight = 12;
@@ -118,20 +118,20 @@ public class FifthBattlePane extends GraphicsPane {
         double meterHeight = 12;
         double spacing = 15;
 
-        double meterX = huemanHealthBack.getX() + huemanHealthBack.getWidth() + spacing;
-        double meterY = huemanHealthBack.getY();
+        double mx = huemanHealthBack.getX() + huemanHealthBack.getWidth() + spacing;
+        double my = huemanHealthBack.getY();
 
-        superMeterBack = new GRect(meterX, meterY, meterWidth, meterHeight);
+        superMeterBack = new GRect(mx, my, meterWidth, meterHeight);
         superMeterBack.setFilled(true);
         superMeterBack.setFillColor(Color.DARK_GRAY);
 
-        superMeterBar = new GRect(meterX, meterY, 0, meterHeight);
+        superMeterBar = new GRect(mx, my, 0, meterHeight);
         superMeterBar.setFilled(true);
         superMeterBar.setFillColor(Color.ORANGE);
 
         superLabel = new GLabel("SP");
         superLabel.setFont("Arial-Bold-10");
-        superLabel.setLocation(meterX, meterY - 2);
+        superLabel.setLocation(mx, my - 2);
 
         mainScreen.add(superMeterBack);
         mainScreen.add(superMeterBar);
@@ -141,23 +141,23 @@ public class FifthBattlePane extends GraphicsPane {
         contents.add(superMeterBar);
         contents.add(superLabel);
 
-        double mxBar = 30;
-        double myBar = 30;
+        double exBar = 30;
+        double eyBar = 30;
 
-        mintHealthBack = new GRect(mxBar, myBar, barWidth, barHeight);
-        mintHealthBack.setFilled(true);
-        mintHealthBack.setFillColor(Color.DARK_GRAY);
+        effervenaHealthBack = new GRect(exBar, eyBar, barWidth, barHeight);
+        effervenaHealthBack.setFilled(true);
+        effervenaHealthBack.setFillColor(Color.DARK_GRAY);
 
-        mintHealthBar = new GRect(mxBar, myBar, barWidth, barHeight);
-        mintHealthBar.setFilled(true);
-        mintHealthBar.setFillColor(new Color(102, 255, 204));
-        mintHealthBar.setColor(new Color(0, 153, 102));
+        effervenaHealthBar = new GRect(exBar, eyBar, barWidth, barHeight);
+        effervenaHealthBar.setFilled(true);
+        effervenaHealthBar.setFillColor(new Color(170, 100, 255));
+        effervenaHealthBar.setColor(new Color(130, 70, 220));
 
-        mainScreen.add(mintHealthBack);
-        mainScreen.add(mintHealthBar);
+        mainScreen.add(effervenaHealthBack);
+        mainScreen.add(effervenaHealthBar);
 
-        contents.add(mintHealthBack);
-        contents.add(mintHealthBar);
+        contents.add(effervenaHealthBack);
+        contents.add(effervenaHealthBar);
 
         huemanName = new GLabel(h1.getName());
         huemanName.setFont("Arial-Bold-14");
@@ -166,18 +166,18 @@ public class FifthBattlePane extends GraphicsPane {
             huemanHealthBack.getY() - 5
         );
 
-        mintName = new GLabel(m1.getName());
-        mintName.setFont("Arial-Bold-14");
-        mintName.setLocation(
-            mintHealthBack.getX(),
-            mintHealthBack.getY() - 5
+        effervenaName = new GLabel(e1.getName());
+        effervenaName.setFont("Arial-Bold-14");
+        effervenaName.setLocation(
+            effervenaHealthBack.getX(),
+            effervenaHealthBack.getY() - 5
         );
 
         mainScreen.add(huemanName);
-        mainScreen.add(mintName);
+        mainScreen.add(effervenaName);
 
         contents.add(huemanName);
-        contents.add(mintName);
+        contents.add(effervenaName);
 
         double boxWidth = 300;
         double boxHeight = 120;
@@ -201,7 +201,7 @@ public class FifthBattlePane extends GraphicsPane {
 
         GRect innerFrame = new GRect(boxX + 6, boxY + 6, boxWidth - 12, boxHeight - 12);
         innerFrame.setFilled(false);
-        innerFrame.setColor(new Color(102, 255, 204));
+        innerFrame.setColor(new Color(170, 100, 255));
         mainScreen.add(innerFrame);
         contents.add(innerFrame);
 
@@ -228,7 +228,6 @@ public class FifthBattlePane extends GraphicsPane {
 
         continueLabel = new GLabel("Continue");
         continueLabel.setFont("Arial-Bold-16");
-
         continueLabel.setLocation(
             continueButton.getX() + 35,
             continueButton.getY() + 18
@@ -245,6 +244,7 @@ public class FifthBattlePane extends GraphicsPane {
         GObject obj = mainScreen.getElementAtLocation(e.getX(), e.getY());
 
         if (obj == continueButton || obj == continueLabel) {
+            mainScreen.setCurrentLevel(5);
             mainScreen.switchToLevelSelectScreen();
             return;
         }
@@ -265,8 +265,15 @@ public class FifthBattlePane extends GraphicsPane {
 
             } else if (obj == abilityOption) {
                 if (h1.getSuperMeter() > 0) {
-                    h1.useAbility(1, m1);
+                    h1.useAbility(1, e1);
                     updateHealthBars();
+                    checkBattleEnd();
+
+                    if (!battleOver) {
+                        playerTurn = false;
+                        performEnemyTurn();
+                        checkBattleEnd();
+                    }
                 }
             }
         }
@@ -279,9 +286,11 @@ public class FifthBattlePane extends GraphicsPane {
         contents.remove(fightOption);
 
         fightOption = new GLabel("Basic Attack");
+        fightOption.setFont("Arial-Bold-18");
         fightOption.setLocation(actionBox.getX() + 20, actionBox.getY() + 40);
 
         abilityOption = new GLabel("Superpower");
+        abilityOption.setFont("Arial-Bold-18");
         abilityOption.setLocation(actionBox.getX() + 20, actionBox.getY() + 70);
 
         mainScreen.add(fightOption);
@@ -293,13 +302,13 @@ public class FifthBattlePane extends GraphicsPane {
 
     private void updateSuperMeter() {
         double ratio = (double) h1.getSuperMeter() / 500.0;
-        superMeterBar.setSize(200 * ratio, 8);
+        superMeterBar.setSize(120 * ratio, 12);
     }
 
     private void performPlayerAttack() {
         if (!playerTurn || battleOver) return;
 
-        h1.attackOpponent(m1);
+        h1.attackOpponent(e1);
         updateHealthBars();
 
         playerTurn = false;
@@ -308,8 +317,8 @@ public class FifthBattlePane extends GraphicsPane {
     private void performEnemyTurn() {
         if (battleOver) return;
 
-        if (m1.isAlive()) {
-            m1.takeTurn(h1);
+        if (e1.isAlive()) {
+            e1.takeTurn(h1);
             updateHealthBars();
         }
 
@@ -317,9 +326,10 @@ public class FifthBattlePane extends GraphicsPane {
     }
 
     private void checkBattleEnd() {
-        if (!m1.isAlive()) {
+        if (!e1.isAlive()) {
             battleOver = true;
             System.out.println("YOU WIN");
+            mainScreen.setCurrentLevel(5);
             mainScreen.switchToLevelSelectScreen();
             return;
         }
@@ -332,10 +342,10 @@ public class FifthBattlePane extends GraphicsPane {
 
     private void updateHealthBars() {
         double huemanRatio = (double) h1.getHP() / huemanMaxHP;
-        double mintRatio = (double) m1.getHP() / mintMaxHP;
+        double effervenaRatio = (double) e1.getHP() / effervenaMaxHP;
 
         huemanHealthBar.setSize(200 * huemanRatio, 12);
-        mintHealthBar.setSize(200 * mintRatio, 12);
+        effervenaHealthBar.setSize(200 * effervenaRatio, 12);
 
         updateSuperMeter();
     }
@@ -373,6 +383,4 @@ public class FifthBattlePane extends GraphicsPane {
         }
         contents.clear();
     }
-    
-    //test2
 }
