@@ -635,10 +635,8 @@ public class CutscenePane extends GraphicsPane {
         d.setLocation(cx, cy);
         return d;
     }
-    
-    
-    
-    
-    
-    //tesst,s
+   
 }
+
+
+//tesst112
