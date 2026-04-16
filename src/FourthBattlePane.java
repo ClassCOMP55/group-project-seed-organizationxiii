@@ -2,8 +2,8 @@ import acm.graphics.GImage;
 import acm.graphics.GLabel;
 import acm.graphics.GObject;
 import acm.graphics.GRect;
-import characters.Decima;
 import characters.Hueman;
+import characters.Lavender;
 
 import java.awt.Color;
 import java.awt.event.KeyEvent;
@@ -12,16 +12,16 @@ import java.awt.event.MouseEvent;
 public class FourthBattlePane extends GraphicsPane {
 
     private GImage huemanImage;
-    private GImage decimaImage;
+    private GImage lavenderImage;
 
     private GRect huemanHealthBar;
     private GRect huemanHealthBack;
 
-    private GRect decimaHealthBar;
-    private GRect decimaHealthBack;
+    private GRect lavenderHealthBar;
+    private GRect lavenderHealthBack;
 
     private double huemanMaxHP;
-    private double decimaMaxHP;
+    private double lavenderMaxHP;
 
     private GRect actionBox;
     private GLabel fightOption;
@@ -30,10 +30,10 @@ public class FourthBattlePane extends GraphicsPane {
     private boolean showingFightMenu = false;
 
     private Hueman h1;
-    private Decima d1;
+    private Lavender l1;
 
     private GLabel huemanName;
-    private GLabel decimaName;
+    private GLabel lavenderName;
 
     private GRect continueButton;
     private GLabel continueLabel;
@@ -52,30 +52,30 @@ public class FourthBattlePane extends GraphicsPane {
     @Override
     public void showContent() {
         h1 = mainScreen.getPlayer();
-        d1 = new Decima(600, 20, 10, "Decima", Decima.Phase.FIRST);
+        l1 = new Lavender(600, 20, 10, "Lavender");
 
         huemanMaxHP = h1.getHP();
-        decimaMaxHP = d1.getHP();
+        lavenderMaxHP = l1.getHP();
 
         huemanImage = new GImage(getHuemanImage());
-        decimaImage = new GImage("Decima.png");
+        lavenderImage = new GImage("lavender.png");
 
         huemanImage.scale(0.6);
-        decimaImage.scale(0.9);
+        lavenderImage.scale(0.9);
 
         double hx = MainApplication.WINDOW_WIDTH * 0.25 - huemanImage.getWidth() / 2 + 30;
         double hy = 200;
         huemanImage.setLocation(hx, hy);
 
-        double dx = MainApplication.WINDOW_WIDTH * 0.75 - decimaImage.getWidth() / 2;
-        double dy = 10;
-        decimaImage.setLocation(dx, dy);
+        double lx = MainApplication.WINDOW_WIDTH * 0.75 - lavenderImage.getWidth() / 2;
+        double ly = 10;
+        lavenderImage.setLocation(lx, ly);
 
         mainScreen.add(huemanImage);
-        mainScreen.add(decimaImage);
+        mainScreen.add(lavenderImage);
 
         contents.add(huemanImage);
-        contents.add(decimaImage);
+        contents.add(lavenderImage);
 
         double barWidth = 200;
         double barHeight = 12;
@@ -141,23 +141,23 @@ public class FourthBattlePane extends GraphicsPane {
         contents.add(superMeterBar);
         contents.add(superLabel);
 
-        double dxBar = 30;
-        double dyBar = 30;
+        double lxBar = 30;
+        double lyBar = 30;
 
-        decimaHealthBack = new GRect(dxBar, dyBar, barWidth, barHeight);
-        decimaHealthBack.setFilled(true);
-        decimaHealthBack.setFillColor(Color.DARK_GRAY);
+        lavenderHealthBack = new GRect(lxBar, lyBar, barWidth, barHeight);
+        lavenderHealthBack.setFilled(true);
+        lavenderHealthBack.setFillColor(Color.DARK_GRAY);
 
-        decimaHealthBar = new GRect(dxBar, dyBar, barWidth, barHeight);
-        decimaHealthBar.setFilled(true);
-        decimaHealthBar.setFillColor(new Color(212, 175, 55));
-        decimaHealthBar.setColor(new Color(150, 120, 30));
+        lavenderHealthBar = new GRect(lxBar, lyBar, barWidth, barHeight);
+        lavenderHealthBar.setFilled(true);
+        lavenderHealthBar.setFillColor(new Color(190, 140, 255));
+        lavenderHealthBar.setColor(new Color(145, 100, 220));
 
-        mainScreen.add(decimaHealthBack);
-        mainScreen.add(decimaHealthBar);
+        mainScreen.add(lavenderHealthBack);
+        mainScreen.add(lavenderHealthBar);
 
-        contents.add(decimaHealthBack);
-        contents.add(decimaHealthBar);
+        contents.add(lavenderHealthBack);
+        contents.add(lavenderHealthBar);
 
         huemanName = new GLabel(h1.getName());
         huemanName.setFont("Arial-Bold-14");
@@ -166,18 +166,18 @@ public class FourthBattlePane extends GraphicsPane {
             huemanHealthBack.getY() - 5
         );
 
-        decimaName = new GLabel(d1.getName());
-        decimaName.setFont("Arial-Bold-14");
-        decimaName.setLocation(
-            decimaHealthBack.getX(),
-            decimaHealthBack.getY() - 5
+        lavenderName = new GLabel(l1.getName());
+        lavenderName.setFont("Arial-Bold-14");
+        lavenderName.setLocation(
+            lavenderHealthBack.getX(),
+            lavenderHealthBack.getY() - 5
         );
 
         mainScreen.add(huemanName);
-        mainScreen.add(decimaName);
+        mainScreen.add(lavenderName);
 
         contents.add(huemanName);
-        contents.add(decimaName);
+        contents.add(lavenderName);
 
         double boxWidth = 300;
         double boxHeight = 120;
@@ -201,7 +201,7 @@ public class FourthBattlePane extends GraphicsPane {
 
         GRect innerFrame = new GRect(boxX + 6, boxY + 6, boxWidth - 12, boxHeight - 12);
         innerFrame.setFilled(false);
-        innerFrame.setColor(new Color(212, 175, 55));
+        innerFrame.setColor(new Color(190, 140, 255));
         mainScreen.add(innerFrame);
         contents.add(innerFrame);
 
@@ -228,7 +228,6 @@ public class FourthBattlePane extends GraphicsPane {
 
         continueLabel = new GLabel("Continue");
         continueLabel.setFont("Arial-Bold-16");
-
         continueLabel.setLocation(
             continueButton.getX() + 35,
             continueButton.getY() + 18
@@ -266,8 +265,15 @@ public class FourthBattlePane extends GraphicsPane {
 
             } else if (obj == abilityOption) {
                 if (h1.getSuperMeter() > 0) {
-                    h1.useAbility(1, d1);
+                    h1.useAbility(1, l1);
                     updateHealthBars();
+                    checkBattleEnd();
+
+                    if (!battleOver) {
+                        playerTurn = false;
+                        performEnemyTurn();
+                        checkBattleEnd();
+                    }
                 }
             }
         }
@@ -280,9 +286,11 @@ public class FourthBattlePane extends GraphicsPane {
         contents.remove(fightOption);
 
         fightOption = new GLabel("Basic Attack");
+        fightOption.setFont("Arial-Bold-18");
         fightOption.setLocation(actionBox.getX() + 20, actionBox.getY() + 40);
 
         abilityOption = new GLabel("Superpower");
+        abilityOption.setFont("Arial-Bold-18");
         abilityOption.setLocation(actionBox.getX() + 20, actionBox.getY() + 70);
 
         mainScreen.add(fightOption);
@@ -294,13 +302,13 @@ public class FourthBattlePane extends GraphicsPane {
 
     private void updateSuperMeter() {
         double ratio = (double) h1.getSuperMeter() / 500.0;
-        superMeterBar.setSize(200 * ratio, 8);
+        superMeterBar.setSize(120 * ratio, 12);
     }
 
     private void performPlayerAttack() {
         if (!playerTurn || battleOver) return;
 
-        h1.attackOpponent(d1);
+        h1.attackOpponent(l1);
         updateHealthBars();
 
         playerTurn = false;
@@ -309,8 +317,8 @@ public class FourthBattlePane extends GraphicsPane {
     private void performEnemyTurn() {
         if (battleOver) return;
 
-        if (d1.isAlive()) {
-            d1.takeTurn(h1);
+        if (l1.isAlive()) {
+            l1.takeTurn(h1);
             updateHealthBars();
         }
 
@@ -318,10 +326,9 @@ public class FourthBattlePane extends GraphicsPane {
     }
 
     private void checkBattleEnd() {
-        if (!d1.isAlive()) {
+        if (!l1.isAlive()) {
             battleOver = true;
             System.out.println("YOU WIN");
-
             mainScreen.setCurrentLevel(4);
             mainScreen.switchToLevelSelectScreen();
             return;
@@ -335,10 +342,10 @@ public class FourthBattlePane extends GraphicsPane {
 
     private void updateHealthBars() {
         double huemanRatio = (double) h1.getHP() / huemanMaxHP;
-        double decimaRatio = (double) d1.getHP() / decimaMaxHP;
+        double lavenderRatio = (double) l1.getHP() / lavenderMaxHP;
 
         huemanHealthBar.setSize(200 * huemanRatio, 12);
-        decimaHealthBar.setSize(200 * decimaRatio, 12);
+        lavenderHealthBar.setSize(200 * lavenderRatio, 12);
 
         updateSuperMeter();
     }
@@ -376,6 +383,4 @@ public class FourthBattlePane extends GraphicsPane {
         }
         contents.clear();
     }
-    
-    //test2
 }

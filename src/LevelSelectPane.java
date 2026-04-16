@@ -286,12 +286,12 @@ public class LevelSelectPane extends GraphicsPane {
         else if (selectedLevel == 3) {
             mainColor = new Color(170, 100, 255);
             glowColor = new Color(130, 70, 220);
-            enemyName = "effervena.png";
+            enemyName = "lavender.png";
         } 
         else if (selectedLevel == 4) {
             mainColor = new Color(190, 140, 255);
             glowColor = new Color(145, 100, 220);
-            enemyName = "lavender.png";
+            enemyName = "effervena.png";
         } 
         else if (selectedLevel == 5) {
             mainColor = new Color(255, 120, 120);
