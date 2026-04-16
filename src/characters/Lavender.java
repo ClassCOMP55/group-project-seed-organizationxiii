@@ -1,25 +1,22 @@
 package characters;
 
-public class lavender extends boss {
+public class Lavender extends boss {
 	
 	private boolean usedFakeOut = false;
 	private boolean enraged = false;
 	
 
-	public lavender(int hp, int atk, int spd, String nm) {
+	public Lavender(int hp, int atk, int spd, String nm) {
 		super(hp, atk, spd, nm);
 		usedFakeOut = false;
 		loadSprites();
-		// TODO Auto-generated constructor stub
 	}
 	
 	public boolean fakeOut(Hueman player) {
 	    System.out.println("Lavender used Fake Out!");
-
 	    player.takeDamage((int)(attack * 0.5));
-
 	    System.out.println("Hueman flinched!");
-	    return true; // ALWAYS flinches
+	    return true;
 	}
 	
 	
