@@ -3,51 +3,73 @@ import java.awt.Color;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
+import javax.swing.Timer;
 import characters.Hueman;
 
 public class LevelSelectPane extends GraphicsPane {
 
-    private GImage huemanImage;
-
+    // ── Stars / path ─────────────────────────────────────────────────────────
     private GPolygon[] stars;
     private GPolygon[] starGlows;
-    private GLabel[] levelNumbers;
+    private GLabel[]   levelNumbers;
+    private GLabel[]   bossLabels;
 
     private double[] pointX;
     private double[] pointY;
 
-    private int currentPoint = 0;
-
+    private int     currentPoint  = 0;
+    private int     selectedLevel = 1;
     private boolean showLevelScreen = false;
-    private int selectedLevel = 1;
 
-    private GRect levelScreenBG;
-    private GLabel levelTitle;
-    private GRect startButton;
-    private GLabel startText;
-    private GRect backButton;
-    private GLabel backText;
+    // ── Level preview panel ───────────────────────────────────────────────────
+    private GRect  startButton;
+    private GRect  backButton;
     private GImage levelEnemyImage;
 
-    private ArrayList<GObject> previewObjects = new ArrayList<GObject>();
-    private ArrayList<GObject> ropeObjects    = new ArrayList<GObject>();
-    private ArrayList<GObject> bgObjects      = new ArrayList<GObject>();
+    // ── Object lists ─────────────────────────────────────────────────────────
+    private final ArrayList<GObject> previewObjects = new ArrayList<>();
+    private final ArrayList<GObject> ropeObjects    = new ArrayList<>();
+    private final ArrayList<GObject> bgObjects      = new ArrayList<>();
 
-    // ─── Palette ────────────────────────────────────────────────────────────
-    private static final Color BG_DARK      = new Color(18,  20,  30);
-    private static final Color BG_MID       = new Color(28,  32,  50);
-    private static final Color PATH_FILL    = new Color(45,  50,  75);
-    private static final Color PATH_BORDER  = new Color(70,  80, 120);
-    private static final Color ROPE_MAIN    = new Color(180, 145,  80);
-    private static final Color ROPE_DARK    = new Color(120,  90,  45);
-    private static final Color STAR_GLOW    = new Color(255, 225, 100);
-    private static final Color STAR_DONE    = new Color(255, 220,  60);  // overridden by player colour
-    private static final Color STAR_LOCKED  = new Color(35,   38,  55);
-    private static final Color STAR_BORDER  = new Color(90,  100, 140);
+    // ── Animated background ───────────────────────────────────────────────────
+    private Timer animTimer;
+    private int   tick = 0;
 
-    // ─── Window dimensions (match MainApplication constants) ─────────────────
-    private double W;
-    private double H;
+    // Twinkling star-field
+    private static final int BG_STAR_COUNT = 120;
+    private GOval[]  bgStars     = new GOval[BG_STAR_COUNT];
+    private float[]  bgStarAlpha = new float[BG_STAR_COUNT];
+    private float[]  bgStarSpeed = new float[BG_STAR_COUNT];
+
+    // Moon
+    private GOval moonDisc;
+    private GOval moonGlow;
+
+    // Meteors
+    private static final int METEOR_COUNT = 6;
+    private GLine[]   meteorLines  = new GLine[METEOR_COUNT];
+    private double[]  meteorX      = new double[METEOR_COUNT];
+    private double[]  meteorY      = new double[METEOR_COUNT];
+    private double[]  meteorLen    = new double[METEOR_COUNT];
+    private double[]  meteorSpeed  = new double[METEOR_COUNT];
+    private float[]   meteorAlpha  = new float[METEOR_COUNT];
+    private boolean[] meteorActive = new boolean[METEOR_COUNT];
+
+    // Current-star indicator ring
+    private GOval currentIndicator = null;
+
+    // ── Palette ───────────────────────────────────────────────────────────────
+    private static final Color SKY_TOP   = new Color( 5,  7, 20);
+    private static final Color SKY_BOT   = new Color(12, 18, 40);
+    private static final Color ROPE_MAIN = new Color(180, 145, 80);
+    private static final Color ROPE_DARK = new Color(120,  90, 45);
+    private static final Color STAR_GLOW = new Color(255, 225, 100);
+    private static final Color STAR_LOCK = new Color( 35,  38, 55);
+    private static final Color STAR_BORD = new Color( 90, 100,140);
+    private static final Color TRAIN_COL = new Color(100, 230, 220); // cyan for training star
+
+    // ── Dimensions ───────────────────────────────────────────────────────────
+    private double W, H;
 
     public LevelSelectPane(MainApplication mainScreen) {
         this.mainScreen = mainScreen;
@@ -58,322 +80,393 @@ public class LevelSelectPane extends GraphicsPane {
     // ════════════════════════════════════════════════════════════════════════
     @Override
     public void showContent() {
-    	W = mainScreen.getWidth();
-    	H = mainScreen.getHeight();
+        W = mainScreen.getWidth();
+        H = mainScreen.getHeight();
+
         showLevelScreen = false;
         clearPreviewScreen();
-
-        Hueman player       = mainScreen.getPlayer();
-        int   levelProgress = mainScreen.getCurrentLevel();
-
         removeAllStars();
         clearRopes();
         clearBackground();
 
-        // ── 1. Star positions – winding S-curve from bottom-left to top-right ──
-        // Layout (for a ~1920 × 1080 window; scale naturally with the coords):
-        //   Level 1 (minion) : bottom-left  quadrant
-        //   Level 2 (boss)   : lower-centre
-        //   Level 3 (minion) : lower-right
-        //   Level 4 (boss)   : mid-right
-        //   Level 5 (minion) : mid-centre
-        //   Level 6 (boss)   : mid-left
-        //   Level 7 (minion) : upper-left
-        //   Level 8 (boss)   : upper-right (final)
+        // ── 9 star positions: index 0 = Training, 1-8 = original levels ───────
+        pointX = new double[]{
+            W * 0.080,  // 0  Training
+            W * 0.125,  // 1  Level 1  (minion)
+            W * 0.270,  // 2  Level 2  (boss)
+            W * 0.427,  // 3  Level 3  (minion)
+            W * 0.573,  // 4  Level 4  (boss)
+            W * 0.500,  // 5  Level 5  (minion)
+            W * 0.333,  // 6  Level 6  (boss)
+            W * 0.188,  // 7  Level 7  (minion)
+            W * 0.354   // 8  Level 8  (boss / final)
+        };
+        pointY = new double[]{
+            H * 0.860,  // 0  Training
+            H * 0.759,  // 1
+            H * 0.722,  // 2
+            H * 0.667,  // 3
+            H * 0.630,  // 4
+            H * 0.444,  // 5
+            H * 0.370,  // 6
+            H * 0.241,  // 7
+            H * 0.167   // 8
+        };
 
-        pointX = new double[] {
-        	    W * 0.125,  // 1
-        	    W * 0.270,  // 2
-        	    W * 0.427,  // 3
-        	    W * 0.573,  // 4
-        	    W * 0.500,  // 5
-        	    W * 0.333,  // 6
-        	    W * 0.188,  // 7
-        	    W * 0.354   // 8
-        	};
-
-        	pointY = new double[] {
-        	    H * 0.759,  // 1
-        	    H * 0.722,  // 2
-        	    H * 0.667,  // 3
-        	    H * 0.630,  // 4
-        	    H * 0.444,  // 5
-        	    H * 0.370,  // 6
-        	    H * 0.241,  // 7
-        	    H * 0.167   // 8
-        	};
-        // ── 2. Rich background ────────────────────────────────────────────────
         drawBackground();
-
-        // ── 3. Rope path ─────────────────────────────────────────────────────
         drawRopes();
+        drawLevelStars();
 
-        // ── 4. Stars ─────────────────────────────────────────────────────────
-        stars        = new GPolygon[8];
-        starGlows    = new GPolygon[8];
-        levelNumbers = new GLabel[8];
+        currentPoint = Math.max(0, Math.min(8, mainScreen.getCurrentLevel()));
+        highlightCurrentStar();
 
-        for (int i = 0; i < 8; i++) {
-            boolean isBoss = ((i + 1) % 2 == 0);
-
-            double outerGlow = isBoss ? 62 : 48;
-            double innerGlow = isBoss ? 30 : 22;
-            double outerStar = isBoss ? 52 : 40;
-            double innerStar = isBoss ? 24 : 16;
-
-            // Outer glow ring
-            starGlows[i] = createStar(pointX[i], pointY[i], outerGlow, innerGlow);
-            starGlows[i].setFilled(true);
-            starGlows[i].setFillColor(STAR_GLOW);
-            starGlows[i].setColor(STAR_GLOW);
-            mainScreen.add(starGlows[i]);
-
-            // Main star
-            stars[i] = createStar(pointX[i], pointY[i], outerStar, innerStar);
-            stars[i].setFilled(true);
-
-            if (levelProgress > i) {          // already completed
-                stars[i].setFillColor(getPlayerColor());
-                stars[i].setColor(STAR_GLOW);
-            } else if (levelProgress == i) {  // current / unlocked
-                stars[i].setFillColor(new Color(60, 65, 90));
-                stars[i].setColor(STAR_GLOW);
-            } else {                          // locked
-                stars[i].setFillColor(STAR_LOCKED);
-                stars[i].setColor(STAR_BORDER);
-            }
-
-            mainScreen.add(stars[i]);
-
-            // Level number label beneath each star
-            GLabel num = new GLabel(String.valueOf(i + 1));
-            num.setFont("Arial-Bold-16");
-            num.setColor(levelProgress > i
-                    ? new Color(30, 30, 30)
-                    : new Color(120, 130, 160));
-            num.setLocation(pointX[i] - num.getWidth() / 2.0,
-                            pointY[i] + outerStar + 18);
-            mainScreen.add(num);
-            levelNumbers[i] = num;
-
-            // Boss crown label
-            if (isBoss) {
-                GLabel bossTag = new GLabel("BOSS");
-                bossTag.setFont("Arial-Bold-11");
-                bossTag.setColor(new Color(220, 170, 50));
-                bossTag.setLocation(pointX[i] - bossTag.getWidth() / 2.0,
-                                    pointY[i] - outerStar - 20);
-                mainScreen.add(bossTag);
-                levelNumbers[i] = bossTag; // repurpose slot to track removal
-            }
-        }
-
-        // ── 5. Player character ───────────────────────────────────────────────
-        currentPoint = levelProgress - 1;
-        if (currentPoint < 0) currentPoint = 0;
-        if (currentPoint > 7) currentPoint = 7;
-
-        huemanImage = player.getSprite("overworld");
-        huemanImage.scale(0.65);
-
-        if (currentPoint == 0 && levelProgress == 0) {
-            // Haven't played yet — place just before star 1
-            huemanImage.setLocation(pointX[0] - 70, pointY[0]);
-        } else {
-            int clamp = Math.min(currentPoint, 7);
-            huemanImage.setLocation(pointX[clamp], pointY[clamp]);
-        }
-
-        mainScreen.add(huemanImage);
-        huemanImage.sendToFront();
+        tick = 0;
+        animTimer = new Timer(33, e -> animate());
+        animTimer.start();
     }
-
 
     // ════════════════════════════════════════════════════════════════════════
     //  Background
     // ════════════════════════════════════════════════════════════════════════
     private void drawBackground() {
-        // Base dark fill
-        GRect base = new GRect(0, 0, W, H);
-        base.setFilled(true);
-        base.setFillColor(BG_DARK);
-        base.setColor(BG_DARK);
-        mainScreen.add(base);
-        bgObjects.add(base);
+        GRect skyTop = new GRect(0, 0, W, H * 0.55);
+        skyTop.setFilled(true); skyTop.setFillColor(SKY_TOP); skyTop.setColor(SKY_TOP);
+        bg(skyTop);
 
-        // Subtle gradient panels (lighter towards the centre/top)
-        GRect midPanel = new GRect(0, 0, W, H * 2 / 3);
-        midPanel.setFilled(true);
-        midPanel.setFillColor(new Color(22, 26, 42, 180));
-        midPanel.setColor(new Color(22, 26, 42, 0));
-        mainScreen.add(midPanel);
-        bgObjects.add(midPanel);
+        GRect skyBot = new GRect(0, H * 0.45, W, H * 0.55);
+        skyBot.setFilled(true); skyBot.setFillColor(SKY_BOT); skyBot.setColor(SKY_BOT);
+        bg(skyBot);
 
-        // Soft "ground" strip at the bottom
-        GRect ground = new GRect(0, H - 120, W, 120);
-        ground.setFilled(true);
-        ground.setFillColor(new Color(15, 17, 28));
-        ground.setColor(new Color(15, 17, 28));
-        mainScreen.add(ground);
-        bgObjects.add(ground);
+        GRect ground = new GRect(0, H * 0.92, W, H * 0.08);
+        ground.setFilled(true); ground.setFillColor(new Color(8,10,20)); ground.setColor(new Color(8,10,20));
+        bg(ground);
 
-        // Decorative star-field dots (small circles scattered in the background)
-        int[][] dots = {
-            {100, 80},  {340, 50},  {600, 120}, {900, 40},
-            {1200, 90}, {1500, 60}, {1750, 130},{150, 200},
-            {450, 300}, {750, 180}, {1050, 240},{1350, 160},
-            {1650, 220},{80,  450}, {380, 500}, {680, 420},
-            {980, 480}, {1280, 360},{1580, 440},{1820, 300}
-        };
-        for (int[] d : dots) {
-            GOval dot = new GOval(d[0], d[1], 3, 3);
-            dot.setFilled(true);
-            dot.setFillColor(new Color(180, 190, 220, 100));
-            dot.setColor(new Color(180, 190, 220, 100));
-            mainScreen.add(dot);
-            bgObjects.add(dot);
+        // ── Moon ─────────────────────────────────────────────────────────────
+        double moonX = W * 0.82, moonY = H * 0.10, moonR = 55;
+
+        moonGlow = new GOval(moonX - moonR*1.6, moonY - moonR*1.6, moonR*3.2, moonR*3.2);
+        moonGlow.setFilled(true);
+        moonGlow.setFillColor(new Color(255, 245, 200, 18));
+        moonGlow.setColor(new Color(0,0,0,0));
+        bg(moonGlow);
+
+        moonDisc = new GOval(moonX - moonR, moonY - moonR, moonR*2, moonR*2);
+        moonDisc.setFilled(true);
+        moonDisc.setFillColor(new Color(255, 248, 220));
+        moonDisc.setColor(new Color(240, 230, 180, 160));
+        bg(moonDisc);
+
+        int[][] craters = {{-18,-10,14},{10,8,10},{-8,18,7},{20,-18,8}};
+        for (int[] c : craters) {
+            GOval cr = new GOval(moonX+c[0]-c[2]/2.0, moonY+c[1]-c[2]/2.0, c[2], c[2]);
+            cr.setFilled(true);
+            cr.setFillColor(new Color(220,212,185));
+            cr.setColor(new Color(200,192,165,120));
+            bg(cr);
         }
 
-        // "LEVEL SELECT" title banner at the top
+        // ── Twinkling star-field ──────────────────────────────────────────────
+        for (int i = 0; i < BG_STAR_COUNT; i++) {
+            double sx = Math.random() * W;
+            double sy = Math.random() * H * 0.85;
+            double sr = 0.8 + Math.random() * 1.8;
+            bgStarAlpha[i] = (float) Math.random();
+            bgStarSpeed[i] = 0.005f + (float)(Math.random() * 0.015);
+            bgStars[i] = new GOval(sx-sr, sy-sr, sr*2, sr*2);
+            bgStars[i].setFilled(true);
+            Color sc = new Color(200, 210, 255, Math.max(0,Math.min(255,(int)(bgStarAlpha[i]*200))));
+            bgStars[i].setFillColor(sc); bgStars[i].setColor(sc);
+            bg(bgStars[i]);
+        }
+
+        // ── Meteors ───────────────────────────────────────────────────────────
+        for (int i = 0; i < METEOR_COUNT; i++) {
+            meteorLines[i] = new GLine(0,0,1,1);
+            meteorLines[i].setColor(new Color(255,255,255,0));
+            bg(meteorLines[i]);
+            spawnMeteor(i, true);
+        }
+
+        // ── UI title ──────────────────────────────────────────────────────────
+        GLabel titleShadow = new GLabel("LEVEL SELECT");
+        titleShadow.setFont("Arial-Bold-40");
+        titleShadow.setColor(new Color(0,0,0,160));
+        titleShadow.setLocation((W - titleShadow.getWidth())/2.0 + 3, H*0.085 + 3);
+        bg(titleShadow);
+
         GLabel title = new GLabel("LEVEL SELECT");
-        title.setFont("Arial-Bold-36");
-        title.setColor(new Color(220, 215, 255));
-        title.setLocation((W - title.getWidth()) / 2.0, 80);
-        mainScreen.add(title);
-        bgObjects.add(title);
+        title.setFont("Arial-Bold-40");
+        title.setColor(new Color(220,215,255));
+        title.setLocation((W - title.getWidth())/2.0, H*0.085);
+        bg(title);
 
-        // Thin horizontal divider under the title
-        GLine divider = new GLine((W / 2.0) - 160, 95, (W / 2.0) + 160, 95);
-        divider.setColor(new Color(100, 100, 180, 160));
-        mainScreen.add(divider);
-        bgObjects.add(divider);
+        GLine divider = new GLine(W/2.0-180, H*0.095, W/2.0+180, H*0.095);
+        divider.setColor(new Color(120,110,200,140));
+        bg(divider);
 
-        // Key legend bottom-right
         drawLegend();
     }
 
     private void drawLegend() {
-        double lx = W - 230;
-        double ly = H - 110;
+        double lx = W - 240, ly = H - 130;
 
-        // Completed star sample
-        GPolygon sampleDone = createStar(lx + 12, ly + 14, 12, 5);
-        sampleDone.setFilled(true);
-        sampleDone.setFillColor(getPlayerColor());
-        sampleDone.setColor(STAR_GLOW);
-        mainScreen.add(sampleDone);
-        bgObjects.add(sampleDone);
+        // Training sample
+        GPolygon st = createStar(lx+12, ly+14, 10, 5);
+        st.setFilled(true); st.setFillColor(new Color(80,220,200)); st.setColor(TRAIN_COL);
+        bg(st);
+        GLabel lt = new GLabel("Training");
+        lt.setFont("Arial-14"); lt.setColor(new Color(100,220,210));
+        lt.setLocation(lx+30, ly+19); bg(lt);
 
-        GLabel lblDone = new GLabel("Completed");
-        lblDone.setFont("Arial-14");
-        lblDone.setColor(new Color(180, 185, 210));
-        lblDone.setLocation(lx + 30, ly + 19);
-        mainScreen.add(lblDone);
-        bgObjects.add(lblDone);
+        // Completed sample
+        GPolygon sd = createStar(lx+12, ly+42, 12, 5);
+        sd.setFilled(true); sd.setFillColor(getPlayerColor()); sd.setColor(STAR_GLOW);
+        bg(sd);
+        GLabel ld = new GLabel("Completed");
+        ld.setFont("Arial-14"); ld.setColor(new Color(180,185,210));
+        ld.setLocation(lx+30, ly+47); bg(ld);
 
-        // Locked star sample
-        GPolygon sampleLocked = createStar(lx + 12, ly + 46, 12, 5);
-        sampleLocked.setFilled(true);
-        sampleLocked.setFillColor(STAR_LOCKED);
-        sampleLocked.setColor(STAR_BORDER);
-        mainScreen.add(sampleLocked);
-        bgObjects.add(sampleLocked);
+        // Locked sample
+        GPolygon sl = createStar(lx+12, ly+70, 12, 5);
+        sl.setFilled(true); sl.setFillColor(STAR_LOCK); sl.setColor(STAR_BORD);
+        bg(sl);
+        GLabel ll = new GLabel("Locked");
+        ll.setFont("Arial-14"); ll.setColor(new Color(120,125,160));
+        ll.setLocation(lx+30, ly+75); bg(ll);
 
-        GLabel lblLocked = new GLabel("Locked");
-        lblLocked.setFont("Arial-14");
-        lblLocked.setColor(new Color(120, 125, 160));
-        lblLocked.setLocation(lx + 30, ly + 51);
-        mainScreen.add(lblLocked);
-        bgObjects.add(lblLocked);
-
-        // Controls hint
-        GLabel hint = new GLabel("[A] / [D]  to move  ·  Click star to select");
-        hint.setFont("Arial-13");
-        hint.setColor(new Color(90, 100, 140));
-        hint.setLocation(W - 320, H - 30);
-        mainScreen.add(hint);
-        bgObjects.add(hint);
+        GLabel hint = new GLabel("[A] / [D]  to move   ·   Click star to select");
+        hint.setFont("Arial-13"); hint.setColor(new Color(90,100,140));
+        hint.setLocation(W-340, H-16); bg(hint);
     }
+
+    private void bg(GObject obj) { mainScreen.add(obj); bgObjects.add(obj); }
 
     private void clearBackground() {
-        for (GObject obj : bgObjects) mainScreen.remove(obj);
+        for (GObject o : bgObjects) mainScreen.remove(o);
         bgObjects.clear();
+        moonDisc = null; moonGlow = null;
+        for (int i = 0; i < BG_STAR_COUNT; i++) bgStars[i]    = null;
+        for (int i = 0; i < METEOR_COUNT;   i++) meteorLines[i] = null;
     }
 
+    // ════════════════════════════════════════════════════════════════════════
+    //  Level stars  (9 total: index 0 = Training)
+    // ════════════════════════════════════════════════════════════════════════
+    private void drawLevelStars() {
+        int levelProgress = mainScreen.getCurrentLevel();
+
+        stars        = new GPolygon[9];
+        starGlows    = new GPolygon[9];
+        levelNumbers = new GLabel[9];
+        bossLabels   = new GLabel[9];
+
+        for (int i = 0; i < 9; i++) {
+            boolean isTraining = (i == 0);
+            // After training: i=1 minion, i=2 boss, i=3 minion, i=4 boss …
+            boolean isBoss = (!isTraining && (i % 2 == 0));
+
+            double outerG = isTraining ? 40 : (isBoss ? 62 : 48);
+            double innerG = isTraining ? 20 : (isBoss ? 30 : 22);
+            double outerS = isTraining ? 32 : (isBoss ? 52 : 40);
+            double innerS = isTraining ? 16 : (isBoss ? 24 : 16);
+
+            // Glow ring
+            starGlows[i] = createStar(pointX[i], pointY[i], outerG, innerG);
+            starGlows[i].setFilled(true);
+
+            if (isTraining) {
+                starGlows[i].setFillColor(new Color(TRAIN_COL.getRed(), TRAIN_COL.getGreen(), TRAIN_COL.getBlue(), 70));
+                starGlows[i].setColor(new Color(TRAIN_COL.getRed(), TRAIN_COL.getGreen(), TRAIN_COL.getBlue(), 70));
+            } else {
+                starGlows[i].setFillColor(STAR_GLOW);
+                starGlows[i].setColor(STAR_GLOW);
+            }
+            mainScreen.add(starGlows[i]);
+
+            // Main star fill
+            stars[i] = createStar(pointX[i], pointY[i], outerS, innerS);
+            stars[i].setFilled(true);
+
+            if (isTraining) {
+                // Distinct cyan teal — clearly different from boss gold or regular grey
+                stars[i].setFillColor(levelProgress > i ? new Color(80,220,200) : new Color(25,65,75));
+                stars[i].setColor(TRAIN_COL);
+            } else if (levelProgress > i) {
+                stars[i].setFillColor(getPlayerColor());
+                stars[i].setColor(STAR_GLOW);
+            } else if (levelProgress == i) {
+                stars[i].setFillColor(new Color(60,65,90));
+                stars[i].setColor(STAR_GLOW);
+            } else {
+                stars[i].setFillColor(STAR_LOCK);
+                stars[i].setColor(STAR_BORD);
+            }
+            mainScreen.add(stars[i]);
+
+            // Number / symbol beneath star
+            GLabel num;
+            if (isTraining) {
+                num = new GLabel("✦");
+                num.setFont("Arial-Bold-14");
+                num.setColor(new Color(100,220,210));
+            } else {
+                num = new GLabel(String.valueOf(i)); // levels 1-8
+                num.setFont("Arial-Bold-16");
+                num.setColor(levelProgress > i ? new Color(200,210,230) : new Color(90,100,130));
+            }
+            num.setLocation(pointX[i] - num.getWidth()/2.0, pointY[i] + outerS + 20);
+            mainScreen.add(num);
+            levelNumbers[i] = num;
+
+            // Tag above star
+            if (isTraining) {
+                GLabel tag = new GLabel("TRAINING");
+                tag.setFont("Arial-Bold-11");
+                tag.setColor(new Color(120, 200, 255)); // cyan-blue, distinct from gold BOSS
+                tag.setLocation(pointX[i] - tag.getWidth()/2.0, pointY[i] - outerS - 20);
+                mainScreen.add(tag);
+                bossLabels[i] = tag;
+            } else if (isBoss) {
+                GLabel boss = new GLabel("BOSS");
+                boss.setFont("Arial-Bold-11");
+                boss.setColor(new Color(220,170,50));
+                boss.setLocation(pointX[i] - boss.getWidth()/2.0, pointY[i] - outerS - 20);
+                mainScreen.add(boss);
+                bossLabels[i] = boss;
+            }
+        }
+    }
+
+    private void highlightCurrentStar() {
+        if (currentIndicator != null) mainScreen.remove(currentIndicator);
+        if (currentPoint < 0 || currentPoint > 8) return;
+        double r = 70;
+        currentIndicator = new GOval(pointX[currentPoint]-r, pointY[currentPoint]-r, r*2, r*2);
+        currentIndicator.setFilled(false);
+        currentIndicator.setColor(new Color(255,230,100,80));
+        mainScreen.add(currentIndicator);
+    }
 
     // ════════════════════════════════════════════════════════════════════════
-    //  Ropes  — curved catenary arcs instead of straight crossing lines
+    //  Ropes
     // ════════════════════════════════════════════════════════════════════════
     private void drawRopes() {
         clearRopes();
-
-        for (int i = 0; i < pointX.length - 1; i++) {
-            drawRopeSegment(pointX[i], pointY[i], pointX[i + 1], pointY[i + 1]);
-        }
+        for (int i = 0; i < pointX.length - 1; i++)
+            drawRopeSegment(pointX[i], pointY[i], pointX[i+1], pointY[i+1]);
     }
 
-    /**
-     * Draws a two-line "rope" between (x1,y1) and (x2,y2) using a
-     * quadratic Bézier approximation rendered with small line segments.
-     * The control point sags downward to mimic a hanging rope.
-     */
     private void drawRopeSegment(double x1, double y1, double x2, double y2) {
-        // Control point: mid-point + downward sag
-        double mx  = (x1 + x2) / 2.0;
-        double my  = (y1 + y2) / 2.0;
-        double sag = 50.0;   // vertical droop in pixels
-        double cx  = mx;
-        double cy  = my + sag;
-
+        double mx = (x1+x2)/2.0, my = (y1+y2)/2.0;
+        double cx = mx, cy = my + 50;
         int steps = 24;
-
-        double prevX1 = x1, prevY1 = y1;
-        double prevX2 = x1 + 2, prevY2 = y1 + 2;
-
+        double px1=x1, py1=y1, px2=x1+2, py2=y1+2;
         for (int k = 1; k <= steps; k++) {
-            double t  = (double) k / steps;
+            double t  = (double)k/steps;
             double bx = (1-t)*(1-t)*x1 + 2*(1-t)*t*cx + t*t*x2;
             double by = (1-t)*(1-t)*y1 + 2*(1-t)*t*cy + t*t*y2;
-
-            GLine seg1 = new GLine(prevX1, prevY1, bx, by);
-            seg1.setColor(ROPE_MAIN);
-            mainScreen.add(seg1);
-            ropeObjects.add(seg1);
-
-            GLine seg2 = new GLine(prevX2, prevY2, bx + 2, by + 2);
-            seg2.setColor(ROPE_DARK);
-            mainScreen.add(seg2);
-            ropeObjects.add(seg2);
-
-            prevX1 = bx;  prevY1 = by;
-            prevX2 = bx + 2; prevY2 = by + 2;
+            GLine s1 = new GLine(px1,py1,bx,by);       s1.setColor(ROPE_MAIN); mainScreen.add(s1); ropeObjects.add(s1);
+            GLine s2 = new GLine(px2,py2,bx+2,by+2);   s2.setColor(ROPE_DARK); mainScreen.add(s2); ropeObjects.add(s2);
+            px1=bx; py1=by; px2=bx+2; py2=by+2;
         }
-
-        // Knots along the rope
         for (int k = 1; k <= 3; k++) {
-            double t  = k / 4.0;
+            double t  = k/4.0;
             double kx = (1-t)*(1-t)*x1 + 2*(1-t)*t*cx + t*t*x2;
             double ky = (1-t)*(1-t)*y1 + 2*(1-t)*t*cy + t*t*y2;
-
-            GLine knot = new GLine(kx - 4, ky - 4, kx + 4, ky + 4);
-            knot.setColor(ROPE_DARK);
-            mainScreen.add(knot);
-            ropeObjects.add(knot);
+            GLine knot = new GLine(kx-4,ky-4,kx+4,ky+4);
+            knot.setColor(ROPE_DARK); mainScreen.add(knot); ropeObjects.add(knot);
         }
     }
 
     private void clearRopes() {
-        for (GObject obj : ropeObjects) mainScreen.remove(obj);
+        for (GObject o : ropeObjects) mainScreen.remove(o);
         ropeObjects.clear();
     }
 
+    // ════════════════════════════════════════════════════════════════════════
+    //  Meteor helpers
+    // ════════════════════════════════════════════════════════════════════════
+    private void spawnMeteor(int i, boolean randomY) {
+        meteorX[i]      = W * (0.1 + Math.random() * 0.8);
+        meteorY[i]      = randomY ? Math.random() * H * 0.6 : -20;
+        meteorLen[i]    = 60 + Math.random() * 100;
+        meteorSpeed[i]  = 4  + Math.random() * 6;
+        meteorAlpha[i]  = 0f;
+        meteorActive[i] = randomY && Math.random() > 0.5;
+    }
+
+    // ════════════════════════════════════════════════════════════════════════
+    //  Animation
+    // ════════════════════════════════════════════════════════════════════════
+    private void animate() {
+        tick++;
+
+        // Twinkling star-field
+        for (int i = 0; i < BG_STAR_COUNT; i++) {
+            if (bgStars[i] == null) continue;
+            bgStarAlpha[i] += bgStarSpeed[i] * (i%2==0 ? 1 : -1);
+            if (bgStarAlpha[i] > 1f)  { bgStarAlpha[i]=1f;  bgStarSpeed[i]=-Math.abs(bgStarSpeed[i]); }
+            if (bgStarAlpha[i] < 0f)  { bgStarAlpha[i]=0f;  bgStarSpeed[i]= Math.abs(bgStarSpeed[i]); }
+            int a = Math.max(0,Math.min(255,(int)(bgStarAlpha[i]*200)));
+            Color sc = new Color(200,210,255,a);
+            bgStars[i].setFillColor(sc); bgStars[i].setColor(sc);
+        }
+
+        // Moon glow pulse
+        if (moonGlow != null) {
+            float mp = (float)(0.5 + 0.5*Math.sin(tick*0.02));
+            moonGlow.setFillColor(new Color(255,245,200,(int)(12+mp*20)));
+        }
+
+        // Meteors
+        for (int i = 0; i < METEOR_COUNT; i++) {
+            if (meteorLines[i] == null) continue;
+            if (!meteorActive[i]) { if (Math.random()<0.003) meteorActive[i]=true; continue; }
+            meteorX[i] += meteorSpeed[i] * 1.4;
+            meteorY[i] += meteorSpeed[i] * 0.6;
+            meteorAlpha[i] = Math.min(1f, meteorAlpha[i]+0.08f);
+            if (meteorX[i] > W*0.95 || meteorY[i] > H*0.85)
+                meteorAlpha[i] = Math.max(0f, meteorAlpha[i]-0.15f);
+            if (meteorAlpha[i] <= 0f && (meteorX[i]>W || meteorY[i]>H)) {
+                spawnMeteor(i,false); continue;
+            }
+            int ma = (int)(meteorAlpha[i]*200);
+            meteorLines[i].setColor(new Color(220,230,255,ma));
+            meteorLines[i].setStartPoint(meteorX[i], meteorY[i]);
+            meteorLines[i].setEndPoint(meteorX[i]-meteorLen[i]*0.9, meteorY[i]-meteorLen[i]*0.4);
+        }
+
+        // Level star glow pulse
+        if (starGlows != null) {
+            for (int i = 0; i < 9; i++) {
+                if (starGlows[i] == null) continue;
+                float p = (float)(0.5 + 0.5*Math.sin(tick*0.04 + i*0.7));
+                int a = (int)(60 + p*90);
+                boolean isTraining = (i == 0);
+                if (isTraining) {
+                    starGlows[i].setFillColor(new Color(TRAIN_COL.getRed(), TRAIN_COL.getGreen(), TRAIN_COL.getBlue(), a));
+                    starGlows[i].setColor(new Color(TRAIN_COL.getRed(), TRAIN_COL.getGreen(), TRAIN_COL.getBlue(), a));
+                } else {
+                    starGlows[i].setFillColor(new Color(STAR_GLOW.getRed(), STAR_GLOW.getGreen(), STAR_GLOW.getBlue(), a));
+                    starGlows[i].setColor(new Color(STAR_GLOW.getRed(), STAR_GLOW.getGreen(), STAR_GLOW.getBlue(), a));
+                }
+            }
+        }
+
+        // Current star indicator pulse
+        if (currentIndicator != null) {
+            float p = (float)(0.5 + 0.5*Math.sin(tick*0.07));
+            currentIndicator.setColor(new Color(255,230,100,(int)(40+p*100)));
+        }
+    }
 
     // ════════════════════════════════════════════════════════════════════════
     //  hideContent
     // ════════════════════════════════════════════════════════════════════════
     @Override
     public void hideContent() {
-        if (huemanImage != null) mainScreen.remove(huemanImage);
+        if (animTimer != null) { animTimer.stop(); animTimer = null; }
+        if (currentIndicator != null) { mainScreen.remove(currentIndicator); currentIndicator = null; }
         removeAllStars();
         clearRopes();
         clearBackground();
@@ -381,15 +474,12 @@ public class LevelSelectPane extends GraphicsPane {
         showLevelScreen = false;
     }
 
-
     // ════════════════════════════════════════════════════════════════════════
-    //  Input handling
+    //  Input
     // ════════════════════════════════════════════════════════════════════════
     @Override
     public void keyPressed(KeyEvent e) {
         if (showLevelScreen) return;
-        if (huemanImage == null) return;
-
         if (e.getKeyCode() == KeyEvent.VK_D) moveForward();
         if (e.getKeyCode() == KeyEvent.VK_A) moveBackward();
     }
@@ -398,24 +488,19 @@ public class LevelSelectPane extends GraphicsPane {
     public void mouseClicked(MouseEvent e) {
         if (showLevelScreen) {
             if (startButton != null && startButton.contains(e.getX(), e.getY())) {
-                launchLevel(selectedLevel);
-                return;
+                launchLevel(selectedLevel); return;
             }
             if (backButton != null && backButton.contains(e.getX(), e.getY())) {
-                clearPreviewScreen();
-                showLevelScreen = false;
-                return;
+                clearPreviewScreen(); showLevelScreen = false; return;
             }
-            return; // swallow clicks while level screen is open
+            return;
         }
-
-        int levelProgress = mainScreen.getCurrentLevel();
-        for (int i = 0; i < 8; i++) {
-            if (stars[i] != null
-                    && stars[i].contains(e.getX(), e.getY())
-                    && levelProgress >= i + 1) {
-                currentPoint = i + 1;
-                selectedLevel = i + 1;
+        int prog = mainScreen.getCurrentLevel();
+        for (int i = 0; i < 9; i++) {
+            if (stars[i] != null && stars[i].contains(e.getX(), e.getY()) && prog >= i) {
+                currentPoint  = i;
+                selectedLevel = i;
+                highlightCurrentStar();
                 showLevelPreview();
                 return;
             }
@@ -424,257 +509,231 @@ public class LevelSelectPane extends GraphicsPane {
 
     private void launchLevel(int level) {
         switch (level) {
-            case 1: mainScreen.switchToSecondBattleScreen();  break;
-            case 2: mainScreen.switchToCutScene3Screen();     break;
-            case 3: mainScreen.switchToFourthBattleScreen();  break;
-            case 4: mainScreen.switchToFifthBattleScreen();   break;
-            // future levels wired here
+            case 0: /* training — wire to training battle if available */ break;
+            case 1: mainScreen.switchToSecondBattleScreen(); break;
+            case 2: mainScreen.switchToCutScene3Screen();    break;
+            case 3: mainScreen.switchToFourthBattleScreen(); break;
+            case 4: mainScreen.switchToFifthBattleScreen();  break;
         }
     }
-
 
     // ════════════════════════════════════════════════════════════════════════
     //  Movement
     // ════════════════════════════════════════════════════════════════════════
     private void moveForward() {
-        int maxReachable = mainScreen.getCurrentLevel();
-        if (currentPoint < maxReachable && currentPoint < pointX.length) {
+        int max = mainScreen.getCurrentLevel();
+        if (currentPoint < max && currentPoint < 8) {
             currentPoint++;
-            huemanImage.setLocation(pointX[currentPoint - 1], pointY[currentPoint - 1]);
             selectedLevel = currentPoint;
+            highlightCurrentStar();
             showLevelPreview();
         }
     }
 
     private void moveBackward() {
-        if (currentPoint > 1) {
+        if (currentPoint > 0) {
             currentPoint--;
-            huemanImage.setLocation(pointX[currentPoint - 1], pointY[currentPoint - 1]);
-        } else if (currentPoint == 1) {
-            currentPoint = 0;
-            huemanImage.setLocation(pointX[0] - 70, pointY[0]);
+            highlightCurrentStar();
         }
     }
 
-
     // ════════════════════════════════════════════════════════════════════════
-    //  Level preview panel  (replaces showLevelOneScreen)
+    //  Level preview panel
     // ════════════════════════════════════════════════════════════════════════
     private void showLevelPreview() {
         clearPreviewScreen();
         showLevelScreen = true;
 
-        // ── Colours per level ────────────────────────────────────────────
         Color mainColor, glowColor, darkColor;
         String enemyName;
+        String displayName;
 
         switch (selectedLevel) {
-            case 1:  mainColor = new Color(  0, 255, 220); glowColor = new Color(  0, 200, 170); darkColor = new Color(  0, 80, 70); enemyName = "mint.png";        break;
-            case 2:  mainColor = new Color( 11,  95,  90); glowColor = new Color( 19, 115, 109); darkColor = new Color(  5, 45, 42); enemyName = "slujupiter.png";  break;
-            case 3:  mainColor = new Color(170, 100, 255); glowColor = new Color(130,  70, 220); darkColor = new Color( 60, 20,100); enemyName = "lavender.png";    break;
-            case 4:  mainColor = new Color(190, 140, 255); glowColor = new Color(145, 100, 220); darkColor = new Color( 70, 30,110); enemyName = "effervena.png";   break;
-            case 5:  mainColor = new Color(255, 120, 120); glowColor = new Color(210,  90,  90); darkColor = new Color(100, 25, 25); enemyName = "";                break;
-            case 6:  mainColor = new Color(255,  80,  80); glowColor = new Color(200,  50,  50); darkColor = new Color( 90, 15, 15); enemyName = "";                break;
-            case 7:  mainColor = new Color(120, 180, 255); glowColor = new Color( 80, 140, 220); darkColor = new Color( 20, 55,110); enemyName = "";                break;
-            default: mainColor = new Color( 80, 120, 255); glowColor = new Color( 50,  90, 220); darkColor = new Color( 15, 35, 90); enemyName = "";                break;
+            case 0: mainColor=new Color(100,230,220); glowColor=new Color( 70,200,190); darkColor=new Color(10,50,48); enemyName="";             displayName="Training";  break;
+            case 1: mainColor=new Color(  0,255,220); glowColor=new Color(  0,200,170); darkColor=new Color( 0,60,55); enemyName="mint.png";       displayName="Level  1";  break;
+            case 2: mainColor=new Color( 11, 95, 90); glowColor=new Color( 19,115,109); darkColor=new Color( 4,35,32); enemyName="slujupiter.png"; displayName="Level  2";  break;
+            case 3: mainColor=new Color(170,100,255); glowColor=new Color(130, 70,220); darkColor=new Color(50,15,90); enemyName="lavender.png";   displayName="Level  3";  break;
+            case 4: mainColor=new Color(190,140,255); glowColor=new Color(145,100,220); darkColor=new Color(60,22,95); enemyName="effervena.png";  displayName="Level  4";  break;
+            case 5: mainColor=new Color(255,120,120); glowColor=new Color(210, 90, 90); darkColor=new Color(90,18,18); enemyName="";               displayName="Level  5";  break;
+            case 6: mainColor=new Color(255, 80, 80); glowColor=new Color(200, 50, 50); darkColor=new Color(80,12,12); enemyName="";               displayName="Level  6";  break;
+            case 7: mainColor=new Color(120,180,255); glowColor=new Color( 80,140,220); darkColor=new Color(15,45,100);enemyName="";               displayName="Level  7";  break;
+            default:mainColor=new Color( 80,120,255); glowColor=new Color( 50, 90,220); darkColor=new Color(12,28,85); enemyName="";               displayName="Level  8";  break;
         }
 
-        boolean isBoss   = (selectedLevel % 2 == 0);
-        String  typeText = isBoss ? "BOSS" : "MINION";
+        boolean isTraining = (selectedLevel == 0);
+        boolean isBoss     = (!isTraining && selectedLevel % 2 == 0);
+        String  typeText   = isTraining ? "TRAINING" : (isBoss ? "BOSS" : "MINION");
 
-        // Panel dimensions — slim side-panel anchored to the right
-        int panelW = 460;
-        int panelH = 560;
-      double panelX = W - panelW - 120;
-      double panelY = (H - panelH) / 2;
+        int    panelW = 420;
+        int    panelH = 540;
+        double panelX = W - panelW - 80;
+        double panelY = (H - panelH) / 2.0;
 
-        // ── Dark panel background ────────────────────────────────────────
-        GRect shadow = new GRect(panelX + 6, panelY + 6, panelW, panelH);
-        shadow.setFilled(true);
-        shadow.setFillColor(new Color(0, 0, 0, 120));
-        shadow.setColor(new Color(0, 0, 0, 0));
-        addPreviewObject(shadow);
+        // Layered outer glow
+        for (int g = 3; g >= 1; g--) {
+            GRect glow = new GRect(panelX-g*5, panelY-g*5, panelW+g*10, panelH+g*10);
+            glow.setFilled(true);
+            glow.setFillColor(new Color(mainColor.getRed(),mainColor.getGreen(),mainColor.getBlue(),12-g*3));
+            glow.setColor(new Color(mainColor.getRed(),mainColor.getGreen(),mainColor.getBlue(),60-g*15));
+            addPrev(glow);
+        }
 
-        GRect panel = new GRect(panelX, panelY, panelW, panelH);
-        panel.setFilled(true);
-        panel.setFillColor(darkColor);
-        panel.setColor(mainColor);
-        addPreviewObject(panel);
+        GRect shadow = new GRect(panelX+6,panelY+6,panelW,panelH);
+        shadow.setFilled(true); shadow.setFillColor(new Color(0,0,0,140)); shadow.setColor(new Color(0,0,0,0));
+        addPrev(shadow);
 
-        // Accent top bar
-        GRect topBar = new GRect(panelX, panelY, panelW, 6);
-        topBar.setFilled(true);
-        topBar.setFillColor(mainColor);
-        topBar.setColor(mainColor);
-        addPreviewObject(topBar);
+        GRect panel = new GRect(panelX,panelY,panelW,panelH);
+        panel.setFilled(true); panel.setFillColor(darkColor); panel.setColor(mainColor);
+        addPrev(panel);
 
-        // ── Type badge (BOSS / MINION) ────────────────────────────────────
-        GRect badge = new GRect(panelX + 20, panelY + 24, 90, 28);
-        badge.setFilled(true);
-        badge.setFillColor(mainColor);
-        badge.setColor(mainColor);
-        addPreviewObject(badge);
+        GRect inner = new GRect(panelX+5,panelY+5,panelW-10,panelH-10);
+        inner.setFilled(false);
+        inner.setColor(new Color(mainColor.getRed(),mainColor.getGreen(),mainColor.getBlue(),40));
+        addPrev(inner);
 
-        GLabel badgeText = new GLabel(typeText);
-        badgeText.setFont("Arial-Bold-13");
-        badgeText.setColor(darkColor);
-        badgeText.setLocation(panelX + 30, panelY + 43);
-        addPreviewObject(badgeText);
+        GRect topBar = new GRect(panelX,panelY,panelW,5);
+        topBar.setFilled(true); topBar.setFillColor(mainColor); topBar.setColor(mainColor);
+        addPrev(topBar);
 
-        // ── Title ("Level N") ─────────────────────────────────────────────
-        String titleStr = "Level  " + selectedLevel;
-        GLabel titleGlow = new GLabel(titleStr);
-        titleGlow.setFont("Arial-Bold-46");
-        titleGlow.setColor(glowColor);
-        titleGlow.setLocation(panelX + 18, panelY + 100);
-        addPreviewObject(titleGlow);
+        // Corner diamonds
+        double[][] corners = {{panelX,panelY},{panelX+panelW,panelY},
+                              {panelX,panelY+panelH},{panelX+panelW,panelY+panelH}};
+        for (double[] c : corners) {
+            GPolygon d = makeDiamond(c[0],c[1],9);
+            d.setFilled(true);
+            d.setFillColor(new Color(mainColor.getRed(),mainColor.getGreen(),mainColor.getBlue(),180));
+            d.setColor(new Color(mainColor.getRed(),mainColor.getGreen(),mainColor.getBlue(),240));
+            addPrev(d);
+        }
 
-        GLabel titleLabel = new GLabel(titleStr);
-        titleLabel.setFont("Arial-Bold-46");
-        titleLabel.setColor(mainColor);
-        titleLabel.setLocation(panelX + 20, panelY + 98);
-        addPreviewObject(titleLabel);
+        // Badge
+        GRect badge = new GRect(panelX+18,panelY+20,isTraining?90:80,24);
+        badge.setFilled(true); badge.setFillColor(mainColor); badge.setColor(mainColor);
+        addPrev(badge);
+        GLabel badgeTxt = new GLabel(typeText);
+        badgeTxt.setFont("Arial-Bold-12");
+        badgeTxt.setColor(darkColor);
+        badgeTxt.setLocation(panelX+24, panelY+36);
+        addPrev(badgeTxt);
 
-        // Divider
-        GLine divLine = new GLine(panelX + 20, panelY + 112, panelX + panelW - 20, panelY + 112);
-        divLine.setColor(new Color(mainColor.getRed(), mainColor.getGreen(), mainColor.getBlue(), 80));
-        addPreviewObject(divLine);
+        // Title
+        GLabel tGlow = new GLabel(displayName);
+        tGlow.setFont("Arial-Bold-44"); tGlow.setColor(glowColor);
+        tGlow.setLocation(panelX+18, panelY+96); addPrev(tGlow);
 
-        // ── Enemy image or placeholder ────────────────────────────────────
-        double imgAreaY = panelY + 126;
-        int imgAreaH = 240;
+        GLabel tLabel = new GLabel(displayName);
+        tLabel.setFont("Arial-Bold-44"); tLabel.setColor(mainColor);
+        tLabel.setLocation(panelX+20, panelY+94); addPrev(tLabel);
+
+        GLine div = new GLine(panelX+18,panelY+106,panelX+panelW-18,panelY+106);
+        div.setColor(new Color(mainColor.getRed(),mainColor.getGreen(),mainColor.getBlue(),70));
+        addPrev(div);
+
+        // Enemy image area
+        double imgAreaX = panelX+20, imgAreaY = panelY+118;
+        double imgAreaW = panelW-40, imgAreaH  = 230;
+
+        GRect imgBg = new GRect(imgAreaX,imgAreaY,imgAreaW,imgAreaH);
+        imgBg.setFilled(true);
+        imgBg.setFillColor(new Color(mainColor.getRed(),mainColor.getGreen(),mainColor.getBlue(),12));
+        imgBg.setColor(new Color(mainColor.getRed(),mainColor.getGreen(),mainColor.getBlue(),50));
+        addPrev(imgBg);
 
         if (!enemyName.isEmpty()) {
             levelEnemyImage = new GImage(enemyName);
-            levelEnemyImage.scale(0.7);
-            double imgX = panelX + (panelW - levelEnemyImage.getWidth()) / 2.0;
-            double imgY = imgAreaY + (imgAreaH - levelEnemyImage.getHeight()) / 2.0;
-            levelEnemyImage.setLocation(imgX, imgY);
-            addPreviewObject(levelEnemyImage);
+            double scaleX = (imgAreaW-20)/levelEnemyImage.getWidth();
+            double scaleY = (imgAreaH-20)/levelEnemyImage.getHeight();
+            double scale  = Math.min(scaleX, scaleY);
+            if (scale < 1.0) levelEnemyImage.scale(scale);
+            levelEnemyImage.setLocation(
+                imgAreaX + (imgAreaW - levelEnemyImage.getWidth())  / 2.0,
+                imgAreaY + (imgAreaH - levelEnemyImage.getHeight()) / 2.0);
+            addPrev(levelEnemyImage);
+        } else if (isTraining) {
+            // Training placeholder: "PRACTICE" label
+            GLabel pl = new GLabel("PRACTICE");
+            pl.setFont("Arial-Bold-24");
+            pl.setColor(new Color(mainColor.getRed(),mainColor.getGreen(),mainColor.getBlue(),100));
+            pl.setLocation(imgAreaX+(imgAreaW-pl.getWidth())/2.0, imgAreaY+imgAreaH/2.0-10);
+            addPrev(pl);
+            GLabel pl2 = new GLabel("BATTLE");
+            pl2.setFont("Arial-Bold-24");
+            pl2.setColor(pl.getColor());
+            pl2.setLocation(imgAreaX+(imgAreaW-pl2.getWidth())/2.0, imgAreaY+imgAreaH/2.0+24);
+            addPrev(pl2);
         } else {
-            // "COMING SOON" placeholder box
-            GRect ph = new GRect(panelX + 100, imgAreaY + 30, 260, 180);
-            ph.setFilled(true);
-            ph.setFillColor(new Color(mainColor.getRed(), mainColor.getGreen(), mainColor.getBlue(), 25));
-            ph.setColor(new Color(mainColor.getRed(), mainColor.getGreen(), mainColor.getBlue(), 80));
-            addPreviewObject(ph);
-
             GLabel cs1 = new GLabel("COMING");
-            cs1.setFont("Arial-Bold-28");
-            cs1.setColor(new Color(mainColor.getRed(), mainColor.getGreen(), mainColor.getBlue(), 120));
-            cs1.setLocation(panelX + 150, imgAreaY + 108);
-            addPreviewObject(cs1);
-
+            cs1.setFont("Arial-Bold-26");
+            cs1.setColor(new Color(mainColor.getRed(),mainColor.getGreen(),mainColor.getBlue(),100));
+            cs1.setLocation(imgAreaX+(imgAreaW-cs1.getWidth())/2.0, imgAreaY+imgAreaH/2.0-10);
+            addPrev(cs1);
             GLabel cs2 = new GLabel("SOON");
-            cs2.setFont("Arial-Bold-28");
-            cs2.setColor(new Color(mainColor.getRed(), mainColor.getGreen(), mainColor.getBlue(), 120));
-            cs2.setLocation(panelX + 168, imgAreaY + 145);
-            addPreviewObject(cs2);
+            cs2.setFont("Arial-Bold-26"); cs2.setColor(cs1.getColor());
+            cs2.setLocation(imgAreaX+(imgAreaW-cs2.getWidth())/2.0, imgAreaY+imgAreaH/2.0+26);
+            addPrev(cs2);
         }
 
-        // ── Buttons ────────────────────────────────────────────────────────
-        double btnX = panelX + 30;
-        double btnW = panelW - 60;
-        double btnH = 56;
-        double startY = panelY + panelH - 155;
-        double backY  = panelY + panelH - 85;
-
-        addButton(btnX, startY, btnW, btnH, "START", mainColor, glowColor, darkColor, true);
-        addButton(btnX, backY,  btnW, btnH, "BACK",  new Color(100, 110, 150), new Color(130, 140, 180), new Color(20, 22, 36), false);
+        // Buttons
+        double btnX = panelX+25, btnW = panelW-50, btnH = 52;
+        addButton(btnX, panelY+panelH-138, btnW, btnH, "START", mainColor, glowColor, darkColor, true);
+        addButton(btnX, panelY+panelH- 74, btnW, btnH, "BACK",
+                  new Color(100,110,150), new Color(130,140,180), new Color(18,20,34), false);
     }
 
-    /** Creates a styled button and registers startButton / backButton accordingly. */
     private void addButton(double x, double y, double w, double h,
-                           String label, Color col, Color glow, Color dark,
-                           boolean isPrimary) {
-        // Glow halo
-        GRect halo = new GRect(x - 3, y - 3, w + 6, h + 6);
+                           String label, Color col, Color glow, Color dark, boolean isPrimary) {
+        GRect halo = new GRect(x-4,y-4,w+8,h+8);
         halo.setFilled(true);
-        halo.setFillColor(new Color(col.getRed(), col.getGreen(), col.getBlue(), 60));
-        halo.setColor(new Color(0, 0, 0, 0));
-        addPreviewObject(halo);
+        halo.setFillColor(new Color(col.getRed(),col.getGreen(),col.getBlue(),50));
+        halo.setColor(new Color(0,0,0,0));
+        addPrev(halo);
 
-        // Button body
-        GRect btn = new GRect(x, y, w, h);
+        GRect btn = new GRect(x,y,w,h);
         btn.setFilled(true);
-        btn.setFillColor(isPrimary ? new Color(dark.getRed(), dark.getGreen(), dark.getBlue()) : new Color(22, 24, 38));
+        btn.setFillColor(isPrimary ? dark : new Color(20,22,36));
         btn.setColor(col);
-        addPreviewObject(btn);
+        addPrev(btn);
 
-        // Button text (with glow copy beneath)
         GLabel lblG = new GLabel(label);
-        lblG.setFont("Arial-Bold-22");
-        lblG.setColor(glow);
-        double lx = x + (w - lblG.getWidth()) / 2.0;
-        double ly = y + 36;
-        lblG.setLocation(lx - 1, ly - 1);
-        addPreviewObject(lblG);
+        lblG.setFont("Arial-Bold-20"); lblG.setColor(glow);
+        double lx = x+(w-lblG.getWidth())/2.0, ly = y+34;
+        lblG.setLocation(lx-1,ly-1); addPrev(lblG);
 
         GLabel lbl = new GLabel(label);
-        lbl.setFont("Arial-Bold-22");
-        lbl.setColor(col);
-        lbl.setLocation(lx, ly);
-        addPreviewObject(lbl);
+        lbl.setFont("Arial-Bold-20"); lbl.setColor(col);
+        lbl.setLocation(lx,ly); addPrev(lbl);
 
-        if (isPrimary) {
-            startButton = btn;
-            startText   = lbl;
-        } else {
-            backButton = btn;
-            backText   = lbl;
-        }
+        if (isPrimary) startButton = btn;
+        else           backButton  = btn;
     }
 
-    private void addBrokenDivider(double centerX) {
-        // Kept for backwards-compatibility but no longer used.
-        Color lineColor = new Color(100, 100, 140);
-        double[] yPoints = {0, 60, 120, 180, 240, 300, 360, 420, 480, 540, 600};
-        double[] offsets = {-4, 3, -6, 5, -3, 6, -5, 4, -2, 3, -4};
-        for (int i = 0; i < yPoints.length - 1; i++) {
-            GLine piece = new GLine(
-                centerX + offsets[i], yPoints[i],
-                centerX + offsets[i + 1], yPoints[i + 1]);
-            piece.setColor(lineColor);
-            addPreviewObject(piece);
-        }
-    }
-
-    private void addPreviewObject(GObject obj) {
-        mainScreen.add(obj);
-        previewObjects.add(obj);
-    }
+    private void addPrev(GObject obj) { mainScreen.add(obj); previewObjects.add(obj); }
 
     private void clearPreviewScreen() {
-        for (GObject obj : previewObjects) mainScreen.remove(obj);
+        for (GObject o : previewObjects) mainScreen.remove(o);
         previewObjects.clear();
-        levelScreenBG  = null;
-        levelTitle     = null;
-        startButton    = null;
-        startText      = null;
-        backButton     = null;
-        backText       = null;
-        levelEnemyImage = null;
+        startButton = null; backButton = null; levelEnemyImage = null;
     }
 
+    // ════════════════════════════════════════════════════════════════════════
+    //  Star removal
+    // ════════════════════════════════════════════════════════════════════════
+    private void removeAllStars() {
+        if (stars        != null) for (GPolygon s : stars)        if (s!=null) mainScreen.remove(s);
+        if (starGlows    != null) for (GPolygon s : starGlows)    if (s!=null) mainScreen.remove(s);
+        if (levelNumbers != null) for (GLabel   l : levelNumbers) if (l!=null) mainScreen.remove(l);
+        if (bossLabels   != null) for (GLabel   l : bossLabels)   if (l!=null) mainScreen.remove(l);
+    }
 
     // ════════════════════════════════════════════════════════════════════════
     //  Helpers
     // ════════════════════════════════════════════════════════════════════════
-    private void removeAllStars() {
-        if (stars != null)
-            for (GPolygon s : stars)     { if (s != null) mainScreen.remove(s); }
-        if (starGlows != null)
-            for (GPolygon s : starGlows) { if (s != null) mainScreen.remove(s); }
-        if (levelNumbers != null)
-            for (GLabel  l : levelNumbers){ if (l != null) mainScreen.remove(l); }
-    }
-
     private GPolygon createStar(double cx, double cy, double outerR, double innerR) {
         GPolygon star = new GPolygon();
         for (int i = 0; i < 10; i++) {
-            double angle = Math.toRadians(-90 + i * 36);
-            double r     = (i % 2 == 0) ? outerR : innerR;
-            star.addVertex(r * Math.cos(angle), r * Math.sin(angle));
+            double angle = Math.toRadians(-90 + i*36);
+            double r     = (i%2==0) ? outerR : innerR;
+            star.addVertex(r*Math.cos(angle), r*Math.sin(angle));
         }
         star.setFilled(true);
         star.setFillColor(Color.BLACK);
@@ -683,11 +742,18 @@ public class LevelSelectPane extends GraphicsPane {
         return star;
     }
 
+    private GPolygon makeDiamond(double cx, double cy, double r) {
+        GPolygon d = new GPolygon();
+        d.addVertex(0,-r); d.addVertex(r,0); d.addVertex(0,r); d.addVertex(-r,0);
+        d.setLocation(cx, cy);
+        return d;
+    }
+
     private Color getPlayerColor() {
         String sel = mainScreen.getSelectedColor();
-        if (sel == null)            return new Color(255, 220, 60);
-        if (sel.equals("red"))      return new Color(255, 80, 80);
-        if (sel.equals("green"))    return new Color(80, 255, 80);
-        return new Color(80, 160, 255);
+        if (sel == null)         return new Color(255,220,60);
+        if (sel.equals("red"))   return new Color(255, 80,80);
+        if (sel.equals("green")) return new Color( 80,255,80);
+        return new Color(80,160,255);
     }
 }
