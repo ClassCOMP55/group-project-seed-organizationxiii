@@ -231,15 +231,17 @@ public class EighthBattlePane extends GraphicsPane {
 
     @Override
     public void mouseClicked(MouseEvent e) {
-        if (battleOver) return;
-
         GObject obj = mainScreen.getElementAtLocation(e.getX(), e.getY());
 
         if (obj == continueButton || obj == continueLabel) {
-            mainScreen.setCurrentLevel(8);
-            mainScreen.switchToLevelSelectScreen();
+            if (battleOver) {
+                mainScreen.setCurrentLevel(7);
+                mainScreen.switchToCutScene6Screen();
+            }
             return;
         }
+
+        if (battleOver) return;
 
         if (!showingFightMenu) {
             if (obj == fightOption) {
@@ -258,6 +260,13 @@ public class EighthBattlePane extends GraphicsPane {
                 if (h1.getSuperMeter() > 0) {
                     h1.useAbility(1, d1);
                     updateHealthBars();
+                    checkBattleEnd();
+
+                    if (!battleOver) {
+                        playerTurn = false;
+                        performEnemyTurn();
+                        checkBattleEnd();
+                    }
                 }
             }
         }
@@ -284,7 +293,7 @@ public class EighthBattlePane extends GraphicsPane {
 
     private void updateSuperMeter() {
         double ratio = (double) h1.getSuperMeter() / 500.0;
-        superMeterBar.setSize(200 * ratio, 8);
+        superMeterBar.setSize(120 * ratio, 12);
     }
 
     private void performPlayerAttack() {
@@ -311,7 +320,8 @@ public class EighthBattlePane extends GraphicsPane {
         if (!d1.isAlive()) {
             battleOver = true;
             System.out.println("YOU WIN");
-            mainScreen.switchToCutScene2Screen();
+            mainScreen.setCurrentLevel(7);
+            mainScreen.switchToCutScene6Screen();
             return;
         }
 
