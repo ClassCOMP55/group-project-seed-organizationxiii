@@ -2,7 +2,7 @@ import acm.graphics.GImage;
 import acm.graphics.GLabel;
 import acm.graphics.GObject;
 import acm.graphics.GRect;
-import characters.Effervena;
+import characters.Brick;
 import characters.Hueman;
 
 import java.awt.Color;
@@ -12,16 +12,16 @@ import java.awt.event.MouseEvent;
 public class SixthBattlePane extends GraphicsPane {
 
     private GImage huemanImage;
-    private GImage effervenaImage;
+    private GImage brickImage;
 
     private GRect huemanHealthBar;
     private GRect huemanHealthBack;
 
-    private GRect effervenaHealthBar;
-    private GRect effervenaHealthBack;
+    private GRect brickHealthBar;
+    private GRect brickHealthBack;
 
     private double huemanMaxHP;
-    private double effervenaMaxHP;
+    private double brickMaxHP;
 
     private GRect actionBox;
     private GLabel fightOption;
@@ -30,10 +30,10 @@ public class SixthBattlePane extends GraphicsPane {
     private boolean showingFightMenu = false;
 
     private Hueman h1;
-    private Effervena e1;
+    private Brick b1;
 
     private GLabel huemanName;
-    private GLabel effervenaName;
+    private GLabel brickName;
 
     private GRect continueButton;
     private GLabel continueLabel;
@@ -52,30 +52,30 @@ public class SixthBattlePane extends GraphicsPane {
     @Override
     public void showContent() {
         h1 = mainScreen.getPlayer();
-        e1 = new Effervena(600, 20, 10, "Effervena");
+        b1 = new Brick(600, 20, 10, "Brick");
 
         huemanMaxHP = h1.getHP();
-        effervenaMaxHP = e1.getHP();
+        brickMaxHP = b1.getHP();
 
         huemanImage = new GImage(getHuemanImage());
-        effervenaImage = new GImage("effervena.png");
+        brickImage = new GImage("brick.png");
 
         huemanImage.scale(0.6);
-        effervenaImage.scale(0.9);
+        brickImage.scale(0.9);
 
         double hx = MainApplication.WINDOW_WIDTH * 0.25 - huemanImage.getWidth() / 2 + 30;
         double hy = 200;
         huemanImage.setLocation(hx, hy);
 
-        double ex = MainApplication.WINDOW_WIDTH * 0.75 - effervenaImage.getWidth() / 2;
+        double ex = MainApplication.WINDOW_WIDTH * 0.75 - brickImage.getWidth() / 2;
         double ey = 10;
-        effervenaImage.setLocation(ex, ey);
+        brickImage.setLocation(ex, ey);
 
         mainScreen.add(huemanImage);
-        mainScreen.add(effervenaImage);
+        mainScreen.add(brickImage);
 
         contents.add(huemanImage);
-        contents.add(effervenaImage);
+        contents.add(brickImage);
 
         double barWidth = 200;
         double barHeight = 12;
@@ -144,20 +144,20 @@ public class SixthBattlePane extends GraphicsPane {
         double exBar = 30;
         double eyBar = 30;
 
-        effervenaHealthBack = new GRect(exBar, eyBar, barWidth, barHeight);
-        effervenaHealthBack.setFilled(true);
-        effervenaHealthBack.setFillColor(Color.DARK_GRAY);
+        brickHealthBack = new GRect(exBar, eyBar, barWidth, barHeight);
+        brickHealthBack.setFilled(true);
+        brickHealthBack.setFillColor(Color.DARK_GRAY);
 
-        effervenaHealthBar = new GRect(exBar, eyBar, barWidth, barHeight);
-        effervenaHealthBar.setFilled(true);
-        effervenaHealthBar.setFillColor(new Color(170, 100, 255));
-        effervenaHealthBar.setColor(new Color(130, 70, 220));
+        brickHealthBar = new GRect(exBar, eyBar, barWidth, barHeight);
+        brickHealthBar.setFilled(true);
+        brickHealthBar.setFillColor(new Color(170, 100, 255));
+        brickHealthBar.setColor(new Color(130, 70, 220));
 
-        mainScreen.add(effervenaHealthBack);
-        mainScreen.add(effervenaHealthBar);
+        mainScreen.add(brickHealthBack);
+        mainScreen.add(brickHealthBar);
 
-        contents.add(effervenaHealthBack);
-        contents.add(effervenaHealthBar);
+        contents.add(brickHealthBack);
+        contents.add(brickHealthBar);
 
         huemanName = new GLabel(h1.getName());
         huemanName.setFont("Arial-Bold-14");
@@ -166,18 +166,18 @@ public class SixthBattlePane extends GraphicsPane {
             huemanHealthBack.getY() - 5
         );
 
-        effervenaName = new GLabel(e1.getName());
-        effervenaName.setFont("Arial-Bold-14");
-        effervenaName.setLocation(
-            effervenaHealthBack.getX(),
-            effervenaHealthBack.getY() - 5
+        brickName = new GLabel(b1.getName());
+        brickName.setFont("Arial-Bold-14");
+        brickName.setLocation(
+            brickHealthBack.getX(),
+            brickHealthBack.getY() - 5
         );
 
         mainScreen.add(huemanName);
-        mainScreen.add(effervenaName);
+        mainScreen.add(brickName);
 
         contents.add(huemanName);
-        contents.add(effervenaName);
+        contents.add(brickName);
 
         double boxWidth = 300;
         double boxHeight = 120;
@@ -244,7 +244,7 @@ public class SixthBattlePane extends GraphicsPane {
         GObject obj = mainScreen.getElementAtLocation(e.getX(), e.getY());
 
         if (obj == continueButton || obj == continueLabel) {
-            mainScreen.setCurrentLevel(5);
+            mainScreen.setCurrentLevel(6);
             mainScreen.switchToLevelSelectScreen();
             return;
         }
@@ -265,7 +265,7 @@ public class SixthBattlePane extends GraphicsPane {
 
             } else if (obj == abilityOption) {
                 if (h1.getSuperMeter() > 0) {
-                    h1.useAbility(1, e1);
+                    h1.useAbility(1, b1);
                     updateHealthBars();
                     checkBattleEnd();
 
@@ -308,7 +308,7 @@ public class SixthBattlePane extends GraphicsPane {
     private void performPlayerAttack() {
         if (!playerTurn || battleOver) return;
 
-        h1.attackOpponent(e1);
+        h1.attackOpponent(b1);
         updateHealthBars();
 
         playerTurn = false;
@@ -317,8 +317,8 @@ public class SixthBattlePane extends GraphicsPane {
     private void performEnemyTurn() {
         if (battleOver) return;
 
-        if (e1.isAlive()) {
-            e1.takeTurn(h1);
+        if (b1.isAlive()) {
+            b1.takeTurn(h1);
             updateHealthBars();
         }
 
@@ -326,7 +326,7 @@ public class SixthBattlePane extends GraphicsPane {
     }
 
     private void checkBattleEnd() {
-        if (!e1.isAlive()) {
+        if (!b1.isAlive()) {
             battleOver = true;
             System.out.println("YOU WIN");
             mainScreen.setCurrentLevel(5);
@@ -342,10 +342,10 @@ public class SixthBattlePane extends GraphicsPane {
 
     private void updateHealthBars() {
         double huemanRatio = (double) h1.getHP() / huemanMaxHP;
-        double effervenaRatio = (double) e1.getHP() / effervenaMaxHP;
+        double brickRatio = (double) b1.getHP() / brickMaxHP;
 
         huemanHealthBar.setSize(200 * huemanRatio, 12);
-        effervenaHealthBar.setSize(200 * effervenaRatio, 12);
+        brickHealthBar.setSize(200 * brickRatio, 12);
 
         updateSuperMeter();
     }
