@@ -276,7 +276,8 @@ public class EighthBattlePane extends GraphicsPane {
 
         // ✅ TEST BUTTON → go to CutScene2Pane
         if (obj == continueButton || obj == continueLabel) {
-            mainScreen.switchToCutScene2Screen();
+        	mainScreen.setCurrentLevel(8);
+            mainScreen.switchToLevelSelectScreen();
             return;
         }
 

@@ -244,7 +244,7 @@ public class SeventhBattlePane extends GraphicsPane {
         GObject obj = mainScreen.getElementAtLocation(e.getX(), e.getY());
 
         if (obj == continueButton || obj == continueLabel) {
-            mainScreen.setCurrentLevel(5);
+            mainScreen.setCurrentLevel(7);
             mainScreen.switchToLevelSelectScreen();
             return;
         }
