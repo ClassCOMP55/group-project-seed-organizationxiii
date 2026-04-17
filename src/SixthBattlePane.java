@@ -244,8 +244,10 @@ public class SixthBattlePane extends GraphicsPane {
         GObject obj = mainScreen.getElementAtLocation(e.getX(), e.getY());
 
         if (obj == continueButton || obj == continueLabel) {
-            mainScreen.setCurrentLevel(6);
-            mainScreen.switchToLevelSelectScreen();
+        	if(battleOver) {
+        		mainScreen.setCurrentLevel(5);
+                mainScreen.switchToCutScene4Screen();
+        	}
             return;
         }
 
@@ -330,7 +332,7 @@ public class SixthBattlePane extends GraphicsPane {
             battleOver = true;
             System.out.println("YOU WIN");
             mainScreen.setCurrentLevel(5);
-            mainScreen.switchToLevelSelectScreen();
+            mainScreen.switchToCutScene4Screen();
             return;
         }
 
