@@ -33,6 +33,9 @@ public class MainApplication extends GraphicsProgram{
 	private FifthBattlePane fifthBattlePane;
 	private vs_Second vsSecondPane;
 	private vs_Third vsThirdPane;
+	private SixthBattlePane sixthBattlePane;
+	private SeventhBattlePane seventhBattlePane;
+	private EighthBattlePane eighthBattlePane;
 	private int currentLevel = 1; // start at level 1
 	private boolean isTransitioning = false;
 
@@ -90,6 +93,9 @@ public class MainApplication extends GraphicsProgram{
 		fourthBattlePane = new FourthBattlePane(this);
 		fifthBattlePane = new FifthBattlePane(this);
 		vsThirdPane = new vs_Third(this);
+		sixthBattlePane = new SixthBattlePane(this);
+		seventhBattlePane = new SeventhBattlePane(this);
+		eighthBattlePane = new EighthBattlePane(this);
 
 
 		//The Default Screen
@@ -149,6 +155,30 @@ public class MainApplication extends GraphicsProgram{
 	
 	public void switchToVsThirdScreen() {
 	    switchToScreen(vsThirdPane);
+	}
+	
+	public void switchToSixthBattleScreen() {
+	    if (currentScreen != null) {
+	        currentScreen.hideContent();
+	    }
+	    currentScreen = sixthBattlePane;
+	    currentScreen.showContent();
+	}
+
+	public void switchToSeventhBattleScreen() {
+	    if (currentScreen != null) {
+	        currentScreen.hideContent();
+	    }
+	    currentScreen = seventhBattlePane;
+	    currentScreen.showContent();
+	}
+
+	public void switchToEighthBattleScreen() {
+	    if (currentScreen != null) {
+	        currentScreen.hideContent();
+	    }
+	    currentScreen = eighthBattlePane;
+	    currentScreen.showContent();
 	}
 	    
 	
