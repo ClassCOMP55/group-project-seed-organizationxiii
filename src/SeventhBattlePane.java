@@ -239,15 +239,17 @@ public class SeventhBattlePane extends GraphicsPane {
 
     @Override
     public void mouseClicked(MouseEvent e) {
-        if (battleOver) return;
-
         GObject obj = mainScreen.getElementAtLocation(e.getX(), e.getY());
 
         if (obj == continueButton || obj == continueLabel) {
-            mainScreen.setCurrentLevel(7);
-            mainScreen.switchToLevelSelectScreen();
+            if (battleOver) {
+                mainScreen.setCurrentLevel(6);
+                mainScreen.switchToCutScene5Screen();
+            }
             return;
         }
+
+        if (battleOver) return;
 
         if (!showingFightMenu) {
             if (obj == fightOption) {
@@ -329,8 +331,8 @@ public class SeventhBattlePane extends GraphicsPane {
         if (!l1.isAlive()) {
             battleOver = true;
             System.out.println("YOU WIN");
-            mainScreen.setCurrentLevel(5);
-            mainScreen.switchToLevelSelectScreen();
+            mainScreen.setCurrentLevel(6);
+            mainScreen.switchToCutScene5Screen();
             return;
         }
 
