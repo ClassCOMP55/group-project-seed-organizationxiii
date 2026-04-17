@@ -52,13 +52,13 @@ public class SeventhBattlePane extends GraphicsPane {
     @Override
     public void showContent() {
         h1 = mainScreen.getPlayer();
-        l1 = new Loathe(600, 20, 10, "Effervena");
+        l1 = new Loathe(600, 20, 10, "Loathe");
 
         huemanMaxHP = h1.getHP();
         loatheMaxHP = l1.getHP();
 
         huemanImage = new GImage(getHuemanImage());
-        loatheImage = new GImage("effervena.png");
+        loatheImage = new GImage("loathe.png");
 
         huemanImage.scale(0.6);
         loatheImage.scale(0.9);
