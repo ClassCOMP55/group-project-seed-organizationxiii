@@ -332,11 +332,22 @@ public class TitlePane extends GraphicsPane {
 
         if (startLabel != null) {
             if (startHovered) {
-                startLabel.setColor(new Color(255, 240, 120));
+                float hoverT = (float)((Math.sin(tick * 0.08) + 1) / 2.0);
+                
+                int hoverIdx = (tick / 6) % TITLE_COLORS.length;
+                int nextHoverIdx = (hoverIdx + 1) % TITLE_COLORS.length;
+                
+                Color hc1 = TITLE_COLORS[hoverIdx];
+                Color hc2 = TITLE_COLORS[nextHoverIdx];
+                
+                startLabel.setColor(new Color(
+                		lerp(hc1.getRed(), hc2.getRed(), hoverT),
+                		lerp(hc1.getGreen(), hc2.getGreen(), hoverT),
+                		lerp(hc1.getBlue(), hc2.getBlue(), hoverT)));
             } else {
-                int base  = 200;
-                int pulse = (int)(startPulse * 55);
-                startLabel.setColor(new Color(base + pulse, base - 20 + pulse / 2, 255));
+            	int base = 200;
+            	int pulse = (int)(startPulse * 55);
+            	startLabel.setColor(new Color(base + pulse, base - 20 + pulse / 2, 255));
             }
         }
 

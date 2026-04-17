@@ -112,6 +112,8 @@ public class vs_Second extends GraphicsPane {
 
         mainScreen.add(continueLabel);
         contents.add(continueLabel);
+        
+        
     }
 
     private void advanceDialogue() {
