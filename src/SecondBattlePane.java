@@ -206,7 +206,7 @@ public class SecondBattlePane extends GraphicsPane {
         double boxHeight = 120;
 
         double boxX = 240;
-        double boxY = MainApplication.WINDOW_HEIGHT - boxHeight - 30;
+        double boxY = MainApplication.WINDOW_HEIGHT - boxHeight - 150;
 
         // Shadow behind box
         GRect actionBoxShadow = new GRect(boxX + 6, boxY + 6, boxWidth, boxHeight);
@@ -243,7 +243,7 @@ public class SecondBattlePane extends GraphicsPane {
         // =========================
         continueButton = new GRect(
             MainApplication.WINDOW_WIDTH - 180,
-            MainApplication.WINDOW_HEIGHT - 50,
+            MainApplication.WINDOW_HEIGHT - 160,
             160,
             25
         );
