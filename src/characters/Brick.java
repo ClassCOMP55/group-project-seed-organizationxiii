@@ -1,11 +1,11 @@
 package characters;
 
-public class brick extends boss {
+public class Brick extends boss {
 
 	
 	private int powerStacks = 3;
 	
-	public brick(int hp, int atk, int spd, String nm) {
+	public Brick(int hp, int atk, int spd, String nm) {
 		super(hp, atk, spd, nm);
 		// TODO Auto-generated constructor stub
 	}
