@@ -514,6 +514,9 @@ public class LevelSelectPane extends GraphicsPane {
             case 2: mainScreen.switchToCutScene3Screen();    break;
             case 3: mainScreen.switchToFourthBattleScreen(); break;
             case 4: mainScreen.switchToFifthBattleScreen();  break;
+            case 5: mainScreen.switchToSixthBattleScreen();  break;
+            case 6: mainScreen.switchToSeventhBattleScreen(); break;
+            case 7: mainScreen.switchToEighthBattleScreen(); break;
         }
     }
 
