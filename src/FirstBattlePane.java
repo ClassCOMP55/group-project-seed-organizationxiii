@@ -176,17 +176,17 @@ public class FirstBattlePane extends GraphicsPane {
             addObj(slash);
         }
 
-        GOval playerGlow = new GOval(X(275), Y(405), S(160), S(160));
-        playerGlow.setFilled(true);
-        playerGlow.setFillColor(new Color(30, 80, 30, 28));
-        playerGlow.setColor(new Color(0, 0, 0, 0));
-        addObj(playerGlow);
-
-        GOval enemyGlow = new GOval(X(930), Y(110), S(280), S(280));
-        enemyGlow.setFilled(true);
-        enemyGlow.setFillColor(new Color(100, 70, 10, 24));
-        enemyGlow.setColor(new Color(0, 0, 0, 0));
-        addObj(enemyGlow);
+//        GOval playerGlow = new GOval(X(275), Y(405), S(160), S(160));
+//        playerGlow.setFilled(true);
+//        playerGlow.setFillColor(new Color(30, 80, 30, 28));
+//        playerGlow.setColor(new Color(0, 0, 0, 0));
+//        addObj(playerGlow);
+//
+//        GOval enemyGlow = new GOval(X(930), Y(110), S(280), S(280));
+//        enemyGlow.setFilled(true);
+//        enemyGlow.setFillColor(new Color(100, 70, 10, 24));
+//        enemyGlow.setColor(new Color(0, 0, 0, 0));
+//        addObj(enemyGlow);
     }
 
     private void drawBattleFrame() {

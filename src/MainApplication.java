@@ -36,6 +36,7 @@ public class MainApplication extends GraphicsProgram{
 	private SixthBattlePane sixthBattlePane;
 	private SeventhBattlePane seventhBattlePane;
 	private EighthBattlePane eighthBattlePane;
+	private NinethBattlePane ninethBattlePane;
 	private CutScene4Pane cutScene4Pane;
 	private CutScene5Pane cutScene5Pane;
 	private CutScene6Pane cutScene6Pane;
@@ -100,6 +101,7 @@ public class MainApplication extends GraphicsProgram{
 		sixthBattlePane = new SixthBattlePane(this);
 		seventhBattlePane = new SeventhBattlePane(this);
 		eighthBattlePane = new EighthBattlePane(this);
+		ninethBattlePane = new NinethBattlePane(this);
 		cutScene4Pane = new CutScene4Pane(this);
 		cutScene5Pane = new CutScene5Pane(this);
 		cutScene6Pane = new CutScene6Pane(this);
@@ -128,7 +130,7 @@ public class MainApplication extends GraphicsProgram{
 	}
 	
 	
-	public void switchToVictoryScreen() {
+	public void switchToVictoryScreen1() {
 		switchToScreen(victoryPane);
 	}
 	
@@ -306,6 +308,17 @@ public class MainApplication extends GraphicsProgram{
 	    currentScreen = fifthBattlePane;
 	    currentScreen.showContent();
 	}
+	
+	
+	public void switchToNinethBattleScreen() {
+	    switchToScreen(ninethBattlePane);
+	}
+
+	public void switchToVictoryScreen() {
+	    switchToScreen(victoryPane);
+	}
+	
+	
 	
 	public void switchToSixthBattleScreen() {
 		switchToScreen(sixthBattlePane);
