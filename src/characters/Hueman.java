@@ -15,6 +15,7 @@ public class Hueman extends player {
     private float speedMult = 1.0f;
     
     
+    
     @Override
     public int calculateSpeed() {
     	return (int) (speed * speedMult);
@@ -96,6 +97,10 @@ public class Hueman extends player {
     
     public int getSuperMeter() {
         return currentSuperPowerMeter;
+    }
+    
+    public void setSuperMeter(int value) {
+        currentSuperPowerMeter = value;
     }
     
     public void lowerSuperMeter(int n) {

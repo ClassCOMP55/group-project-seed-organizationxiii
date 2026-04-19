@@ -716,7 +716,7 @@ public class CutScene2Pane extends GraphicsPane {
                 progressDots[dialogueIndex].setColor(GOLD);
             }
         } else {
-            mainScreen.switchToVsFirstScreen();
+        	mainScreen.switchToLevelSelectScreen();
         }
     }
 
@@ -761,7 +761,7 @@ public class CutScene2Pane extends GraphicsPane {
         double y = e.getY();
 
         if (continueButton != null && (continueButton.contains(x, y) || continueLabel.contains(x, y))) {
-            mainScreen.switchToVsFirstScreen();
+        	mainScreen.switchToLevelSelectScreen();
             return;
         }
 
