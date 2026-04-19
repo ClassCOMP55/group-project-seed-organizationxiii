@@ -712,7 +712,7 @@ public class CutScene3Pane extends GraphicsPane {
                 progressDots[dialogueIndex].setColor(GOLD);
             }
         } else {
-            mainScreen.switchToVsFirstScreen();
+            mainScreen.switchToThirdBattleScreen();
         }
     }
 
@@ -757,7 +757,7 @@ public class CutScene3Pane extends GraphicsPane {
         double y = e.getY();
 
         if (continueButton != null && (continueButton.contains(x, y) || continueLabel.contains(x, y))) {
-            mainScreen.switchToVsFirstScreen();
+            mainScreen.switchToThirdBattleScreen();
             return;
         }
 

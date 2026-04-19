@@ -318,6 +318,9 @@ public class MainApplication extends GraphicsProgram{
 	    switchToScreen(victoryPane);
 	}
 	
+	public void switchToThirdBattleScreen() {
+	    switchToScreen(thirdBattlePane);
+	}
 	
 	
 	public void switchToSixthBattleScreen() {

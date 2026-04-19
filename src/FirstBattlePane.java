@@ -898,11 +898,35 @@ public class FirstBattlePane extends GraphicsPane {
 
     @Override
     public void mouseClicked(MouseEvent e) {
-        double mx=e.getX(),my=e.getY();
+        double mx = e.getX();
+        double my = e.getY();
+
+        // ✅ CONTINUE BUTTON (ADD THIS)
+        if (continueButton != null &&
+            mx >= continueButton.getX() &&
+            mx <= continueButton.getX() + continueButton.getWidth() &&
+            my >= continueButton.getY() &&
+            my <= continueButton.getY() + continueButton.getHeight()) {
+
+            battleOver = true;
+            stopAllTimers();
+            clearOverlay();
+            clearEndOverlay();
+
+            mainScreen.switchToCutScene2Screen(); // this is YOUR correct next screen
+            return;
+        }
+
+        // ===== EXISTING CODE =====
 
         if(selectionOverlayOpen){
             for(int i=0;i<3;i++){
-                if(targetButtons[i]!=null&&mx>=targetButtons[i].getX()&&mx<=targetButtons[i].getX()+targetButtons[i].getWidth()&&my>=targetButtons[i].getY()&&my<=targetButtons[i].getY()+targetButtons[i].getHeight()){
+                if(targetButtons[i]!=null &&
+                   mx>=targetButtons[i].getX() &&
+                   mx<=targetButtons[i].getX()+targetButtons[i].getWidth() &&
+                   my>=targetButtons[i].getY() &&
+                   my<=targetButtons[i].getY()+targetButtons[i].getHeight()){
+
                     if(choosingPlayerAttack) resolvePlayerAttack(targetNames[i]);
                     else if(choosingPlayerDefense) resolveEnemyAttack(targetNames[i]);
                     return;
@@ -911,11 +935,9 @@ public class FirstBattlePane extends GraphicsPane {
             return;
         }
 
-        GObject obj=mainScreen.getElementAt(mx,my);
+        GObject obj = mainScreen.getElementAt(mx, my);
 
-        if (battleOver) {
-            return;
-        }
+        if (battleOver) return;
 
         if(playerTurn){
             if(obj==fightOption||obj==fightHighlight) openAttackSelection();
