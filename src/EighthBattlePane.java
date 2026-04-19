@@ -520,16 +520,18 @@ public class EighthBattlePane extends GraphicsPane {
         if (c.equals("green")) return "greenback.png";
         return "blueback.png";
     }
+    
     @Override
     public void mouseClicked(MouseEvent e) {
+        if (battleOver) return;
+
         GObject obj = mainScreen.getElementAtLocation(e.getX(), e.getY());
 
         if (obj == continueButton || obj == continueLabel || obj == continueGlow) {
-            mainScreen.switchToNinethBattleScreen();
+            mainScreen.setCurrentLevel(8);
+            mainScreen.switchToCutScene6Screen();
             return;
         }
-
-        if (battleOver) return;
 
         if (!showingFightMenu) {
             if (obj == fightOption || obj == fightHighlight) {
@@ -557,6 +559,18 @@ public class EighthBattlePane extends GraphicsPane {
                     }
                 }
             }
+        }
+    }
+
+    private void checkBattleEnd() {
+        if (!enemy.isAlive()) {
+            battleOver = true;
+            mainScreen.setCurrentLevel(8);
+            mainScreen.switchToCutScene6Screen();
+            return;
+        }
+        if (!h1.isAlive()) {
+            battleOver = true;
         }
     }
 
@@ -611,16 +625,6 @@ public class EighthBattlePane extends GraphicsPane {
             updateHealthBars();
         }
         playerTurn = true;
-    }
-
-    private void checkBattleEnd() {
-        if (!enemy.isAlive()) {
-            battleOver = true;
-            return;
-        }
-        if (!h1.isAlive()) {
-            battleOver = true;
-        }
     }
 
     private void updateHealthBars() {
