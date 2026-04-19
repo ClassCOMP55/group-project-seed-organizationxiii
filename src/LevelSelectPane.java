@@ -525,19 +525,20 @@ public class LevelSelectPane extends GraphicsPane {
                 mainScreen.switchToCutScene4Screen();
                 break;
             case 5:
-                mainScreen.switchToSixthBattleScreen();   // Brick now goes straight to SixthBattle
+                mainScreen.switchToSixthBattleScreen();
                 break;
             case 6:
-                mainScreen.switchToCutScene5Screen();     // Loathe path now goes preview -> CutScene5
+                mainScreen.switchToCutScene5Screen();
                 break;
             case 7:
                 mainScreen.switchToEighthBattleScreen();
                 break;
             case 8:
-                mainScreen.switchToVictoryScreen();
+                mainScreen.switchToCutScene6Screen();   // final preview -> CutScene6 -> NinethBattle
                 break;
         }
     }
+    
     // ════════════════════════════════════════════════════════════════════════
     //  Movement
     // ════════════════════════════════════════════════════════════════════════

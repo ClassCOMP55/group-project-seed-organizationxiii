@@ -6,14 +6,14 @@ import acm.graphics.*;
 
 public class CutScene6Pane extends GraphicsPane {
 
-    private final String[] dialogue = {
-    		"You defeated Loathe...",
-            "But your journey is still not over.",
-            "The air shifts again with something familiar.",
-            "A presence you already fought once begins to return.",
-            "Decima has come back stronger for one final battle.",
-            "This is the end. Prepare yourself."
-    };
+	private final String[] dialogue = {
+		    "Hueman... this is the final path.",
+		    "The enemy waiting ahead is Decima once more.",
+		    "But this time, the battle will be harder than before.",
+		    "You have made it through every trial to reach this point.",
+		    "Do not hesitate now. Give everything you have.",
+		    "Go. Finish the last battle."
+		};
 
     private int dialogueIndex = 0;
     private boolean pressed = false;
@@ -715,10 +715,10 @@ public class CutScene6Pane extends GraphicsPane {
                 progressDots[dialogueIndex].setColor(GOLD);
             }
         } else {
-            mainScreen.switchToVsFirstScreen();
+            mainScreen.switchToNinethBattleScreen();
         }
     }
-
+    
     @Override
     public void hideContent() {
         if (animTimer != null) {
@@ -760,15 +760,15 @@ public class CutScene6Pane extends GraphicsPane {
         double y = e.getY();
 
         if (continueButton != null && (continueButton.contains(x, y) || continueLabel.contains(x, y))) {
-            mainScreen.switchToVsFirstScreen();
+            mainScreen.switchToNinethBattleScreen();
             return;
         }
 
         if (backButton != null && (backButton.contains(x, y) || backLabel.contains(x, y))) {
-            mainScreen.switchToColorSelectionScreen();
+            mainScreen.switchToLevelSelectScreen();
             return;
         }
-
+        
         advanceDialogue();
     }
 
