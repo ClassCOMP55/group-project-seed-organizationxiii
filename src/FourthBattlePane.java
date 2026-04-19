@@ -1115,16 +1115,19 @@ public class FourthBattlePane extends GraphicsPane {
 
     @Override
     public void mouseClicked(MouseEvent e) {
-        if (battleOver) {
-            GObject obj = mainScreen.getElementAtLocation(e.getX(), e.getY());
-            if (obj == continueButton || obj == continueLabel || obj == continueGlow) {
-                mainScreen.setCurrentLevel(4);
-                mainScreen.switchToLevelSelectScreen();
-            }
+
+        GObject obj = mainScreen.getElementAtLocation(e.getX(), e.getY());
+
+        // ✅ ALWAYS allow continue button (for testing)
+        if (obj == continueButton || obj == continueLabel || obj == continueGlow) {
+            mainScreen.setCurrentLevel(4);
+            mainScreen.switchToLevelSelectScreen();
             return;
         }
 
-        GObject obj = mainScreen.getElementAtLocation(e.getX(), e.getY());
+        if (battleOver) {
+            return;
+        }
 
         if (selectionOverlayOpen) {
             for (int i = 0; i < 3; i++) {
@@ -1144,5 +1147,4 @@ public class FourthBattlePane extends GraphicsPane {
         if (obj == superOption || obj == superHighlight) {
             if (playerTurn && superReady && !animating) resolvePlayerSuper();
         }
-    }
-}
+    }}

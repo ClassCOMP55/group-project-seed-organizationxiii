@@ -509,18 +509,35 @@ public class LevelSelectPane extends GraphicsPane {
 
     private void launchLevel(int level) {
         switch (level) {
-            case 0: /* training — wire to training battle if available */ break;
-            case 1: mainScreen.switchToSecondBattleScreen(); break;
-            case 2: mainScreen.switchToCutScene3Screen();    break;
-            case 3: mainScreen.switchToFourthBattleScreen(); break;
-            case 4: mainScreen.switchToFifthBattleScreen();  break;
-            case 5: mainScreen.switchToSixthBattleScreen();  break;
-            case 6: mainScreen.switchToSeventhBattleScreen(); break;
-            case 7: mainScreen.switchToEighthBattleScreen(); break;
-            case 8: mainScreen.switchToVictoryScreen(); break; // or whatever you want after final
+            case 0:
+                /* training */
+                break;
+            case 1:
+                mainScreen.switchToSecondBattleScreen();
+                break;
+            case 2:
+                mainScreen.switchToCutScene3Screen();
+                break;
+            case 3:
+                mainScreen.switchToFourthBattleScreen();
+                break;
+            case 4:
+                mainScreen.switchToCutScene4Screen();
+                break;
+            case 5:
+                mainScreen.switchToSixthBattleScreen();   // Brick now goes straight to SixthBattle
+                break;
+            case 6:
+                mainScreen.switchToCutScene5Screen();     // Loathe path now goes preview -> CutScene5
+                break;
+            case 7:
+                mainScreen.switchToEighthBattleScreen();
+                break;
+            case 8:
+                mainScreen.switchToVictoryScreen();
+                break;
         }
     }
-
     // ════════════════════════════════════════════════════════════════════════
     //  Movement
     // ════════════════════════════════════════════════════════════════════════

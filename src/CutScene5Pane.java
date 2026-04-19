@@ -6,14 +6,14 @@ import acm.graphics.*;
 
 public class CutScene5Pane extends GraphicsPane {
 
-    private final String[] dialogue = {
-    		"You defeated Effervena...",
-		    "But the journey still continues.",
-		    "One more disciple stands in your way.",
-		    "His name is Brick.",
-		    "Beyond him waits Loathe himself.",
-		    "You are getting closer to the end. Be ready."
-    };
+	private final String[] dialogue = {
+		    "Hueman... you are close now.",
+		    "The next one waiting for you is Loathe.",
+		    "He is not like the others. Stay focused.",
+		    "Do not let fear control your next step.",
+		    "Defeat him, and your path will open even further.",
+		    "Go now. I will be watching."
+		};
 
     private int dialogueIndex = 0;
     private boolean pressed = false;
@@ -715,7 +715,7 @@ public class CutScene5Pane extends GraphicsPane {
                 progressDots[dialogueIndex].setColor(GOLD);
             }
         } else {
-            mainScreen.switchToVsFirstScreen();
+            mainScreen.switchToSeventhBattleScreen();
         }
     }
 
@@ -760,15 +760,15 @@ public class CutScene5Pane extends GraphicsPane {
         double y = e.getY();
 
         if (continueButton != null && (continueButton.contains(x, y) || continueLabel.contains(x, y))) {
-            mainScreen.switchToVsFirstScreen();
+            mainScreen.switchToSeventhBattleScreen();
             return;
         }
 
         if (backButton != null && (backButton.contains(x, y) || backLabel.contains(x, y))) {
-            mainScreen.switchToColorSelectionScreen();
+            mainScreen.switchToLevelSelectScreen();
             return;
         }
-
+        
         advanceDialogue();
     }
 

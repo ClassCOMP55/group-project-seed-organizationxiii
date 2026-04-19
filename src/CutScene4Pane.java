@@ -7,12 +7,11 @@ import acm.graphics.*;
 public class CutScene4Pane extends GraphicsPane {
 
     private final String[] dialogue = {
-    		"You defeated Slujupiter...",
-            "But the road ahead is still far from clear.",
-            "Another disciple waits in the shadows.",
-            "Her name is Lavender.",
-            "Beyond her stands Effervena, one of Loathe's strongest forces.",
-            "Stay alert. The next battles will test you."
+        "We are close to Effervena now.",
+        "Her power is far greater than the ones before her.",
+        "Do not lose focus, Hueman.",
+        "One mistake in this fight could cost you everything.",
+        "Prepare yourself. Effervena is waiting."
     };
 
     private int dialogueIndex = 0;
@@ -585,7 +584,7 @@ public class CutScene4Pane extends GraphicsPane {
         backBar.setColor(GOLD_DARK);
         addObj(backBar);
 
-        backLabel = new GLabel("◀  Back");
+        backLabel = new GLabel("◀️  Back");
         backLabel.setFont(new Font("Arial", Font.BOLD, Math.max(10, (int) S(15))));
         backLabel.setColor(TEXT_DIM);
         backLabel.setLocation(backX + (btnW - backLabel.getWidth()) / 2.0 + S(2), backY + S(26));
@@ -607,7 +606,7 @@ public class CutScene4Pane extends GraphicsPane {
         continueButton.setColor(PANEL_BORDER);
         addObj(continueButton);
 
-        continueLabel = new GLabel("Continue  ▶");
+        continueLabel = new GLabel("Continue  ▶️");
         continueLabel.setFont(new Font("Arial", Font.BOLD, Math.max(10, (int) S(15))));
         continueLabel.setColor(GOLD);
         continueLabel.setLocation(contX + (contW - continueLabel.getWidth()) / 2.0, contY + S(26));
@@ -715,7 +714,7 @@ public class CutScene4Pane extends GraphicsPane {
                 progressDots[dialogueIndex].setColor(GOLD);
             }
         } else {
-            mainScreen.switchToVsFirstScreen();
+            mainScreen.switchToFifthBattleScreen();
         }
     }
 
@@ -760,12 +759,12 @@ public class CutScene4Pane extends GraphicsPane {
         double y = e.getY();
 
         if (continueButton != null && (continueButton.contains(x, y) || continueLabel.contains(x, y))) {
-            mainScreen.switchToVsFirstScreen();
+            mainScreen.switchToFifthBattleScreen();
             return;
         }
 
         if (backButton != null && (backButton.contains(x, y) || backLabel.contains(x, y))) {
-            mainScreen.switchToColorSelectionScreen();
+            mainScreen.switchToLevelSelectScreen();
             return;
         }
 
@@ -817,11 +816,10 @@ public class CutScene4Pane extends GraphicsPane {
 
     private static GPolygon makeDiamond(double cx, double cy, double r) {
         GPolygon d = new GPolygon();
-        d.addVertex(0, -r);
-        d.addVertex(r, 0);
-        d.addVertex(0, r);
-        d.addVertex(-r, 0);
-        d.setLocation(cx, cy);
+        d.addVertex(cx, cy - r);
+        d.addVertex(cx + r, cy);
+        d.addVertex(cx, cy + r);
+        d.addVertex(cx - r, cy);
         return d;
     }
 }
