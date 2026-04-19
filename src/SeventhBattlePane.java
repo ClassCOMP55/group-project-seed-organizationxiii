@@ -529,7 +529,7 @@ public class SeventhBattlePane extends GraphicsPane {
 
         if (obj == continueButton || obj == continueLabel || obj == continueGlow) {
             mainScreen.setCurrentLevel(7);
-            mainScreen.switchToLevelSelectScreen();
+            mainScreen.switchToCutScene5Screen();
             return;
         }
 
@@ -559,6 +559,18 @@ public class SeventhBattlePane extends GraphicsPane {
                     }
                 }
             }
+        }
+    }
+
+    private void checkBattleEnd() {
+        if (!enemy.isAlive()) {
+            battleOver = true;
+            mainScreen.setCurrentLevel(7);
+            mainScreen.switchToCutScene5Screen();
+            return;
+        }
+        if (!h1.isAlive()) {
+            battleOver = true;
         }
     }
 
@@ -613,18 +625,6 @@ public class SeventhBattlePane extends GraphicsPane {
             updateHealthBars();
         }
         playerTurn = true;
-    }
-
-    private void checkBattleEnd() {
-        if (!enemy.isAlive()) {
-            battleOver = true;
-            mainScreen.setCurrentLevel(7);
-            mainScreen.switchToLevelSelectScreen();
-            return;
-        }
-        if (!h1.isAlive()) {
-            battleOver = true;
-        }
     }
 
     private void updateHealthBars() {
