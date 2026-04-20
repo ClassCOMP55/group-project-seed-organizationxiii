@@ -607,5 +607,8 @@ public class TitlePane extends GraphicsPane {
         d.addVertex(-r, 0);
         d.setLocation(cx, cy);
         return d;
-    }
+    } //testt
+    
+    
+    
 }
