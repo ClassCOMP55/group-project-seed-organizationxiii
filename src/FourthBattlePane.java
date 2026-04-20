@@ -116,6 +116,7 @@ public class FourthBattlePane extends GraphicsPane {
         updateLayoutScale();
 
         h1 = mainScreen.getPlayer();
+        h1.heal();
         e1 = new Lavender(700, 24, 12, "Lavender");
         huemanMaxHP = h1.getHP();
         enemyMaxHP = e1.getHP();
