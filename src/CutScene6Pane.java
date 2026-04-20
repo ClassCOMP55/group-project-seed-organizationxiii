@@ -7,12 +7,13 @@ import acm.graphics.*;
 public class CutScene6Pane extends GraphicsPane {
 
 	private final String[] dialogue = {
-		    "Hueman... this is the final path.",
-		    "The enemy waiting ahead is Decima once more.",
-		    "But this time, the battle will be harder than before.",
-		    "You have made it through every trial to reach this point.",
-		    "Do not hesitate now. Give everything you have.",
-		    "Go. Finish the last battle."
+		    "Somehow, Decima has returned.",
+		    "He always tried to make a dramatic entrance anytime he",
+		    "was part of the Color Guardians",
+		    "If I know him, he'd be furious at his previos defeat,",
+		    "and would never let the same foe defeat him twice.",
+		    "You will be the exception. Humble this complicitor...",
+		    "will all your might."
 		};
 
     private int dialogueIndex = 0;

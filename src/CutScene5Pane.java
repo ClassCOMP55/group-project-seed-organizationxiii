@@ -7,11 +7,13 @@ import acm.graphics.*;
 public class CutScene5Pane extends GraphicsPane {
 
 	private final String[] dialogue = {
-		    "Hueman... you are close now.",
-		    "The next one waiting for you is Loathe.",
-		    "He is not like the others. Stay focused.",
-		    "Do not let fear control your next step.",
-		    "Defeat him, and your path will open even further.",
+		    "You have done a great service to Palletia,",
+		    "restoring the colors of the world. However, here",
+		    "lies our main foe. Loathe cares not about fairness,",
+		    "but merely of destruction and humiliation.",
+		    "But don't take my word for it; vile words exit his",
+		    "mouth like the air he breathes. The fate of Palletia",
+		    "is in your hands now. Save the colors.",
 		    "Go now. I will be watching."
 		};
 
