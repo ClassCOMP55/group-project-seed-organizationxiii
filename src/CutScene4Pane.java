@@ -8,10 +8,11 @@ public class CutScene4Pane extends GraphicsPane {
 
     private final String[] dialogue = {
         "We are close to Effervena now.",
-        "Her power is far greater than the ones before her.",
-        "Do not lose focus, Hueman.",
-        "One mistake in this fight could cost you everything.",
-        "Prepare yourself. Effervena is waiting."
+        "She wrongly fell in love with Loathe. Her color is fading",
+        "rapidly. Recovering her would be a major blow to Loathe's",
+        "plan. This won't be easy, however",
+        "She will find ways to bother you, as she found ways of",
+        "ruining herself. Prepare yourself"
     };
 
     private int dialogueIndex = 0;
