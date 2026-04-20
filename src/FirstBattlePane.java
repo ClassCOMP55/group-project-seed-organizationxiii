@@ -308,7 +308,7 @@ public class FirstBattlePane extends GraphicsPane {
     // =========================================================================
 
     private void buildPlayerHUD() {
-        double W=screenW(),H=screenH(),pw=S(400),ph=S(100),px=W-pw-S(460),py=H-ph-S(55);
+        double W=screenW(),H=screenH(),pw=S(400),ph=S(100),px=W-pw-S(460),py=H-ph-S(100);
         GRect sh=new GRect(px+S(4),py+S(4),pw,ph); sh.setFilled(true); sh.setFillColor(new Color(0,0,0,120)); sh.setColor(new Color(0,0,0,0)); addObj(sh);
         hudPanel=new GRect(px,py,pw,ph); hudPanel.setFilled(true); hudPanel.setFillColor(PANEL_BG); hudPanel.setColor(PANEL_BORDER); addObj(hudPanel);
         Color ac=getPlayerColor();
