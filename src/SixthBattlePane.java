@@ -140,6 +140,7 @@ public class SixthBattlePane extends GraphicsPane {
         updateLayoutScale();
 
         h1 = mainScreen.getPlayer();
+        h1.heal();
         enemy = new Brick(1100, 34, 18, "Brick");
         huemanMaxHP = h1.getHP();
         enemyMaxHP = enemy.getHP();
