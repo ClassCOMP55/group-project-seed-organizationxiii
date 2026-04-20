@@ -131,8 +131,9 @@ public class SecondBattlePane extends GraphicsPane {
     public void showContent() {
         updateLayoutScale();
 
-        h1.heal();
+        
         h1 = mainScreen.getPlayer(); //needs a function
+        h1.heal();
         m1 = new MintSentinel(800, 15, 10, "Mint");
 
         huemanMaxHP = h1.getHP();
