@@ -121,8 +121,9 @@ public class ThirdBattlePane extends GraphicsPane {
     public void showContent() {
         updateLayoutScale();
         
-        h1.heal();
+        
         h1 = mainScreen.getPlayer();
+        h1.heal();
         s1 = new MintSentinel(700, 24, 12, "Slujupiter");
         huemanMaxHP = h1.getHP();
         enemyMaxHP = s1.getHP();
