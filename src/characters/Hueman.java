@@ -89,7 +89,9 @@ public class Hueman extends player {
     	}
     }
     
-    
+    public void heal() {
+    	currentHP = maxHP;
+    }
     
     public void clearSpeedModifier() {
     	speedMult = 1.0f;
