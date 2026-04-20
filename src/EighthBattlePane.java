@@ -140,6 +140,7 @@ public class EighthBattlePane extends GraphicsPane {
         updateLayoutScale();
 
         h1 = mainScreen.getPlayer();
+        h1.heal();
         enemy = new Decima(1600, 42, 22, "Decima", Decima.Phase.FINAL);
         huemanMaxHP = h1.getHP();
         enemyMaxHP = enemy.getHP();
