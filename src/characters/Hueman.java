@@ -6,7 +6,7 @@ public class Hueman extends player {
 	
 	private ColorType color;
 
-    private final int maxSuperPowerMeter = 400;
+    private final int maxSuperPowerMeter = 200;
     private int currentSuperPowerMeter = 0;
     
     private short debilitateStacks = 0;
@@ -161,7 +161,7 @@ public class Hueman extends player {
     @Override
     public boolean useAbility(int abilityID, character target) {
         if (abilityID == 1) {
-            int damage = (int) (currentSuperPowerMeter * 1.5);
+            int damage = (int) (currentSuperPowerMeter * 2.5);
 
             target.takeDamage(damage);
             currentSuperPowerMeter = 0;
