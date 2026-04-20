@@ -140,6 +140,7 @@ public class SeventhBattlePane extends GraphicsPane {
         updateLayoutScale();
 
         h1 = mainScreen.getPlayer();
+        h1.heal();
         enemy = new Loathe(1300, 38, 20, "Loathe");
         huemanMaxHP = h1.getHP();
         enemyMaxHP = enemy.getHP();
