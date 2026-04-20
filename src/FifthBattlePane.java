@@ -121,6 +121,7 @@ public class FifthBattlePane extends GraphicsPane {
         updateLayoutScale();
 
         h1 = mainScreen.getPlayer();
+        h1.heal();
         enemy = new Effervena(950, 30, 16, "Effervena");
         huemanMaxHP = h1.getHP();
         enemyMaxHP = enemy.getHP();
