@@ -118,7 +118,7 @@ public class FirstBattlePane extends GraphicsPane {
     private double scale, offsetX, offsetY;
 
     // ── Super constants ───────────────────────────────────────────────────────
-    private static final double SUPER_MAX        = 500.0;
+    private static final double SUPER_MAX        = 200.0;
     private static final double SUPER_GAIN_HIT   = 60.0;
     private static final double SUPER_GAIN_BLOCK = 40.0;
     private static final double SUPER_GAIN_DMGTAKEN = 30.0;
@@ -378,9 +378,15 @@ public class FirstBattlePane extends GraphicsPane {
     // =========================================================================
 
     private void gainSuper(double amount) {
+    	
         if (battleOver) return;
+        
+        System.out.println("Before gain: " + h1.getSuperMeter());
+        
         double next = Math.min(SUPER_MAX, h1.getSuperMeter()+amount);
         h1.setSuperMeter((int)next);
+        
+        System.out.println("Before gain: " + h1.getSuperMeter());
         boolean wasFull = superReady;
         superReady = (next >= SUPER_MAX);
         updateSuperMeter();
@@ -869,6 +875,7 @@ public class FirstBattlePane extends GraphicsPane {
     }
 
     private void updateSuperMeter() {
+    	System.out.println("Visual update meter = " + h1.getSuperMeter());
         double r=Math.min(1.0,(double)h1.getSuperMeter()/SUPER_MAX);
         superBar.setSize(superBack.getWidth()*r,superBack.getHeight());
         superBar.setFillColor(r>=1.0?new Color(210,160,255):SUPER_COLOR);
