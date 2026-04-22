@@ -6,6 +6,7 @@ import acm.graphics.GOval;
 import acm.graphics.GRect;
 import characters.Hueman;
 import characters.MintSentinel;
+import characters.Slujupiter;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -16,7 +17,7 @@ import java.util.ArrayList;
 public class ThirdBattlePane extends GraphicsPane {
 
     private Hueman h1;
-    private MintSentinel s1;
+    private Slujupiter s1;
     private double huemanMaxHP;
     private double enemyMaxHP;
 
@@ -124,7 +125,7 @@ public class ThirdBattlePane extends GraphicsPane {
         
         h1 = mainScreen.getPlayer();
         h1.heal();
-        s1 = new MintSentinel(700, 24, 12, "Slujupiter");
+        s1 = new Slujupiter(700, 24, 12, "Slujupiter");
         huemanMaxHP = h1.getHP();
         enemyMaxHP = s1.getHP();
 
