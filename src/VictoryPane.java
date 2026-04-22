@@ -291,22 +291,22 @@ public class VictoryPane extends GraphicsPane {
     }
 
     private void drawTitle() {
-        titleShadow = new GLabel("VICTORY");
+        titleShadow = new GLabel("YOU WIN");
         titleShadow.setFont(new Font("Times New Roman", Font.BOLD, (int) S(54)));
         titleShadow.setColor(new Color(0, 0, 0, 170));
-        titleShadow.setLocation(X(575) + S(4), Y(110) + S(4));
+        titleShadow.setLocation(X(700) + S(4), Y(90) + S(4));
         addObj(titleShadow);
 
-        titleLabel = new GLabel("VICTORY");
+        titleLabel = new GLabel("YOU WIN");
         titleLabel.setFont(new Font("Times New Roman", Font.BOLD, (int) S(54)));
         titleLabel.setColor(new Color(255, 230, 150));
-        titleLabel.setLocation(X(575), Y(110));
+        titleLabel.setLocation(X(700), Y(90));
         addObj(titleLabel);
 
         GLabel subtitle = new GLabel("Palletia's colours have returned");
         subtitle.setFont(new Font("Times New Roman", Font.ITALIC, (int) S(22)));
         subtitle.setColor(new Color(230, 220, 255));
-        subtitle.setLocation(X(500), Y(150));
+        subtitle.setLocation(X(690), Y(130));
         addObj(subtitle);
     }
 
@@ -350,7 +350,7 @@ public class VictoryPane extends GraphicsPane {
         hyperionImage = new GImage("hyperion.png");
         hyperionImage.scale(0.72 * scale);
 
-        double imgX = stoneCX - hyperionImage.getWidth() / 2.0 + S(8);
+        double imgX = stoneCX - hyperionImage.getWidth() / 2.0 - S(25);
         double imgY = stoneTopY - hyperionImage.getHeight() + S(8);
 
         hyperionImage.setLocation(imgX, imgY);
@@ -503,14 +503,14 @@ public class VictoryPane extends GraphicsPane {
             float a = (float) (0.18 + 0.12 * Math.sin((tick + i * 15) * 0.06));
             Color c = withAlpha(orbColors[i], a);
             orbs[i].setFillColor(c);
-            orbs[i].setColor(c);
+            orbs[i ].setColor(c);
         }
 
         if (hyperionImage != null) {
             double floatY = Math.sin(tick * 0.05) * S(3);
             double stoneCX = X(330);
             double stoneTopY = Y(370);
-            double imgX = stoneCX - hyperionImage.getWidth() / 2.0 + S(8);
+            double imgX = stoneCX - hyperionImage.getWidth() / 2.0 - S(25);
             double imgY = stoneTopY - hyperionImage.getHeight() + S(8) + floatY;
             hyperionImage.setLocation(imgX, imgY);
         }

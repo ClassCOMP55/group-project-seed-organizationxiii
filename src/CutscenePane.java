@@ -450,7 +450,7 @@ public class CutscenePane extends GraphicsPane {
         hyperionImage = new GImage("Hyperion.png");
         hyperionImage.scale(0.72);
 
-        double imgX = stoneCX - hyperionImage.getWidth() / 2.0;
+        double imgX = stoneCX - hyperionImage.getWidth() / 2.0 - S(25);
         double imgY = stoneTopY - hyperionImage.getHeight() + S(22);
 
         hyperionImage.setLocation(imgX, imgY);
