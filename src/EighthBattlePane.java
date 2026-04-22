@@ -118,7 +118,7 @@ public class EighthBattlePane extends GraphicsPane {
     private double scale, offsetX, offsetY;
 
     // ── Super constants ───────────────────────────────────────────────────────
-    private static final double SUPER_MAX        = 500.0;
+    private static final double SUPER_MAX        = 200.0;
     private static final double SUPER_GAIN_HIT   = 60.0;
     private static final double SUPER_GAIN_BLOCK = 40.0;
     private static final double SUPER_GAIN_DMGTAKEN = 30.0;

@@ -102,7 +102,7 @@ public class FourthBattlePane extends GraphicsPane {
     private static final double BASE_H = 991.0;
     private double scale, offsetX, offsetY;
 
-    private static final double SUPER_MAX = 500.0;
+    private static final double SUPER_MAX = 200.0;
     private static final double SUPER_GAIN_HIT = 60.0;
     private static final double SUPER_GAIN_BLOCK = 40.0;
     private static final double SUPER_GAIN_DMGTAKEN = 30.0;
