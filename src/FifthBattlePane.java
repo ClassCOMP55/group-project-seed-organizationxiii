@@ -270,7 +270,7 @@ public class FifthBattlePane extends GraphicsPane {
         enemyImage = new GImage("effervena.png");
 
         huemanImage.scale(0.52);
-        enemyImage.scale(0.68);
+        enemyImage.scale(0.78);
 
         double hStoneW = S(170), hStoneH = S(35), hCX = X(340), hSY = Y(700);
         GOval hSh = new GOval(hCX - hStoneW * .45, hSY + hStoneH * .75, hStoneW * .9, hStoneH * .5);
