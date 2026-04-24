@@ -450,10 +450,10 @@ public class vs_First extends GraphicsPane {
         addObj(decimaStone);
 
         decimaImage = new GImage("Decima.png");
-        decimaImage.scale(0.72);
+        decimaImage.scale(1.0);
 
         double imgX = stoneCX - decimaImage.getWidth() / 2.0;
-        double imgY = stoneTopY - decimaImage.getHeight() + S(22);
+        double imgY = stoneTopY - decimaImage.getHeight() + S(35);
 
         decimaImage.setLocation(imgX, imgY);
         addObj(decimaImage);
