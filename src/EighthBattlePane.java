@@ -93,7 +93,7 @@ public class EighthBattlePane extends GraphicsPane {
     private static final Color HP_GREEN     = new Color(55, 220, 100);
     private static final Color HP_BLUE      = new Color(55, 140, 255);
     private static final Color SUPER_COLOR  = new Color(130, 60, 255);
-    private static final Color ENEMY_HP     = new Color(212, 175, 55);
+    private static final Color ENEMY_HP     = new Color(90, 240, 210);
     private static final Color TEXT_BRIGHT  = new Color(230, 235, 255);
     private static final Color MENU_BG      = new Color(8, 10, 25, 240);
     private static final Color HIGHLIGHT    = new Color(55, 75, 180, 80);
@@ -231,7 +231,7 @@ public class EighthBattlePane extends GraphicsPane {
     // =========================================================================
     private void buildSprites() {
         huemanImage = new GImage(getHuemanImage()); enemyImage = new GImage("mint.png");
-        huemanImage.scale(0.52); enemyImage.scale(0.78);
+        huemanImage.scale(0.52); enemyImage.scale(0.60);
         double hStoneW=S(170),hStoneH=S(35),hCX=X(340),hSY=Y(700);
         GOval hSh=new GOval(hCX-hStoneW*.45,hSY+hStoneH*.75,hStoneW*.9,hStoneH*.5);
         hSh.setFilled(true); hSh.setFillColor(new Color(0,0,0,70)); hSh.setColor(new Color(0,0,0,0)); addObj(hSh);
@@ -244,9 +244,9 @@ public class EighthBattlePane extends GraphicsPane {
         GOval dSh=new GOval(dCX-dStoneW*.46,dSY+dStoneH*.75,dStoneW*.92,dStoneH*.5);
         dSh.setFilled(true); dSh.setFillColor(new Color(0,0,0,70)); dSh.setColor(new Color(0,0,0,0)); addObj(dSh);
         GRect dSb2=new GRect(dCX-dStoneW/2-S(6),dSY+S(8),dStoneW+S(12),dStoneH*.55);
-        dSb2.setFilled(true); dSb2.setFillColor(new Color(55,44,22)); dSb2.setColor(new Color(38,30,12)); addObj(dSb2);
+        dSb2.setFilled(true); dSb2.setFillColor(new Color(40, 70, 62)); dSb2.setColor(new Color(24, 44, 40)); addObj(dSb2);
         GRect dSb1=new GRect(dCX-dStoneW/2,dSY,dStoneW,dStoneH);
-        dSb1.setFilled(true); dSb1.setFillColor(new Color(120,95,42)); dSb1.setColor(new Color(76,60,22)); addObj(dSb1);
+        dSb1.setFilled(true); dSb1.setFillColor(new Color(95, 170, 150)); dSb1.setColor(new Color(55, 110, 98)); addObj(dSb1);
         enemyImage.setLocation(dCX-enemyImage.getWidth()/2, dSY-enemyImage.getHeight()+S(10)); addObj(enemyImage);
     }
     // =========================================================================
@@ -256,8 +256,8 @@ public class EighthBattlePane extends GraphicsPane {
         double px=X(30),py=Y(38),pw=S(290),ph=S(85);
         GRect sh=new GRect(px+S(4),py+S(4),pw,ph); sh.setFilled(true); sh.setFillColor(new Color(0,0,0,120)); sh.setColor(new Color(0,0,0,0)); addObj(sh);
         enemyHudPanel=new GRect(px,py,pw,ph); enemyHudPanel.setFilled(true); enemyHudPanel.setFillColor(PANEL_BG); enemyHudPanel.setColor(PANEL_BORDER); addObj(enemyHudPanel);
-        enemyHudAccent=new GRect(px,py,S(5),ph); enemyHudAccent.setFilled(true); enemyHudAccent.setFillColor(ACCENT_GOLD); enemyHudAccent.setColor(ACCENT_GOLD); addObj(enemyHudAccent);
-        enemyNameLabel=new GLabel(enemy.getName().toUpperCase()); enemyNameLabel.setFont(new Font("Georgia",Font.BOLD,Math.max(12,(int)S(28)))); enemyNameLabel.setColor(ACCENT_GOLD); enemyNameLabel.setLocation(px+S(18),py+ph*.35); addObj(enemyNameLabel);
+        enemyHudAccent=new GRect(px,py,S(5),ph); enemyHudAccent.setFilled(true); enemyHudAccent.setFillColor(ENEMY_HP); enemyHudAccent.setColor(ENEMY_HP); addObj(enemyHudAccent);
+        enemyNameLabel=new GLabel(enemy.getName().toUpperCase()); enemyNameLabel.setFont(new Font("Georgia",Font.BOLD,Math.max(12,(int)S(28)))); enemyNameLabel.setColor(ENEMY_HP); enemyNameLabel.setLocation(px+S(18),py+ph*.35); addObj(enemyNameLabel);
         enemyHpLabel=new GLabel("HP"); enemyHpLabel.setFont(new Font("Courier New",Font.BOLD,Math.max(10,(int)S(14)))); enemyHpLabel.setColor(TEXT_BRIGHT); enemyHpLabel.setLocation(px+S(18),py+ph*.70); addObj(enemyHpLabel);
         double bx=px+pw*.18,by=py+ph*.52,bw=pw*.68,bh=ph*.18;
         enemyHealthBack=new GRect(bx,by,bw,bh); enemyHealthBack.setFilled(true); enemyHealthBack.setFillColor(new Color(30,30,50)); enemyHealthBack.setColor(new Color(60,60,90)); addObj(enemyHealthBack);
