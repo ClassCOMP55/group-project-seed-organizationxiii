@@ -266,7 +266,7 @@ public class FirstBattlePane extends GraphicsPane {
 
     private void buildSprites() {
         huemanImage = new GImage(getHuemanImage()); decimaImage = new GImage("Decima.png");
-        huemanImage.scale(0.52); decimaImage.scale(0.78);
+        huemanImage.scale(0.52); decimaImage.scale(0.88);
 
         double hStoneW=S(170),hStoneH=S(35),hCX=X(340),hSY=Y(700);
         GOval hSh=new GOval(hCX-hStoneW*.45,hSY+hStoneH*.75,hStoneW*.9,hStoneH*.5);
