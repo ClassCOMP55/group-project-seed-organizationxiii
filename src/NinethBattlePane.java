@@ -141,7 +141,7 @@ public class NinethBattlePane extends GraphicsPane {
         updateLayoutScale();
 
         h1 = mainScreen.getPlayer();
-        enemy = new Loathe(2000, 40, 12, "Loathe");
+        enemy = new Loathe(2200, 40, 12, "Loathe");
         huemanMaxHP = h1.getHP();
         enemyMaxHP = enemy.getHP();
 
