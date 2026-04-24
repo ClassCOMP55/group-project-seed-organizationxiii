@@ -285,7 +285,7 @@ public class ThirdBattlePane extends GraphicsPane {
         enemyImage = new GImage("slujupiter.png");
 
         huemanImage.scale(0.52);
-        enemyImage.scale(0.72);
+        enemyImage.scale(1.2);
 
         double hStoneW = S(170);
         double hStoneH = S(35);
