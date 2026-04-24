@@ -735,7 +735,7 @@ public class LevelSelectPane extends GraphicsPane {
         for (GObject o : previewObjects) mainScreen.remove(o);
         previewObjects.clear();
         startButton = null; backButton = null; levelEnemyImage = null;
-    }
+    } //test
 
     // ════════════════════════════════════════════════════════════════════════
     //  Star removal
