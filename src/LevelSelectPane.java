@@ -577,9 +577,9 @@ public class LevelSelectPane extends GraphicsPane {
             case 3: mainColor=new Color(170,100,255); glowColor=new Color(130, 70,220); darkColor=new Color(50,15,90); enemyName="lavender.png";   displayName="Level  3";  break;
             case 4: mainColor=new Color(190,140,255); glowColor=new Color(145,100,220); darkColor=new Color(60,22,95); enemyName="effervena.png";  displayName="Level  4";  break;
             case 5: mainColor=new Color(255,120,120); glowColor=new Color(210, 90, 90); darkColor=new Color(90,18,18); enemyName="brick.png";               displayName="Level  5";  break;
-            case 6: mainColor=new Color(255, 80, 80); glowColor=new Color(200, 50, 50); darkColor=new Color(80,12,12); enemyName="loathe.png";               displayName="Level  6";  break;
+            case 6: mainColor=new Color(255, 80, 80); glowColor=new Color(200, 50, 50); darkColor=new Color(80,12,12); enemyName="Decima.png";               displayName="Level  6";  break;
             case 7: mainColor=new Color(120,180,255); glowColor=new Color( 80,140,220); darkColor=new Color(15,45,100);enemyName="mint.png";               displayName="Level  7";  break;
-            default:mainColor=new Color( 80,120,255); glowColor=new Color( 50, 90,220); darkColor=new Color(12,28,85); enemyName="Decima.png";               displayName="Level  8";  break;
+            default:mainColor=new Color( 80,120,255); glowColor=new Color( 50, 90,220); darkColor=new Color(12,28,85); enemyName="loathe.png";               displayName="Level  8";  break;
         }
 
         boolean isTraining = (selectedLevel == 0);

@@ -7,15 +7,16 @@ import acm.graphics.*;
 public class CutScene5Pane extends GraphicsPane {
 
 	private final String[] dialogue = {
-		    "You have done a great service to Palletia,",
-		    "restoring the colors of the world. However, here",
-		    "lies our main foe. Loathe cares not about fairness,",
-		    "but merely of destruction and humiliation.",
-		    "But don't take my word for it; vile words exit his",
-		    "mouth like the air he breathes. The fate of Palletia",
-		    "is in your hands now. Save the colors.",
-		    "Go now. I will be watching."
+		    "Somehow, Decima has returned.",
+		    "He always tried to make a dramatic entrance anytime he",
+		    "was part of the Color Guardians",
+		    "If I know him, he'd be furious at his previos defeat,",
+		    "and would never let the same foe defeat him twice.",
+		    "You will be the exception. Humble this complicitor...",
+		    "will all your might."
 		};
+	
+	
 
     private int dialogueIndex = 0;
     private boolean pressed = false;

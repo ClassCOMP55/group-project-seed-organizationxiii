@@ -44,6 +44,10 @@ public class Hueman extends player {
     	}
     }
     
+    public int getAtack() {
+    	return attack;
+    }
+    
     public void debilitate(boss other) { //after slujupiter battle
     	
     	System.out.println("Hueman used debilitate!");
@@ -157,7 +161,7 @@ public class Hueman extends player {
             currentSuperPowerMeter = maxSuperPowerMeter;
         }
 
-        super.takeDamage(dmg);
+        currentHP -= dmg;
     }
 
     @Override

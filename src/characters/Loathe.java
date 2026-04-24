@@ -18,7 +18,9 @@ public class Loathe extends boss {
 		System.out.println("Hueman's superpower wanes!"); 
 	}
 	
-	
+	public int getAtack() {
+    	return attack;
+    }
 	
 	@Override 	
 	public void takeTurn(Hueman player) {

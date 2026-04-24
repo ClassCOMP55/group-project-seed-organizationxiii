@@ -4,8 +4,9 @@ import acm.graphics.GLine;
 import acm.graphics.GObject;
 import acm.graphics.GOval;
 import acm.graphics.GRect;
-import characters.Decima;
 import characters.Hueman;
+import characters.Loathe;
+
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.event.KeyEvent;
@@ -16,7 +17,7 @@ public class NinethBattlePane extends GraphicsPane {
 
     // ── Characters ────────────────────────────────────────────────────────────
     private Hueman h1;
-    private Decima enemy;
+    private Loathe enemy;
     private double huemanMaxHP;
     private double enemyMaxHP;
 
@@ -140,7 +141,7 @@ public class NinethBattlePane extends GraphicsPane {
         updateLayoutScale();
 
         h1 = mainScreen.getPlayer();
-        enemy = new Decima(1800, 45, 24, "Decima", Decima.Phase.FINAL);
+        enemy = new Loathe(2000, 40, 12, "Loathe");
         huemanMaxHP = h1.getHP();
         enemyMaxHP = enemy.getHP();
 
@@ -265,7 +266,7 @@ public class NinethBattlePane extends GraphicsPane {
     // =========================================================================
 
     private void buildSprites() {
-        huemanImage = new GImage(getHuemanImage()); enemyImage = new GImage("Decima.png");
+        huemanImage = new GImage(getHuemanImage()); enemyImage = new GImage("Loathe.png");
         huemanImage.scale(0.52); enemyImage.scale(0.78);
 
         double hStoneW=S(170),hStoneH=S(35),hCX=X(340),hSY=Y(700);
@@ -414,14 +415,40 @@ public class NinethBattlePane extends GraphicsPane {
      */
     private String aiChooseAttack() {
         enemyPhase2 = (double)enemy.getHP()/enemyMaxHP < 0.40;
-        if (playerHistory.size()>=2) {
-            String l1=playerHistory.get(playerHistory.size()-1);
-            String l2=playerHistory.get(playerHistory.size()-2);
-            if (l1.equals("HEAD")&&l2.equals("HEAD")) return "LEGS";
+
+        double r = Math.random();
+
+        // ===== ABILITIES =====
+
+        // Phase 2: ramp buff
+        if (enemyPhase2 && r < 0.20) {
+            performRamp();
+            return "NONE";
         }
-        double r=Math.random();
-        if (!enemyPhase2) { if(r<0.60)return"HEAD"; if(r<0.85)return"MIDDLE"; return"LEGS"; }
-        else               { if(r<0.40)return"HEAD"; if(r<0.80)return"MIDDLE"; return"LEGS"; }
+
+        // Phase 2: heavy blast
+        if (enemyPhase2 && r < 0.45) {
+            performNegativeBlast();
+            return "NONE";
+        }
+
+        // Phase 1: weaken player
+        if (!enemyPhase2 && r < 0.25) {
+            performFadingTouch();
+            return "NONE";
+        }
+
+        // ===== NORMAL ATTACK =====
+
+        if (!enemyPhase2) {
+            if (r < 0.60) return "HEAD";
+            if (r < 0.85) return "MIDDLE";
+            return "LEGS";
+        } else {
+            if (r < 0.40) return "HEAD";
+            if (r < 0.80) return "MIDDLE";
+            return "LEGS";
+        }
     }
 
     /**
@@ -473,7 +500,7 @@ public class NinethBattlePane extends GraphicsPane {
     // =========================================================================
 
     private void openAttackSelection() {
-        if (!battleOver) buildSelectionOverlay("ATTACK DECIMA", "Choose where to strike.", "Decima.png");
+        if (!battleOver) buildSelectionOverlay("ATTACK LOATHE", "Choose where to strike.", "Loathe.png");
     }
     private void openDefenseSelection() { if(!battleOver) buildSelectionOverlay("DEFEND HUEMAN","Choose what part to protect.",getHuemanImage()); }
 
@@ -517,7 +544,7 @@ public class NinethBattlePane extends GraphicsPane {
         if (!chosenTarget.equals(def)) {
             animatePlayerProjectile(chosenTarget, def);
         } else {
-            setBattleMessage("Decima is defending " + def + "...");
+            setBattleMessage("Loathe is defending " + def + "...");
             animateShieldBlock(getTargetX(enemyImage), getTargetY(enemyImage,def), def, true);
         }
     }
@@ -525,6 +552,18 @@ public class NinethBattlePane extends GraphicsPane {
     private void resolveEnemyAttack(String chosenDefense) {
         recordHistory(chosenDefense);
         String att = aiChooseAttack();
+
+     // If ability used → skip projectile
+     if (att.equals("NONE")) {
+         javax.swing.Timer t = new javax.swing.Timer(900, null);
+         t.setRepeats(false);
+         t.addActionListener(e -> {
+             playerTurn = true;
+             setBattleMessage("Your turn.");
+         });
+         t.start();
+         return;
+     }
         clearOverlay();
         if (!chosenDefense.equals(att)) {
             animateEnemyProjectile(att, chosenDefense);
@@ -559,10 +598,10 @@ public class NinethBattlePane extends GraphicsPane {
         animTimer=new javax.swing.Timer(16,null);
         animTimer.addActionListener(e->{cnt[0]++;projectile.move(dx,dy);
             if(cnt[0]>=steps){animTimer.stop();mainScreen.remove(projectile);contents.remove(projectile);projectile=null;animating=false;
-                setBattleMessage("Hit! Decima defended "+enemyDefense+".");
+                setBattleMessage("Hit! Loathe defended "+enemyDefense+".");
                 explodeThenFlinch(getTargetX(enemyImage),getTargetY(enemyImage,chosenTarget), true, ()-> {
                     gainSuper(SUPER_GAIN_HIT);
-                    int dmg=getOneFifthDamage(enemyMaxHP); enemy.takeDamage(dmg);
+                    int dmg=h1.getAtack(); enemy.takeDamage(dmg);
                     animateEnemyHPDrain(enemyHealthBack.getWidth()*((enemy.getHP()+dmg)/enemyMaxHP), enemyHealthBack.getWidth()*Math.max(0,(double)enemy.getHP()/enemyMaxHP));
                 });
             }
@@ -635,7 +674,7 @@ public class NinethBattlePane extends GraphicsPane {
 
     private void animateEnemyProjectile(String enemyAttack, String chosenDefense) {
         if(animating)return; animating=true;
-        setBattleMessage("Decima fires at your "+enemyAttack+"!");
+        setBattleMessage("Loathe fires at your "+enemyAttack+"!");
         double sx=getTargetX(enemyImage),sy=enemyImage.getY()+enemyImage.getHeight()*.40;
         double ex=getTargetX(huemanImage),ey=getTargetY(huemanImage,enemyAttack);
         double r=S(14); projectile=new GOval(sx-r,sy-r,r*2,r*2); projectile.setFilled(true); projectile.setFillColor(new Color(255,120,60)); projectile.setColor(new Color(255,220,180)); mainScreen.add(projectile); contents.add(projectile);
@@ -643,15 +682,101 @@ public class NinethBattlePane extends GraphicsPane {
         animTimer=new javax.swing.Timer(16,null);
         animTimer.addActionListener(e->{cnt[0]++;projectile.move(dx,dy);
             if(cnt[0]>=steps){animTimer.stop();mainScreen.remove(projectile);contents.remove(projectile);projectile=null;animating=false;
-                setBattleMessage("Decima hit your "+enemyAttack+"!");
+                setBattleMessage("Loathe hit your "+enemyAttack+"!");
                 explodeThenFlinch(ex,ey,false,()->{
                     gainSuper(SUPER_GAIN_DMGTAKEN);
-                    int dmg=getOneFifthDamage(huemanMaxHP); h1.takeDamage(dmg);
+                    int dmg=enemy.getAtack(); h1.takeDamage(dmg);
                     animatePlayerHPDrain(huemanHealthBack.getWidth()*((h1.getHP()+dmg)/huemanMaxHP), huemanHealthBack.getWidth()*Math.max(0,(double)h1.getHP()/huemanMaxHP));
                 });
             }
         });
         animTimer.start();
+    }
+    
+    private void performRamp() {
+        setBattleMessage("Loathe gathers power!");
+        enemy.ramp();
+
+        int pulses = 20;
+        int[] frame = {0};
+
+        javax.swing.Timer t = new javax.swing.Timer(40, null);
+        t.addActionListener(e -> {
+            frame[0]++;
+
+            enemyImage.setLocation(
+                enemyImage.getX(),
+                enemyImage.getY() - Math.sin(frame[0] * 0.5) * S(6)
+            );
+
+            if (frame[0] >= pulses) {
+                t.stop();
+                enemyImage.setLocation(enemyImage.getX(), enemyImage.getY());
+            }
+        });
+
+        t.start();
+    }
+    
+    private void performNegativeBlast() {
+        setBattleMessage("Loathe unleashes a Negative Blast!");
+
+        double cx = getTargetX(huemanImage);
+        double cy = getTargetY(huemanImage, "MIDDLE");
+
+        explodeThenFlinch(cx, cy, false, () -> {
+            enemy.negativeBlast(h1);
+
+            gainSuper(SUPER_GAIN_DMGTAKEN);
+
+            int dmg = getOneFifthDamage(huemanMaxHP) * 2;
+            h1.takeDamage(dmg);
+
+            animatePlayerHPDrain(
+                huemanHealthBack.getWidth() * ((h1.getHP() + dmg) / huemanMaxHP),
+                huemanHealthBack.getWidth() * Math.max(0, (double)h1.getHP()/huemanMaxHP)
+            );
+        });
+    }
+    
+    private void performFadingTouch() {
+        setBattleMessage("Loathe drains your energy!");
+
+        double cx = getTargetX(huemanImage);
+        double cy = getTargetY(huemanImage, "HEAD");
+
+        for (int i = 0; i < 12; i++) {
+            double r = S(6);
+            GOval p = new GOval(cx - r, cy - r, r*2, r*2);
+            p.setFilled(true);
+            p.setFillColor(new Color(150, 80, 255));
+            p.setColor(new Color(200, 150, 255));
+
+            mainScreen.add(p);
+            contents.add(p);
+
+            double vx = (Math.random() - 0.5) * S(6);
+            double vy = (Math.random() - 0.5) * S(6);
+
+            int[] fr = {0};
+
+            javax.swing.Timer pt = new javax.swing.Timer(16, null);
+            pt.addActionListener(e -> {
+                fr[0]++;
+                p.move(vx, vy);
+                p.setFillColor(new Color(150, 80, 255, Math.max(0, 255 - fr[0]*20)));
+
+                if (fr[0] >= 12) {
+                    pt.stop();
+                    mainScreen.remove(p);
+                    contents.remove(p);
+                }
+            });
+
+            pt.start();
+        }
+
+        enemy.fadingTouch(h1);
     }
 
     // =========================================================================
@@ -758,7 +883,7 @@ public class NinethBattlePane extends GraphicsPane {
                 shield = null;
 
                 if (onEnemy) {
-                    setBattleMessage("Blocked! Decima defended " + part + ".");
+                    setBattleMessage("Blocked! Loathe defended " + part + ".");
                     updateHealthBars();
                     checkBattleEnd();
                     if (!battleOver) {
@@ -766,7 +891,7 @@ public class NinethBattlePane extends GraphicsPane {
                         showEnemyTurnIntro();
                     }
                 } else {
-                    setBattleMessage("Guarded! You blocked Decima's " + part + " attack.");
+                    setBattleMessage("Guarded! You blocked Loathe's " + part + " attack.");
                     updateHealthBars();
                     checkBattleEnd();
                     if (!battleOver) {
@@ -785,9 +910,9 @@ public class NinethBattlePane extends GraphicsPane {
     // =========================================================================
 
     private void showEnemyTurnIntro() {
-        setBattleMessage("Decima is preparing to strike...");
+        setBattleMessage("Loathe is preparing to strike...");
         javax.swing.Timer t=new javax.swing.Timer(750,null); t.setRepeats(false);
-        t.addActionListener(e->{t.stop();setBattleMessage("Decima attacks — choose your defence!");openDefenseSelection();});
+        t.addActionListener(e->{t.stop();setBattleMessage("Loathe attacks — choose your defence!");openDefenseSelection();});
         t.start();
     }
 
@@ -820,9 +945,9 @@ public class NinethBattlePane extends GraphicsPane {
         GRect ban=new GRect(bx,by,bw,bh); ban.setFilled(true); ban.setFillColor(new Color(20,15,5)); ban.setColor(ACCENT_GOLD); mainScreen.add(ban); contents.add(ban); endOverlayObjects.add(ban);
         GRect banI=new GRect(bx+S(8),by+S(8),bw-S(16),bh-S(16)); banI.setFilled(false); banI.setColor(new Color(212,175,55,60)); mainScreen.add(banI); contents.add(banI); endOverlayObjects.add(banI);
         GLabel vic=new GLabel("VICTORY"); vic.setFont(new Font("Georgia",Font.BOLD,Math.max(24,(int)S(72)))); vic.setColor(ACCENT_GOLD); vic.setLocation(bx+(bw-vic.getWidth())/2,by+bh*.62); mainScreen.add(vic); contents.add(vic); endOverlayObjects.add(vic);
-        GLabel sub=new GLabel("Decima has been defeated."); sub.setFont(new Font("Georgia",Font.PLAIN,Math.max(12,(int)S(22)))); sub.setColor(TEXT_BRIGHT); sub.setLocation(bx+(bw-sub.getWidth())/2,by+bh*.88); mainScreen.add(sub); contents.add(sub); endOverlayObjects.add(sub);
+        GLabel sub=new GLabel("Loathe has been defeated."); sub.setFont(new Font("Georgia",Font.PLAIN,Math.max(12,(int)S(22)))); sub.setColor(TEXT_BRIGHT); sub.setLocation(bx+(bw-sub.getWidth())/2,by+bh*.88); mainScreen.add(sub); contents.add(sub); endOverlayObjects.add(sub);
         spawnGoldParticles(getTargetX(enemyImage), enemyImage.getY()+enemyImage.getHeight()/2);
-        setBattleMessage("Decima has fallen. Press CONTINUE.");
+        setBattleMessage("Loathe has fallen. Press CONTINUE.");
         goToNextScreenAfterDelay();
     }
 
